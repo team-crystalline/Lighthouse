@@ -5,6 +5,12 @@
 input{
     margin-bottom: calc(2em);
 }
+
+dt{
+    font-weight: bold;
+    font-style: italic;
+}
+
 /* IDs */
 #wrapper{
     width: 50vw;

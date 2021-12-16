@@ -89,8 +89,14 @@ app.use(bodyParser.urlencoded({extended:true}));
   app.get('/about', (req, res, next) => {
       res.render(`pages/about`, { session: req.session, splash:splash });
       splash=null;
-      // res.locals.user = req.session.user;
-      // next();
+  });
+  app.get('/todos', (req, res, next) => {
+      res.render(`pages/todos`, { session: req.session, splash:splash });
+      splash=null;
+  });
+  app.get('/crisis', (req, res, next) => {
+      res.render(`pages/crisis`, { session: req.session, splash:splash });
+      splash=null;
   });
   app.get('/signup', (req, res, next) => {
       res.render(`pages/signup`, { session: req.session, splash:splash });

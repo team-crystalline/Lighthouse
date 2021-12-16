@@ -6,12 +6,12 @@
     <body>
         <%- include ("../partials/nav.ejs") %>
         <div id="wrapper">
-        <section name="about">
+        <section>
         <h1>The System Behind the Site</h1>
         <p>The app "Lighthouse" is made by <strong>The Lighthouse System</strong>. We are a system of 7. We're around <%= new Date().getFullYear() - 1996 %> (birthday is in January so this is most likely correct), and two hosts have gone through college.</p>
         <p>One issue our system had as we got to understand DID was the ability to have a private space for journalling, away from other alters. The honour system wouldn't work-- We have nosy alters. So over the year, I (Dee) began to work on an app to help make separate and a communal journal. First, I tried making it with Flask/Python but didn't like the set up (also deploying it was cumbersome). Then, I tried with PHP but found it annoying to connect a database. So here we are now, with the PERN stack: Postgres, Express JS, React JS, and Node JS. I'm more comfortable with this stack.</p>
     </section>
-    <section name="guidelines">
+    <section>
         <h2>Guidelines</h2>
         <p>These are here solely to protect the users and developer of the website. All persons will be addressed in <em>singular form</em> for legal purposes.</p>
         <dl>
@@ -22,6 +22,9 @@
             <dt>Copyright</dt>
             <dd><p><strong>Everything you write on this app is yours, forever.</strong> Lighthouse will not use your journal(s) to promote the app, or display to anyone else. Lighthouse relinquishes copyright of any material written by users on the app.</dd>
         </dl>
+    </section>
+    <section>
+        <p>Want to see what's on the itinerary? Everything is tenative. <a href="/todos">Check it out!</a></p>
     </section>
 </div>
 <%- include ("../partials/footer.ejs") %>

@@ -12,7 +12,7 @@
             <% } %>
             <ul>
             <% for ( i in sysArr) { %>
-                <li><%= sysArr[i].name %> &emsp;&emsp;&emsp;&emsp;<a href="/deletesys/<%= sysArr[i].id %>" name="<%= sysArr[i].id %>">Delete</a>&emsp;<a href="/editsys/<%= sysArr[i].id %>" name="<%= sysArr[i].id %>">Edit</a></li>
+                <li><a href="/system/<%= sysArr[i].id %>"><%= sysArr[i].name %></a> &emsp;&emsp;&emsp;&emsp;<a href="/deletesys/<%= sysArr[i].id %>" name="<%= sysArr[i].id %>">Delete</a>&emsp;<a href="/editsys/<%= sysArr[i].id %>" name="<%= sysArr[i].id %>">Edit</a></li>
                 <!-- <li><%= sysArr[i].name %> <form method="post"><input type="submit" class="edit" name="e-<%= sysArr[i] %>" value="Edit"> <input type="submit" class="delete" name="d-<%= sysArr[i].id %>" value="Delete"></form></li> -->
                 <!-- <li><%= sysArr[i] %> <button name="edit-<%= sysArr[i] %>">Edit</button> <button name="del-<%= sysArr[i] %>">Delete</button></li> -->
             <% } %>

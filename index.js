@@ -17,6 +17,9 @@ const api = new PKAPI({
 	token: undefined // for authing requests. only set if you're using this for a single system!
 });
 
+function isLoggedIn(req){
+	return req.session.loggedin == true;
+}
 
 async function pkFetch (i){
     // pkFetch("mikfh").then((value) => console.log(value));
@@ -121,7 +124,7 @@ app.use(bodyParser.urlencoded({extended:true}));
   });
 
   app.get('/editsys/:alt', (req, res)=>{
-	  if (req.session.loggedin== true){
+	  if (isLoggedIn(req)){
 		  client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
@@ -137,7 +140,7 @@ app.use(bodyParser.urlencoded({extended:true}));
   });
 
   app.get('/deletesys/:alt', (req, res)=>{
-	  if (req.session.loggedin== true){
+	  if (isLoggedIn(req)){
 		  client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
@@ -153,25 +156,43 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 var sysArr;
   app.get('/system', (req, res, next) => {
-    if (req.session.loggedin== true){
-        client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${req.session.u_id}`]}, (err, result) => {
-            if (err) {
-              console.log(err.stack);
-              console.log("Oops.")
-          } else {
-              req.session.sys = [];
-              for (i in (result.rows)){
-                  // (req.session.sys).push(Buffer.from(result.rows[i].sys_alias, 'base64').toString())
-                  (req.session.sys).push({name: Buffer.from(result.rows[i].sys_alias, 'base64').toString(), id: result.rows[i].sys_id})
-              }
-          }
-		  // console.table(req.session.sys);
-          res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
-        });
+    if (isLoggedIn(req)){
+			client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${req.session.u_id}`]}, (err, result) => {
+	            if (err) {
+	              console.log(err.stack);
+	              console.log("Oops.")
+	          } else {
+	              req.session.sys = [];
+	              for (i in (result.rows)){
+	                  // (req.session.sys).push(Buffer.from(result.rows[i].sys_alias, 'base64').toString())
+	                  (req.session.sys).push({name: Buffer.from(result.rows[i].sys_alias, 'base64').toString(), id: result.rows[i].sys_id})
+	              }
+	          }
+			  // console.table(req.session.sys);
+	          res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
+	        });
+
     } else {
         res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash });
     }
     splash=null;
+  });
+
+  app.get("/system/:alt", (req, res,next)=>{
+	 if (isLoggedIn(req)){
+		 client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
+ 			if (err) {
+ 			  console.log(err.stack);
+ 			  console.log("Oops.")
+ 		  } else {
+ 			  req.session.chosenSys= result.rows[0];
+ 		  }
+ 		  // console.table(req.session.sys);
+ 		  res.render(`pages/sys_info`, { session: req.session, splash:splash, sys:req.session.chosenSys });
+ 		});
+	 } else {
+         res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash });
+     }
   });
 
 	/*
@@ -184,7 +205,7 @@ var sysArr;
 
 	*/
 
-  app.post('/system', function (req, res){
+  app.post('/system/', function (req, res){
 	  // console.log(req.body);
 	  // console.log(Object.keys(req.body)[0]);
 	  if (req.body.sysname){

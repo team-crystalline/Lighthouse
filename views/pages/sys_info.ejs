@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+    <%- include ("../partials/nav.ejs") %>
+    <div id="wrapper">
+        <section>
+            <h2>About <%=  Buffer.from(sys.sys_alias, 'base64').toString() %></h2>
+            <p>Right now, we don't know much about <%=  Buffer.from(sys.sys_alias, 'base64').toString() %>...</p>
+        </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+</body>
+
+</html>

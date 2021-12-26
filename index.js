@@ -204,7 +204,7 @@ var sysArr;
 	var alterArr;
   app.get('/system/:id', (req, res, next) => {
     if (isLoggedIn(req)){
-		client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+		client.query({text: "SELECT systems.sys_id, systems.user_id, systems.sys_alias, alters.alt_id FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
 			  console.log("Oops.")
@@ -260,7 +260,7 @@ var sysArr;
   });
 
   app.get('/journal/:id', (req, res)=>{
-	  console.table(req.session.chosenAlter);
+	  // console.table(req.session.chosenAlter);
 	 if (isLoggedIn(req)){
 		 if (req.session.chosenAlter == null){
 			// redirect back to systems.
@@ -300,7 +300,7 @@ var sysArr;
 			if (isLoggedIn(req)){
 				if (req.body.create){
 					// Create
-					client.query({text: "INSERT INTO journals (alt_id, password, is_private, skin) VALUES ($1, $2, $3, $4)",values: [`${req.params.id}`, `'${CryptoJS.SHA3(req.body.jPass)}'`, `${req.body.priv}`, `'${req.body.journ}'`]}, (err, result) => {
+					client.query({text: "INSERT INTO journals (alt_id, password, is_private, skin, sys_id) VALUES ($1, $2, $3, $4, $5)",values: [`${req.params.id}`, `'${CryptoJS.SHA3(req.body.jPass)}'`, `${req.body.priv}`, `'${req.body.journ}'`, `${req.session.chosenAlter.sys_id}`]}, (err, result) => {
 						if (err) {
 						  console.log(err.stack);
 						  console.log("Oops.")
@@ -382,27 +382,36 @@ var sysArr;
 
 	app.post('/deletesys/:alt', function(req, res){
 		// console.table(req.session.chosenSys);
-		client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${req.session.chosenSys.user_id}`]}, (err, result) => {
+		client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			if (err) {
               console.log(err.stack);
               console.log("Oops.")
 		  } else {
+			  console.table(result.rows[0]);
 			  if (req.session.u_id= result.rows[0].user_id){
 				  // DELETE FROM alters WHERE sys_id=$1;
-				  client.query({text: "DELETE FROM alters WHERE sys_id=$1;",values: [`${req.session.chosenSys.sys_id}`]}, (err, result) => {
+				  // posts, journals, alters, system
+				  client.query({text: "DELETE FROM journals WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
 					  if (err){
 						  console.log(err.stack);
 						  console.log("Oops.");
 					  } else {
-							  client.query({text: "DELETE FROM systems WHERE sys_id=$1;",values: [`${req.session.chosenSys.sys_id}`]}, (err, result) => {
+							  client.query({text: "DELETE FROM alters WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
 								  if (err){
 									  console.log(err.stack);
 									  console.log("Oops.");
 								  }
+								  client.query({text: "DELETE FROM systems WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
+									  if (err){
+										  console.log(err.stack);
+										  console.log("Oops.");
+									  }
+									  splash=`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`;
+									  req.session.chosenSys= null;
+									  res.redirect("/system");
+								  });
 							  });
-						  splash=`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`;
-						  req.session.chosenSys= null;
-						  res.redirect("/system");
+
 					  }
 				  });
 			  } else {

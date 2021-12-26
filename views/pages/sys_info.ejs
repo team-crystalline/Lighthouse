@@ -18,11 +18,12 @@
             <p>Members:</p>
             <div class="grid" style="grid-gap:1em;">
                 <% for ( i in alterArr) { %>
-                    <div style="background: rgb(<%= Math.floor(Math.random() * (225 - 175 + 1)) + 175; %>,<%= Math.floor(Math.random() * (225 - 175 + 1)) + 175; %>,<%= Math.floor(Math.random() * (225 - 175 + 1)) + 175; %>);"><a href="/alter/<%= alterArr[i].a_id %>"><%= alterArr[i].name %></a></div>
+                    <!-- <a style="background: rgb(200,200,<%= Math.floor(Math.random() * (225 - 200 + 1)) + 200; %>);" href="/alter/<%= alterArr[i].a_id %>" ><%= alterArr[i].name %></a> -->
+                    <a href="/alter/<%= alterArr[i].a_id %>" ><%= alterArr[i].name %></a>
                 <% } %>
             </div>
             <% } %>
-            <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>">Edit</a>
+            <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="deletebtn">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="editbtn">Edit</a>
             <form method="post">
                 <label for="altname">Add New Alter</label>
                 <input type="text" name="altname" placeholder="New Alter Name Here" autofocus="autofocus">

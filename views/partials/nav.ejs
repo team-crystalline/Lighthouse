@@ -1,18 +1,19 @@
 <nav>
-    <ul>
+        <div id="logo" style="display: inline-block;"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/>Lighthouse<br/> <sup>Journal Together</sup></div>
         <% if (session.loggedin== true){ %>
-            <li>Hi, <%- session.username %>!</li>
-        <% } %>
-        <% if (session.loggedin== true){ %>
-            <li><a href="/logout">Logout</a></li>
+            <a href="/logout">Logout</a>
         <% } else { %>
-            <li><a href="/signup">Sign Up</a></li>
-            <li><a href="/login">Login</a></li>
+            <a href="/signup">Sign Up</a>
+            <a href="/login">Log in</a>
         <% } %>
-        <li><a href="/">Home Page</a></li>
-        <li><a href="/about">Guidelines</a></li>
+        <a href="/">Home</a>
+        <a href="/about">Information</a>
         <% if (session.loggedin== true){ %>
-            <li><a href="/system">Your system</a></li>
+            <a href="/system">System</a>
         <% } %>
-    </ul>
+        <a href="/crisis">In crisis?</a>
+        <button onclick="history.back()">Go Back</button>
+        <% if (session.loggedin== true){ %>
+            <div>Hi, <%- session.username %>!</div>
+        <% } %>
 </nav>

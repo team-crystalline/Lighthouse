@@ -20,9 +20,11 @@
                 <input type="submit" name="submit" value="Make it so">
             </form>
             <% console.table(alters) %>
-            <% for (i in alters){ %>
-                <p>Edit <%- Buffer.from(alters[i].name, 'base64').toString() %></p>
-            <% } %>
+            <div class="grid">
+                <% for (i in alters){ %>
+                    <a href="/alter/<%= alters[i].alt_id %>" class="alterbutton">Edit <br/><%- Buffer.from(alters[i].name, 'base64').toString() %></a>
+                <% } %>
+            </div>
         </section>
     </div>
     <%- include ("../partials/footer.ejs") %>

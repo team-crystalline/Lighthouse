@@ -9,11 +9,11 @@
         <a class="navel" href="/">Home</a>
         <a class="navel" href="/about">Information</a>
         <% if (session.loggedin== true){ %>
-            <a href="/system">System</a>
+            <a class="navel" href="/system">System</a>
         <% } %>
         <a class="navel" href="/crisis">In crisis?</a>
         <button class="navel" onclick="history.back()">Go Back</button>
         <% if (session.loggedin== true){ %>
-            <div>Hi, <%- session.username %>!</div>
+            <a>Hi, <%- session.username %>!</a>
         <% } %>
 </nav>

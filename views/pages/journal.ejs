@@ -29,6 +29,7 @@
         <hr/>
         <section>
             <section>
+                <% console.log(session.journalPosts) %>
             <% for (i in session.journalPosts) { %>
                 <article>
                 <h2><%= session.journalPosts[i].title %></h2>
@@ -37,6 +38,7 @@
                     for (j in bodyArr){
                         if (bodyArr[j] !== ''){ %>
                             <p><%- bodyArr[j] %></p>
+                            <p><a href="/journal/<%- session.journalPosts[i].p_id %>/edit">Edit</a> <a href="/journal/<%- session.journalPosts[i].p_id %>/delete">Delete</a></p>
                         <% }
                     }%>
             </article>

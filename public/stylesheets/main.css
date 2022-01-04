@@ -61,7 +61,7 @@ article:last-child{
 }
 
 
-.navel {
+.navel, button, input[type=submit], input[type=reset] {
     display: inline-block;
     margin: auto calc(2em);
     text-decoration: none;
@@ -127,10 +127,12 @@ li {
 
 #blogpopup{
     padding: calc(.5em);
-    background: silver;
+    background: ghostwhite;
     width: 25vw;
     z-index: 4;
     position: absolute;
+    border: 1px solid black;
+    border-radius: 10px;
 }
 
 #logo a{

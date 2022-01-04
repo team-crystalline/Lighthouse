@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+    <%- include ("../partials/nav.ejs") %>
+    <div id="wrapper">
+        <section>
+            <% if (typeof splash == 'string'){  %>
+                <p class="splash"><%- splash %></p>
+            <% } %>
+            <h2>Edit</h2>
+            <p>Editing post.</p>
+        </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+</body>
+
+</html>

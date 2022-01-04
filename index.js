@@ -294,6 +294,14 @@ var sysArr;
 	 }
   });
 
+  app.get('/journal/:id/delete', (req, res)=>{
+	  res.render(`pages/delete_post`, { session: req.session, splash:splash });
+  });
+
+  app.get('/journal/:id/edit', (req, res)=>{
+	  res.render(`pages/edit_post`, { session: req.session, splash:splash });
+  });
+
 	/*
 
 

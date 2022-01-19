@@ -52,6 +52,10 @@ nav{
     z-index: 2;
 }
 
+nav a{
+  font-size: calc(1em);
+}
+
 article{
     border-bottom: 1px solid black;
     padding: calc(1em);
@@ -63,12 +67,12 @@ article:last-child{
 
 .navel, button, input[type=submit], input[type=reset] {
     display: inline-block;
-    margin: auto calc(2em);
+    margin: auto calc(1em);
     text-decoration: none;
     transition: 1s;
     vertical-align: middle;
     background: var(--col2);
-    padding: 1em;
+    padding: calc(.5em);
     border-radius: 0px;
     color: var(--col1);
     border: 0;
@@ -116,7 +120,7 @@ li {
     padding: calc(2em);
     margin: 0 auto;
     position: relative;
-    top: 10vh;
+    top: 20vh;
     max-height: 80vh;
 }
 

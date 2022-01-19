@@ -1,5 +1,7 @@
 <nav>
-        <div id="logo" style="display: inline-block;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/> <sup>Journal Together</sup></span></a></div>
+        <div id="logo" style="display: inline-block;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/> <% if (session.loggedin== true){ %>
+            <sup>Hi, <%- session.username %>!</sup>
+        <% } else { %><sup>Journal Together</sup><% } %></span></a></div>
         <% if (session.loggedin== true){ %>
             <a class="navel" href="/logout">Logout</a>
         <% } else { %>
@@ -13,7 +15,4 @@
         <% } %>
         <a class="navel" href="/crisis">In crisis?</a>
         <button class="navel" onclick="history.back()">Go Back</button>
-        <% if (session.loggedin== true){ %>
-            <a>Hi, <%- session.username %>!</a>
-        <% } %>
 </nav>

@@ -196,7 +196,8 @@ app.use(bodyParser.urlencoded({extended:true}));
 
   app.get('/clearalter', (req, res, next)=>{
 	  req.session.journalUser= null;
-	  res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
+	  // res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys, lang:req.acceptsLanguages()[0] });
+		res.redirect('/system');
   });
 
 var sysArr;

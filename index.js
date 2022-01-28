@@ -162,8 +162,7 @@ var app = express();
 		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash });}
 	});
 
-	app.get('/system/rules', (req, res, next) => {
-		// console.log(`GET system/rules/ U_ID: ${req.session.u_id}`);
+	app.get('/rules', (req, res, next) => {
 		if (isLoggedIn(req)){
 			client.query({text: "SELECT * FROM sys_rules WHERE u_id=$1;", values:[req.session.u_id]}, (err, result)=>{
 				if (err){
@@ -178,7 +177,7 @@ var app = express();
 		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash });}
 	});
 
-	app.get('/system/rules/delete/:id', (req, res)=>{
+	app.get('rules/delete/:id', (req, res)=>{
 		if (isLoggedIn(req)){
 			client.query({text: "DELETE FROM sys_rules WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				if (err) {
@@ -187,7 +186,7 @@ var app = express();
 			} else {
 				req.session.sys_rules= null;
 			}
-			res.redirect("/system/rules");
+			res.redirect("/rules");
 			});
 		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash });}
 	});
@@ -500,7 +499,7 @@ var sysArr;
 					console.log(err.stack);
 					console.log("Oops.");
 				} else {
-					res.redirect("/system/rules");
+					res.redirect("/rules");
 				}
 			});
 		} else {

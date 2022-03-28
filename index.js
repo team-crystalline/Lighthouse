@@ -530,7 +530,7 @@ var sysArr;
 					req.session.chosenAlter= result.rows[0];
 				}
 				// console.table(req.session.chosenAlter);
-				res.render(`pages/delete_alter`, { session: req.session, splash:splash});
+				res.render(`pages/delete_alter`, { session: req.session, splash:splash, cookies:getCookies(req)});
 			});
 		} else {
 			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });

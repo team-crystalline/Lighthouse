@@ -1,21 +1,23 @@
 <nav>
-        <div id="logo" style="display: inline-block;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/> <% if (cookies['loggedin']) { %>
-            <sup>Hi, <%- cookies['username'] %>!</sup>
-          <% } else { %>
-            <sup>Journal Together</sup>
-            <% } %>
-        </span></a></div>
-        <% if (cookies['loggedin']){ %>
-            <a class="navel" href="/logout">Logout</a>
-        <% } else { %>
-            <a class="navel" href="/signup">Sign Up</a>
-            <a class="navel" href="/login">Log in</a>
-        <% } %>
-        <a class="navel" href="/">Home</a>
-        <a class="navel" href="/about">Information</a>
-        <% if (cookies['loggedin']){ %>
-            <a class="navel" href="/system">System</a>
-        <% } %>
-        <a class="navel" href="/crisis">In crisis?</a>
-        <button class="navel" onclick="history.back()">Go Back</button>
+  <div id="logo" style="display: inline-block;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/>
+    <% if (cookies.loggedin) { %>
+      <sup>Hi, <%- cookies.username %>!</sup>
+    <% } else { %>
+    <sup>Journal Together</sup>
+      <% } %>
+  </span></a></div>
+  <% if (cookies.loggedin){ %>
+<a class="navel" href="/logout">Logout</a>
+  <% } else { %>
+    <a class="navel" href="/signup">Sign Up</a>
+    <a class="navel" href="/login">Log in</a>
+
+  <% } %>
+  <a class="navel" href="/">Home</a>
+  <a class="navel" href="/about">Information</a>
+  <% if (cookies.loggedin){ %>
+      <a class="navel" href="/system">System</a>
+  <% } %>
+  <a class="navel" href="/crisis">In crisis?</a>
+  <button class="navel" onclick="history.back()">Go Back</button>
 </nav>

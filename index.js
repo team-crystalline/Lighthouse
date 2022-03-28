@@ -1,5 +1,6 @@
 const express = require('express');
 var bodyParser=require("body-parser");
+var cookieParser = require('cookie-parser');
 const session = require('express-session');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,7 @@ require('dotenv').config();
 
 const getCookies = (req) => {
  // We extract the raw cookies from the request headers
+ if (!req.headers.cookie) return 'undefined';
  const rawCookies = req.headers.cookie.split('; ');
  // rawCookies = ['myapp=secretcookie, 'analytics_cookie=beacon;']
 
@@ -49,11 +51,19 @@ function getRandomInt(min, max){
 }
 
 function isLoggedIn(req){
-	if (req.session.loggedin == true || getCookies(req)['loggedin'] == 'true'){
-		return true;
-	} else {
-		return false;
-	}
+	// if (typeof getCookies(req)['loggedin'] == 'string'){
+	// 	return true;
+	// } else {
+	// 	return false;
+	// }
+
+  // try {
+  //   return req.cookies.loggedin == true;
+  // } catch (e){
+  //   return false;
+  // }
+  // console.log(req.cookies)
+  return req.cookies.loggedin == 'true';
 }
 
 function idCheck(req, str){
@@ -120,6 +130,7 @@ var app = express();
 	saveUninitialized: true
     }));
 	app.use(bodyParser.urlencoded({extended:true}));
+  app.use(cookieParser());
 
   app.set('views', path.join(__dirname, 'views'))
   app.set('view engine', 'ejs')
@@ -129,10 +140,10 @@ var app = express();
 	  client.query({text: "SELECT COUNT(id) FROM users;",values: []}, (err, result) => {
 		  if (err) {
 			console.log(err.stack);
-			res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:getCookies(req) });
+			res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
 		} else {
 			var userCount= result.rows[0].count;
-			res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:getCookies(req) });
+			res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:req.cookies });
 	        splash=null;
 		}
 	});
@@ -143,33 +154,33 @@ var app = express();
   // });
 
   app.get('/about', (req, res, next) => {
-      res.render(`pages/about`, { session: req.session, splash:splash, cookies:getCookies(req) });
+      res.render(`pages/about`, { session: req.session, splash:splash, cookies:req.cookies });
       splash=null;
   });
   app.get('/todos', (req, res, next) => {
-      res.render(`pages/todos`, { session: req.session, splash:splash,cookies:getCookies(req) });
+      res.render(`pages/todos`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
   });
   app.get('/crisis', (req, res, next) => {
-      res.render(`pages/crisis`, { session: req.session, splash:splash,cookies:getCookies(req) });
+      res.render(`pages/crisis`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
   });
   app.get('/signup', (req, res, next) => {
-      res.render(`pages/signup`, { session: req.session, splash:splash,cookies:getCookies(req) });
+      res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
   });
 
   app.get('/login', (req, res, next) => {
-      res.render(`pages/login`, { session: req.session, splash:splash,cookies:getCookies(req) });
+      res.render(`pages/login`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
   });
   app.get('/cookies', (req, res, next) => {
-      res.render(`pages/cookies`, { session: req.session, splash:splash,cookies:getCookies(req) });
+      res.render(`pages/cookies`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
   });
 
   app.get('/forgot-password', (req, res, next) => {
-      res.render(`pages/forgot_pass`, { session: req.session, splash:splash,cookies:getCookies(req) });
+      res.render(`pages/forgot_pass`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
   });
 
@@ -185,7 +196,7 @@ var app = express();
   });
 
   app.get('/reset/:id', (req, res)=>{
-     res.render("pages/new_pass", {session: req.session, splash:splash, cookies:getCookies(req)});
+     res.render("pages/new_pass", {session: req.session, splash:splash, cookies:req.cookies});
 		 splash=null;
   });
 
@@ -194,14 +205,14 @@ var app = express();
 			client.query({text:'SELECT * FROM inner_worlds WHERE u_id=$1', values: [getCookies(req)['u_id']]}, (err, result)=>{
 				if (err){
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 				} else {
 					req.session.innerWorld= result.rows;
 				}
-				res.render(`pages/innerworld`, { session: req.session, splash:splash,cookies:getCookies(req) });
+				res.render(`pages/innerworld`, { session: req.session, splash:splash,cookies:req.cookies });
 				splash=null;
 			});
-		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });}
+		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 
 	app.get('/rules', (req, res, next) => {
@@ -209,14 +220,14 @@ var app = express();
 			client.query({text: "SELECT * FROM sys_rules WHERE u_id=$1;", values:[getCookies(req)['u_id']]}, (err, result)=>{
 				if (err){
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 				} else {
 					req.session.sys_rules=result.rows;
 				}
-				res.render(`pages/sys_rules`, { session: req.session, splash:splash,cookies:getCookies(req) });
+				res.render(`pages/sys_rules`, { session: req.session, splash:splash,cookies:req.cookies });
 				splash=null;
 			});
-		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });}
+		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 
 	app.get('rules/delete/:id', (req, res)=>{
@@ -224,13 +235,13 @@ var app = express();
 			client.query({text: "DELETE FROM sys_rules WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				req.session.sys_rules= null;
 			}
 			res.redirect("/rules");
 			});
-		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });}
+		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 
 	app.get('/inner-world/delete/:id', (req, res)=>{
@@ -238,13 +249,13 @@ var app = express();
 			client.query({text: "DELETE FROM inner_worlds WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				req.session.sys_rules= null;
 			}
 			res.redirect("/inner-world");
 			});
-		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });}
+		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 
   app.get('/editsys/:alt', (req, res, next)=>{
@@ -252,13 +263,13 @@ var app = express();
 		  client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				req.session.chosenSys= result.rows[0];
 				client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, systems.sys_alias FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
 					if (err) {
 	  				console.log(err.stack);
-	  				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+	  				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				} else {
 					// console.table(result.rows);
 					req.session.alters = result.rows;
@@ -268,13 +279,13 @@ var app = express();
   	              //     // (req.session.sys).push(Buffer.from(result.rows[i].sys_alias, 'base64').toString())
   	              //     (req.session.alters).push({name: Buffer.from(result.rows[i].name, 'base64').toString(), id: result.rows[i].sys_id, sys_name: Buffer.from(result.rows[i].sys_alias, 'base64').toString()})
   	              // }
-				  res.render(`pages/edit_sys`, { session: req.session, splash:splash, alt:req.session.chosenSys, alters: result.rows,cookies:getCookies(req) });
+				  res.render(`pages/edit_sys`, { session: req.session, splash:splash, alt:req.session.chosenSys, alters: result.rows,cookies:req.cookies });
 				}
 				});
 			}
 			// res.render(`pages/edit_sys`, { session: req.session, splash:splash, alt:req.session.chosenSys });
 		  });
-	  } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });}
+	  } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	  // res.render(`pages/edit_sys`, { session: req.session, splash:splash, alt:req.params.alt });
   });
 
@@ -283,13 +294,13 @@ var app = express();
 		  client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				req.session.chosenSys= result.rows[0];
 			}
-			res.render(`pages/delete_sys`, { session: req.session, splash:splash, alt:req.session.chosenSys,cookies:getCookies(req) });
+			res.render(`pages/delete_sys`, { session: req.session, splash:splash, alt:req.session.chosenSys,cookies:req.cookies });
 		  });
-	  } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });}
+	  } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	  // res.render(`pages/edit_sys`, { session: req.session, splash:splash, alt:req.params.alt });
   });
 
@@ -304,7 +315,7 @@ var sysArr;
 			client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
-	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 	          } else {
 	              req.session.sys = [];
 
@@ -316,14 +327,14 @@ var sysArr;
 				  client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
 	  	            if (err) {
 	  	              console.log(err.stack);
-	  	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+	  	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 	  	          } else {
 	  	              req.session.cPosts = [];
 	  	              for (i in (cresult.rows)){
 	  	                  // (req.session.cPosts).push({name: Buffer.from(cresult.rows[i].sys_alias, 'base64').toString(), id: cresult.rows[i].sys_id})
 						  (req.session.cPosts).push({date: cresult.rows[i].created_on, title: decryptWithAES(cresult.rows[i].title), body: decryptWithAES(cresult.rows[i].body), id: cresult.rows[i].id});
 	  	              }
-					  res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys, lang:req.acceptsLanguages()[0],cookies:getCookies(req) });
+					  res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys, lang:req.acceptsLanguages()[0],cookies:req.cookies });
 	  	          }
 	  			  // console.table(req.session.sys);
 
@@ -332,7 +343,7 @@ var sysArr;
 	        });
 
     } else {
-        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
     }
     splash=null;
   });
@@ -343,7 +354,7 @@ var sysArr;
 		client.query({text: "SELECT systems.sys_id, systems.user_id, systems.sys_alias, alters.alt_id FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  req.session.chosenSys= result.rows[0];
 			  // chosenSys.sys_id, chosenSys.user_id, chosenSys.sys_alias
@@ -352,7 +363,7 @@ var sysArr;
 			client.query({text: "SELECT * FROM alters WHERE sys_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
-	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 	          } else {
 	              req.session.alters = [];
 	              for (i in (result.rows)){
@@ -361,11 +372,11 @@ var sysArr;
 	              }
 	          }
 			  // console.table(req.session.sys);
-	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:getCookies(req) });
+	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies });
 	        });
 
     } else {
-        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
     }
     splash=null;
   });
@@ -376,14 +387,14 @@ var sysArr;
 		 client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, systems.sys_alias FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
 			   console.log(err.stack);
-			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		   } else {
 			   req.session.chosenAlter = result.rows[0];
 		   }
 		   client.query({text: "SELECT * FROM journals WHERE alt_id=$1;",values: [`${req.params.id}`]}, (err, nresult) => {
 			   if (err) {
 				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			  } else {
 				  req.session.altJournal = nresult.rows;
 			  }
@@ -391,16 +402,16 @@ var sysArr;
 				client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
 	 			 if (err) {
 	 			   console.log(err.stack);
-	 			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+	 			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 	 		   } else {
 	 			   req.session.sysList = result.rows;
 	 		   }
-				  res.render(`pages/alter`, { session: req.session, splash:splash,cookies:getCookies(req) });
+				  res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies });
 			 });
 		   });
 		 });
 	 } else {
-		 res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+		 res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	 }
   });
 
@@ -411,14 +422,14 @@ var sysArr;
 			client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${req.session.altJournal[0].j_id}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
- 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+ 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
  			  } else {
  				  req.session.journalPosts = result.rows;
 				  for (i in req.session.journalPosts){
 					  req.session.journalPosts[i].body= decryptWithAES(req.session.journalPosts[i].body);
 					  req.session.journalPosts[i].title= decryptWithAES(req.session.journalPosts[i].title);
 				  }
-				  res.render(`pages/journal`, { session: req.session, splash:splash, lang:req.acceptsLanguages()[0],cookies:getCookies(req) });
+				  res.render(`pages/journal`, { session: req.session, splash:splash, lang:req.acceptsLanguages()[0],cookies:req.cookies });
 
  			  }
 		  });
@@ -429,7 +440,7 @@ var sysArr;
 
 		splash=null;
 	 } else {
-		 res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+		 res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	 }
   });
 
@@ -438,18 +449,18 @@ var sysArr;
 		  client.query({text: "SELECT * FROM posts WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				// console.log(result.rows[0]);
 				req.session.jPost= result.rows[0];
 				req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 				req.session.jPost.title= decryptWithAES(req.session.jPost.title);
 				// console.log(req.session.jPost);
-				res.render(`pages/delete_post`, { session: req.session, splash:splash,cookies:getCookies(req) });
+				res.render(`pages/delete_post`, { session: req.session, splash:splash,cookies:req.cookies });
 			}
 		});
 	  } else {
-		  res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+		  res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	  }
 
   });
@@ -459,18 +470,18 @@ var sysArr;
 		  client.query({text: "SELECT * FROM posts WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				// console.log(result.rows[0]);
 				req.session.jPost= result.rows[0];
 				req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 				req.session.jPost.title= decryptWithAES(req.session.jPost.title);
 				// console.log(req.session.jPost);
-				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:getCookies(req) });
+				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies });
 			}
 		});
 	  } else {
-		  res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+		  res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	  }
 
 
@@ -481,18 +492,18 @@ var sysArr;
 		client.query({text: "SELECT * FROM comm_posts WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 		   if (err) {
 			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  // console.log(result.rows[0]);
 			  req.session.jPost= result.rows[0];
 			  req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 			  req.session.jPost.title= decryptWithAES(req.session.jPost.title);
 			  // console.log(req.session.jPost);
-			  res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:getCookies(req) });
+			  res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies });
 		  }
 	  });
 	} else {
-		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	}
 
 
@@ -503,18 +514,18 @@ var sysArr;
 		client.query({text: "SELECT * FROM comm_posts WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 		   if (err) {
 			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  // console.log(result.rows[0]);
 			  req.session.jPost= result.rows[0];
 			  req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 			  req.session.jPost.title= decryptWithAES(req.session.jPost.title);
 			  // console.log(req.session.jPost);
-			  res.render(`pages/delete_post`, { session: req.session, splash:splash, cookies:getCookies(req) });
+			  res.render(`pages/delete_post`, { session: req.session, splash:splash, cookies:req.cookies });
 		  }
 	  });
 	} else {
-		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	}
 
   });
@@ -525,15 +536,15 @@ var sysArr;
 			client.query({text: "SELECT * FROM alters WHERE alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				 if (err) {
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				} else {
 					req.session.chosenAlter= result.rows[0];
 				}
 				// console.table(req.session.chosenAlter);
-				res.render(`pages/delete_alter`, { session: req.session, splash:splash, cookies:getCookies(req)});
+				res.render(`pages/delete_alter`, { session: req.session, splash:splash, cookies:req.cookies});
 			});
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 
 	});
@@ -551,7 +562,7 @@ var sysArr;
 		// Reset password
 		client.query({text: 'SELECT * FROM users WHERE email_link=$1', values: [`'${req.params.id}'`]}, (err, result)=>{
 		  if (err) {
-		    res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+		    res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 		     // Does the PIN match the one in the DB?
 				 console.log(result.rows[0].email_pin, req.body.pin);
@@ -559,7 +570,7 @@ var sysArr;
 					 client.query({text: 'UPDATE users SET pass=$1 WHERE email_link=$2', values: [`'${CryptoJS.SHA3(req.body.newpass)}'`,`'${req.params.id}'`]}, (err, result)=>{
 					   if (err) {
 							 console.log(err.stack);
-					     res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+					     res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					   } else {
 					      // Code here
 								splash="Updated your password. You can now log in!";
@@ -568,7 +579,7 @@ var sysArr;
 					 });
 
 				 } else {
-					 res.render('pages/new_pass',{ session: req.session, code:"Forbidden", splash:"That PIN doesn't match.",cookies:getCookies(req) });
+					 res.render('pages/new_pass',{ session: req.session, code:"Forbidden", splash:"That PIN doesn't match.",cookies:req.cookies });
 				 }
 		  }
 		});
@@ -578,18 +589,18 @@ var sysArr;
 		client.query({text: 'SELECT username, email, email_link, email_pin FROM users WHERE email=$1 ', values:[`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result)=>{
 			if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 			} else {
 				if ((result.rows).length == 0){
 					// User doesn't exist.
 					splash= "That email isn't in use, actually. Did you mean to sign up?";
-					res.render(`pages/forgot_pass`, { session: req.session, splash:splash,cookies:getCookies(req)});
+					res.render(`pages/forgot_pass`, { session: req.session, splash:splash,cookies:req.cookies});
 				} else {
 					req.session.user= result.rows[0];
 					req.session.user.email_pin= getRandomInt(1111,9999);
 					// console.log(req.session.user.email_pin);
 					client.query({text: 'UPDATE users set email_pin=$1 WHERE email=$2 ', values:[`${req.session.user.email_pin}`,`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result)=>{
-						res.render(`pages/forgot_pass2`, { session: req.session, splash:splash,cookies:getCookies(req)});
+						res.render(`pages/forgot_pass2`, { session: req.session, splash:splash,cookies:req.cookies});
 						transporter.sendMail({
 							from: '"Dee Deyes" <dee_deyes@writelighthouse.com>', // sender
 							to: Buffer.from(req.session.user.email, 'base64').toString(),
@@ -612,13 +623,13 @@ var sysArr;
 			client.query({text:`INSERT INTO sys_rules (u_id, rule) VALUES ($1, $2)`, values:[getCookies(req)['u_id'], `'${Buffer.from(req.body.rule).toString('base64')}'`]}, (err, result)=>{
 				if (err){
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:getCookies(req) });;
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });;
 				} else {
 					res.redirect("/rules");
 				}
 			});
 		} else {
-				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash, cookies:getCookies(req) });
+				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash, cookies:req.cookies });
 		}
 	});
 
@@ -627,17 +638,17 @@ var sysArr;
 			client.query({text: "DELETE FROM posts WHERE p_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
 				 if (err) {
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				} else {
 					client.query({text: "DELETE FROM journals WHERE alt_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
 						 if (err) {
 							console.log(err.stack);
-							res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+							res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 						} else {
 							client.query({text: "DELETE FROM alters WHERE alt_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
 								 if (err) {
 									console.log(err.stack);
-									res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+									res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 								} else {
 									splash=`${Buffer.from(req.session.chosenAlter.name, 'base64').toString()} deleted.`;
 									req.session.chosenAlter= null;
@@ -649,7 +660,7 @@ var sysArr;
 				}
 			});
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -658,14 +669,14 @@ var sysArr;
 			client.query({text: "DELETE FROM comm_posts WHERE id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
 			   if (err) {
 				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			  } else {
 				  req.session.jPost= null;
 				  res.redirect(`/system`);
 			  }
 		  });
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -674,7 +685,7 @@ var sysArr;
 			client.query({text: "UPDATE comm_posts SET title=$1, body=$2 WHERE id=$3; ",values: [`${encryptWithAES(req.body.jTitle)}`, `${encryptWithAES(req.body.jBody)}`, `${req.params.id}`]}, (err, result) => {
 			   if (err) {
 				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			  } else {
 				  req.session.jPost= null;
 				  res.redirect(`/system`);
@@ -682,7 +693,7 @@ var sysArr;
 
 		  });
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -691,14 +702,14 @@ var sysArr;
 			client.query({text: "DELETE FROM posts WHERE p_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
- 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+ 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
  			  } else {
 				  req.session.jPost= null;
 				  res.redirect(`/journal/${req.session.chosenAlter.alt_id}`);
 			  }
 		  });
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -707,7 +718,7 @@ var sysArr;
 			client.query({text: "UPDATE posts SET title=$1, body=$2 WHERE p_id=$3; ",values: [`${encryptWithAES(req.body.jTitle)}`, `${encryptWithAES(req.body.jBody)}`, `${req.params.id}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
- 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+ 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
  			  } else {
 				  req.session.jPost= null;
 				  res.redirect(`/journal/${req.session.chosenAlter.alt_id}`);
@@ -715,7 +726,7 @@ var sysArr;
 
 		  });
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -732,7 +743,7 @@ var sysArr;
 
 		  });
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -763,7 +774,7 @@ var sysArr;
 						client.query({text: "UPDATE alters SET sys_id=$1, name=$2 WHERE alt_id=$3;",values: [req.body.alterSys, `'${Buffer.from(req.body.altname).toString('base64')}'`, req.params.id]}, (err, result) => {
 							if (err) {
 							  console.log(err.stack);
-							  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+							  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 						  } else {
 							  splash=`<strong>All set!</strong> ${req.body.altname} has been moved.`;
 							  res.redirect(`/alter/${req.params.id}`);
@@ -774,7 +785,7 @@ var sysArr;
 				  client.query({text: "SELECT password FROM journals WHERE alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 					  if (err) {
 						console.log(err.stack);
-						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					} else {
 						// splash=`<strong>All set!</strong> Journal made.`;
 						// res.redirect(`/alter/${req.params.id}`);
@@ -790,7 +801,7 @@ var sysArr;
 
 			  }
 			} else {
-				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 			}
 	});
 
@@ -799,14 +810,14 @@ var sysArr;
 				client.query({text: "INSERT INTO alters (sys_id, name) VALUES ($1, $2)",values: [`${req.session.chosenSys.sys_id}`, `'${Buffer.from(req.body.altname).toString('base64')}'`]}, (err, result) => {
 					if (err) {
 					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				  } else {
 					  res.redirect(`/system/${req.session.chosenSys.sys_id}`);
 				  }
 			  });
 
 			} else {
-				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 			}
 	});
 
@@ -815,12 +826,12 @@ var sysArr;
 			client.query({text:'INSERT INTO inner_worlds (u_id, key, value) VALUES ($1,$2,$3);', values: [`${getCookies(req)['u_id']}`, `${Buffer.from(req.body.key).toString('base64')}`,`${Buffer.from(req.body.value).toString('base64')}`]}, (err, result)=>{
 				if (err){
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 				}
 				res.redirect('/inner-world');
 			});
 		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}
 	});
 
@@ -831,14 +842,14 @@ var sysArr;
 		  client.query({text: "SELECT * FROM systems WHERE sys_alias=$1 AND user_id=$2",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			  } else {
 				  // console.table(result.rows);
 				  if ((result.rows).length == 0){
 					  client.query({text: "INSERT INTO systems (sys_alias, user_id) VALUES ($1, $2)",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
 					      if (err) {
 					        console.log(err.stack);
-					        res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+					        res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					      } else {
 					          splash=`Added ${req.body.sysname}.`;
 							  // res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
@@ -848,7 +859,7 @@ var sysArr;
 				  } else {
 					// res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
 					splash=`You already have a system with the alias "${req.body.sysname}". Please use a unique name. Sorry!`;
-					res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys,cookies:getCookies(req) });
+					res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys,cookies:req.cookies });
 				  }
 			  }
 		  });
@@ -858,7 +869,7 @@ var sysArr;
 		  client.query({text: "INSERT INTO comm_posts (u_id, created_on, title, body) VALUES ($1, $2, $3, $4)",values: [`${getCookies(req)['u_id']}`, `${new Date().toLocaleString("en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}`, `${encryptWithAES(req.body.cTitle)}`, `${encryptWithAES(req.body.cBody)}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				res.redirect("/system");
 			}
@@ -871,7 +882,7 @@ var sysArr;
 		client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			if (err) {
               console.log(err.stack);
-              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  console.table(result.rows[0]);
 			  if (getCookies(req)['u_id']= result.rows[0].user_id){
@@ -880,17 +891,17 @@ var sysArr;
 				  client.query({text: "DELETE FROM journals WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
 					  if (err){
 						  console.log(err.stack);
-						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 					  } else {
 							  client.query({text: "DELETE FROM alters WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
 								  if (err){
 									  console.log(err.stack);
-									  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+									  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 								  }
 								  client.query({text: "DELETE FROM systems WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
 									  if (err){
 										  console.log(err.stack);
-										  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+										  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 									  }
 									  splash=`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`;
 									  req.session.chosenSys= null;
@@ -902,7 +913,7 @@ var sysArr;
 				  });
 			  } else {
 					// Not their system.
-					res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+					res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 			  }
 
 		  }
@@ -914,13 +925,13 @@ var sysArr;
 		client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${req.session.chosenSys.user_id}`]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  if (getCookies(req)['u_id']= result.rows[0].user_id){
 				  client.query({text: "UPDATE systems SET sys_alias=$1 WHERE sys_id=$2;",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${req.session.chosenSys.sys_id}`]}, (err, result) => {
 					  if (err){
 						  console.log(err.stack);
-						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 					  } else {
 						  splash=`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`;
 						  req.session.chosenSys= null;
@@ -929,7 +940,7 @@ var sysArr;
 				  });
 			  } else {
 					// Not their system.
-					res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:getCookies(req) });
+					res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 			  }
 
 		  }
@@ -946,13 +957,13 @@ var sysArr;
       client.query(query, (err, result) => {
           if (err) {
             console.log(err.stack);
-            res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+            res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
           } else {
             // console.log(res.rows)
             if (result.rows.length > 0){
                 console.log("Already exists.");
                 splash="<strong>Uh oh!</strong> That username or password is already in use. <a href='/login'>Do you need to log in instead?</a>";
-                res.render(`pages/signup`, { session: req.session, splash:splash,cookies:getCookies(req) });
+                res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
             } else {
                 // Write to the db
                 console.log(`Writing...`)
@@ -963,7 +974,7 @@ var sysArr;
                 client.query(query, (err, result) => {
                     if (err) {
                       console.log(err.stack);
-                      res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });
+                      res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
                   } else {
 					  transporter.sendMail({
 						  from: '"Dee Deyes" <dee_deyes@writelighthouse.com>', // sender address
@@ -975,7 +986,7 @@ var sysArr;
 						}).then(info => {
 						  console.log({info});
 						}).catch(console.error);
-                      res.render(`pages/registered`, { session: req.session, splash:splash,cookies:getCookies(req) });
+                      res.render(`pages/registered`, { session: req.session, splash:splash,cookies:req.cookies });
                   }
               });
             }
@@ -992,7 +1003,7 @@ var sysArr;
      client.query(query, (err, result) => {
          if (err) {
            console.log(err.stack);
-           res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:getCookies(req) });;
+           res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
        } else {
 		   if (result.rows.length == 0){
 			   splash= "Wrong credentials.";
@@ -1013,7 +1024,7 @@ var sysArr;
 
   // ERROR ROUTES. DO NOT PUT NEW PAGES BENEATH THESE.
 	app.use(function(req,res){
-			res.status(404).render(`pages/404`, { session: req.session, code:"Not Found", splash:splash,cookies:getCookies(req) });
+			res.status(404).render(`pages/404`, { session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
 	});
   // End pages.
   app.listen(PORT, () => console.log(`Listening on ${ PORT }`));

@@ -10,7 +10,7 @@ html{
     overflow-y: scroll;
 }
 body{
-    padding-bottom: 50em;
+
 }
 
 *{
@@ -101,6 +101,20 @@ h1, h2, h3, h4{
 
 li {
     margin-bottom: 1em;
+}
+
+footer{
+  font-size: 10px;
+  font-style: italic;
+  position: fixed;
+  padding: 5px 5px 0px 5px;
+  bottom: 0;
+  right: 0;
+  width: 20%;
+  /* Height of the footer*/
+  /* height: 40px; */
+  background: silver;
+  border-radius: 20px 0 0 0;
 }
 
 /* IDs */

@@ -147,6 +147,7 @@ var app = express();
 	        splash=null;
 		}
 	});
+	// console.log(req.cookies.u_id);
   });
 
   // app.get('/p/:tagId', function(req, res) {
@@ -312,7 +313,7 @@ var app = express();
 var sysArr;
   app.get('/system', (req, res, next) => {
     if (isLoggedIn(req)){
-			client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
+			client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${req.cookies.u_id}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
 	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -818,7 +819,7 @@ var sysArr;
 			client.query({text: "INSERT INTO posts (j_id, created_on, body, title) VALUES ($1, $2, $3, $4);",values: [`${req.session.altJournal[0].j_id}`, `${new Date().toLocaleString("en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}`, `${encryptWithAES(req.body.j_body)}`, `${encryptWithAES(req.body.j_title)}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
- 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash });
+ 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies});
  			  } else {
 				  res.redirect(`/journal/${req.params.id}`);
  			  }
@@ -921,7 +922,7 @@ var sysArr;
 	  console.log(req.body);
 	  // console.log(Object.keys(req.body)[0]);
 	  if (req.body.sysname){
-		  client.query({text: "SELECT * FROM systems WHERE sys_alias=$1 AND user_id=$2",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
+		  client.query({text: "SELECT * FROM systems WHERE sys_alias=$1 AND user_id=$2",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${req.cookies.u_id}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
 				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });

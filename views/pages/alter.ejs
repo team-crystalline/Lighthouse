@@ -30,6 +30,10 @@
     width: 40vw;
     text-align: center;
 }
+form>span{
+    display: block;
+    margin-bottom:calc(1em);
+}
     </style>
 </head>
 
@@ -139,13 +143,124 @@
                     <p id="passhint" style="display: none;"><strong>Keep your password somewhere safe.</strong> If you forget, it won't be able to be reset until a future date.</p>
                 </form>
             <% } %>
-            <a style="margin-top: calc(1em)" href="/alter/<%= session.chosenAlter.alt_id %>/delete" class="deletebtn">Delete</a>
         </section>
+        <hr>
+        <section>
+            <!-- For adding alter info. -->
+            <h2>About <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %></h2>
+            <% if (session.chosenAlter.img_url) { %>
+            <img src="<%= Buffer.from(session.chosenAlter.img_url, 'base64').toString() %>" class="medimg" style="float:left; margin-right:calc(1em);">
+            <% } else { %> 
+                <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="medimg" style="float:left; margin-right:calc(1em);" alt="<%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s icon">
+            <% } %>
+            <table>
+                <tbody>
+                  <tr>
+                    <td>Perceived Age:</td>
+                    <td><% if (session.chosenAlter.age && session.chosenAlter.age > 0) { %>
+                            <%= session.chosenAlter.age %>
+                        <% } else { %>
+                            Unknown
+                        <% } %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Type</td>
+                    <td><% if (session.chosenAlter.type) { %>
+                        <%= alterTypes[session.chosenAlter.type] %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Positive Triggers:</td>
+                    <td><% if (session.chosenAlter.triggers_pos) { %>
+                        <%= Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Negative Triggers:</td>
+                    <td><% if (session.chosenAlter.triggers_neg) { %>
+                        <%= Buffer.from(session.chosenAlter.triggers_neg, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Likes:</td>
+                    <td><% if (session.chosenAlter.likes) { %>
+                        <%= Buffer.from(session.chosenAlter.likes, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Dislikes:</td>
+                    <td><% if (session.chosenAlter.dislikes) { %>
+                        <%= Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Internal Job:</td>
+                    <td><% if (session.chosenAlter.job) { %>
+                        <%= Buffer.from(session.chosenAlter.job, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Feels safest when:</td>
+                    <td><% if (session.chosenAlter.safe_place) { %>
+                        <%= Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Wants/Wishes:</td>
+                    <td><% if (session.chosenAlter.wants) { %>
+                        <%= Buffer.from(session.chosenAlter.wants, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Needs accommodated for:</td>
+                    <td><% if (session.chosenAlter.acc) { %>
+                        <%= Buffer.from(session.chosenAlter.acc, 'base64').toString() %>
+                    <% } else { %>
+                        Unknown
+                    <% } %></td>
+                  </tr>
+                  <tr>
+                    <td>Other Notes:</td>
+                    <td><% if (session.chosenAlter.notes) { %>
+                        <%= Buffer.from(session.chosenAlter.notes, 'base64').toString() %>
+                    <% } %></td>
+                  </tr>
+                </tbody>
+                </table>
+                <a title="Edit <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>" href="/edit-alter/<%= session.chosenAlter.alt_id %>" class="editbtn">Edit <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %></a>
+        </section>
+        <hr>
+        <section>
+            <h2><span class="material-symbols-outlined">dangerous</span> Danger Zone <span class="material-symbols-outlined">dangerous</span></h2>
+            <form method="post">
 
+            </form>
+            <!-- Delete the alter. -->
+            <a style="margin-top: calc(1em)" href="/alter/<%= session.chosenAlter.alt_id %>/delete" class="deletebtn">Delete <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %></a>
+        </section>
     </div>
+
     <%- include ("../partials/footer.ejs") %>
     <script>
-        
+
+
         $("#pass").on('keyup', function () {
             document.getElementById("passtext").style.color="gray";
             $("#passtext").html(`<small>You typed: ${$("#pass").val()}</small>`);

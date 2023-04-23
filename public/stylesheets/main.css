@@ -12,9 +12,6 @@ html{
     background: ghostwhite;
     overflow-y: scroll;
 }
-body{
-
-}
 
 *{
     font-family: Verdana, Arial,sans-serif;
@@ -170,9 +167,6 @@ footer{
 
 /* Classes */
 
-.warningtext{
-    
-}
 
 .warningbutton{
 	font-style: italic;
@@ -275,6 +269,10 @@ footer{
 }
 .tinyimg{
     width: calc(4em);
+    height: auto;
+}
+.medimg{
+    width: calc(8em);
     height: auto;
 }
 .splash{

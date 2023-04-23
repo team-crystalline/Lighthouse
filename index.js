@@ -29,6 +29,8 @@ const getCookies = (req) => {
  return parsedCookies;
 };
 
+var alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Other", "Introject (Mixed)"]
+
 const api = new PKAPI({
 	base_url: "https://api.pluralkit.me", // base api url
 	version: 1, // api version
@@ -397,7 +399,6 @@ var sysArr;
   });
 
   app.get("/alter/:id", (req, res, next)=>{
-	var alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Other"];
 	 if (isLoggedIn(req)){
 		 client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, systems.sys_alias,alters.triggers_pos, alters.triggers_neg, alters.age,alters.likes,alters.dislikes,alters.job,alters.safe_place,alters.wants,alters.acc,alters.notes,alters.type,alters.img_url FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
@@ -432,7 +433,6 @@ var sysArr;
 
   app.get("/edit-alter/:id", (req, res, next)=>{
 
-	var alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Other"];
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, systems.sys_alias,alters.triggers_pos, alters.triggers_neg, alters.age,alters.likes,alters.dislikes,alters.job,alters.safe_place,alters.wants,alters.acc,alters.notes,alters.type,alters.img_url FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {

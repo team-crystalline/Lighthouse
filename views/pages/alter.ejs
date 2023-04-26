@@ -59,6 +59,35 @@ form>span{
         {val: '17', c: "Summer"}, 
         {val: '18', c: "Flowers"}, 
     ]
+    var moods=[
+    // Positive
+    {name: "Joyous", positive: true, emoji: "😄"},
+    {name: "Loved", positive: true, emoji: "🤗"},
+    {name: "Satisfied", positive: true, emoji: "🙂"},
+    {name: "Content", positive: true, emoji: "😌"},
+    {name: "Interested", positive: true, emoji: "😮"},
+    {name: "Amused", positive: true, emoji: "😆"},
+    {name: "Happy", positive: true, emoji: "😀"},
+    {name: "Serene", positive: true, emoji: "☺"},
+    {name: "Awestruck", positive: true, emoji: "🤩"},
+    {name: "Sleepy", positive: true, emoji: "😴"},
+    // Negative
+    {name: "Afraid", positive: false, emoji: "😨"},
+    {name: "Frustrated", positive: false, emoji: "😖"},
+    {name: "Overwhelmed", positive: false, emoji: "😖"},
+    {name: "Dazed", positive: false, emoji: "😵"},
+    {name: "Confused", positive: false, emoji: "😵"},
+    {name: "Angry", positive: false, emoji: "😡"},
+    {name: "Enraged", positive: false, emoji: "🤬"},
+    {name: "Disgusted", positive: false, emoji: "🤢"},
+    {name: "Sad", positive: false, emoji: "🙁"},
+    {name: "Lonely", positive: false, emoji: "😢"},
+    {name: "Upset", positive: false, emoji: "😭"},
+    {name: "Melancholy", positive: false, emoji: "😔"},
+    {name: "Annoyed", positive: false, emoji: "😒"},
+    {name: "Tired", positive: false, emoji: "🥱"},
+    {name: "Stressed", positive: false, emoji: "😖"},
+] 
     %>
     <div id="wrapper">
         <% if (typeof splash == 'string'){  %>
@@ -66,7 +95,14 @@ form>span{
         <% } %>
         <section>
             <h2><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s page</h2>
-            <!-- <p><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> is a part of <%= Buffer.from(session.chosenAlter.sys_alias, 'base64').toString() %>.</p> -->
+            <dt>
+            <% if (session.chosenAlter.mood) { %>
+                Feeling: <%- moods[session.chosenAlter.mood].name %> <%- moods[session.chosenAlter.mood].emoji %>
+            <% } %>
+            </dt>
+        <dd><small><% if (session.chosenAlter.mood) { %>
+            Reason: <%- session.chosenAlter.reason %>
+        <% } %><a href="/mood/<%=session.chosenAlter.alt_id %>">Set mood</a></small></dd>
             <form method="post" autocomplete="off">
               <input type="text" name="altname" value="<%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>" style="text-align:center;"> is a part of <select name="alterSys" style="text-align:center;"><% for (i in session.sysList){ %>
                 <% if (session.chosenAlter.sys_alias == session.sysList[i].sys_alias){ %>
@@ -140,7 +176,7 @@ form>span{
                     <br/>
                     <!-- <hr/> -->
                     <input type="submit" value="Create <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal" name="create">
-                    <p id="passhint" style="display: none;"><strong>Keep your password somewhere safe.</strong> If you forget, it won't be able to be reset until a future date.</p>
+                    <p id="passhint" style="display: none;"><strong>Keep your password somewhere safe.</strong></p>
                 </form>
             <% } %>
         </section>
@@ -292,6 +328,9 @@ form>span{
         function blogPopup(){
             document.getElementById("blogpopup").style.display="block";
         }
+        $("#moodButton").click(function(){
+            $( "#moodForm" ).show("fast");
+        });
 
     </script>
 </body>

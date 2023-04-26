@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%     var moods=[
+        // Positive
+        {name: "Joyous", positive: true, emoji: "😄"},
+        {name: "Loved", positive: true, emoji: "🤗"},
+        {name: "Satisfied", positive: true, emoji: "🙂"},
+        {name: "Content", positive: true, emoji: "😌"},
+        {name: "Interested", positive: true, emoji: "😮"},
+        {name: "Amused", positive: true, emoji: "😆"},
+        {name: "Happy", positive: true, emoji: "😀"},
+        {name: "Serene", positive: true, emoji: "☺"},
+        {name: "Awestruck", positive: true, emoji: "🤩"},
+        {name: "Sleepy", positive: true, emoji: "😴"},
+        // Negative
+        {name: "Afraid", positive: false, emoji: "😨"},
+        {name: "Frustrated", positive: false, emoji: "😖"},
+        {name: "Overwhelmed", positive: false, emoji: "😖"},
+        {name: "Dazed", positive: false, emoji: "😵"},
+        {name: "Confused", positive: false, emoji: "😵"},
+        {name: "Angry", positive: false, emoji: "😡"},
+        {name: "Enraged", positive: false, emoji: "🤬"},
+        {name: "Disgusted", positive: false, emoji: "🤢"},
+        {name: "Sad", positive: false, emoji: "🙁"},
+        {name: "Lonely", positive: false, emoji: "😢"},
+        {name: "Upset", positive: false, emoji: "😭"},
+        {name: "Melancholy", positive: false, emoji: "😔"},
+        {name: "Annoyed", positive: false, emoji: "😒"},
+        {name: "Tired", positive: false, emoji: "🥱"},
+        {name: "Stressed", positive: false, emoji: "😖"},
+    ]  %>
+         
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <h2>Set <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Mood</h2>
+            <form method="post" name="mood">
+                <label for="mood"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> is feeling...</label>
+                <select name="mood">
+                    <% for (i in moods) { %>
+                        <option value= "<%- i %>"><%- moods[i].name %> <%- moods[i].emoji %></option>
+                        <% } %>
+                </select><br>
+                <label for="reason">What might be behind this emotion?<br></label>
+                <textarea name="reason"></textarea><br>
+                <input type="submit" value="Set Mood">
+            </form>
+        </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

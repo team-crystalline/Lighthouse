@@ -12,6 +12,8 @@ const PKAPI = require("pkapi.js");
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 
+const tuning= require('./js/genVars.js');
+
 require('dotenv').config();
 
 const getCookies = (req) => {
@@ -337,7 +339,6 @@ var sysArr;
 	              req.session.sys = [];
 
 	              for (i in (result.rows)){
-	                  // (req.session.sys).push(Buffer.from(result.rows[i].sys_alias, 'base64').toString())
 	                  (req.session.sys).push({name: Buffer.from(result.rows[i].sys_alias, 'base64').toString(), id: result.rows[i].sys_id})
 	              }
 	          }
@@ -377,19 +378,19 @@ var sysArr;
 			  // chosenSys.sys_id, chosenSys.user_id, chosenSys.sys_alias
 		  }
 		});
-			client.query({text: "SELECT * FROM alters WHERE sys_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+			client.query({text: "SELECT alters.alt_id, alters.sys_id, alters.name, alter_moods.mood FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
 	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 	          } else {
 	              req.session.alters = [];
 	              for (i in (result.rows)){
-	                  // (req.session.sys).push(Buffer.from(result.rows[i].sys_alias, 'base64').toString())
-	                  (req.session.alters).push({name: Buffer.from(result.rows[i].name, 'base64').toString(), id: result.rows[i].sys_id, a_id: result.rows[i].alt_id})
+	                //   console.table(result.rows[i]);
+	                  (req.session.alters).push({name: Buffer.from(result.rows[i].name, 'base64').toString(), id: result.rows[i].sys_id, a_id: result.rows[i].alt_id, mood: result.rows[i].mood})
 	              }
 	          }
 			  // console.table(req.session.sys);
-	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies });
+	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies});
 	        });
 
     } else {
@@ -400,7 +401,7 @@ var sysArr;
 
   app.get("/alter/:id", (req, res, next)=>{
 	 if (isLoggedIn(req)){
-		 client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, systems.sys_alias,alters.triggers_pos, alters.triggers_neg, alters.age,alters.likes,alters.dislikes,alters.job,alters.safe_place,alters.wants,alters.acc,alters.notes,alters.type,alters.img_url FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+		 client.query({text: "SELECT alter_moods.*, alters.*, systems.sys_alias FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
 			   console.log(err.stack);
 			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -441,6 +442,22 @@ var sysArr;
 		  } else {
 			  req.session.chosenAlter = result.rows[0];
 			  res.render(`pages/edit_alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes });
+		  }
+		});
+	} else {
+		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
+	}
+ });
+ app.get("/mood/:id", (req, res, next)=>{
+
+	if (isLoggedIn(req)){
+		client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, alter_moods.* FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+			if (err) {
+			  console.log(err.stack);
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+		  } else {
+			  req.session.chosenAlter = result.rows[0];
+			  res.render(`pages/set_mood`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes });
 		  }
 		});
 	} else {
@@ -608,6 +625,40 @@ var sysArr;
 
 
 	*/
+	app.post('/mood/:alt', function(req, res){
+		// console.table(req.session.chosenSys);
+		var now = new Date();
+		client.query({text: "SELECT * FROM alter_moods WHERE alt_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
+			if (err) {
+              console.log(err.stack);
+              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+		  } else {
+			if (result.rows.length==0){
+				// Woops. Add new mood!
+				client.query({text: "INSERT INTO alter_moods (alt_id, mood, reason, timestamp) VALUES ($1, $2, $3, $4);",values: [`${req.params.alt}`, req.body.mood, req.body.reason, `${now.getUTCFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}+${now.getTimezoneOffset()}`]}, (err, result) => {
+					if (err) {
+						console.log(err.stack);
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					}
+					
+					});
+			} else {
+				client.query({text: "UPDATE alter_moods SET mood=$2, reason=$3, timestamp=$4 WHERE alt_id=$1;",values: [`${req.params.alt}`, req.body.mood, req.body.reason, `${now.getUTCFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}+${now.getTimezoneOffset()}`]}, (err, result) => {
+					if (err) {
+						console.log(err.stack);
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					}
+					// Might as well change session vars here??? idk
+					req.session.chosenAlter.mood= req.body.mood;
+					req.session.chosenAlter.reason=req.body.reason;
+						splash="Mood updated!";
+						res.redirect(302,`/alter/${req.params.alt}`);
+					});
+			}
+		  }
+		});
+
+		});
 	
 		app.post('/profile', function(req, res){
 		// console.table(req.body);

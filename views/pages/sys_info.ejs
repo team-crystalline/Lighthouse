@@ -7,6 +7,37 @@
 
 <body>
     <%- include ("../partials/nav.ejs") %>
+    <%
+    var moods=[
+    // Positive
+    {name: "Joyous", positive: true, emoji: "😄"},
+    {name: "Loved", positive: true, emoji: "🤗"},
+    {name: "Satisfied", positive: true, emoji: "🙂"},
+    {name: "Content", positive: true, emoji: "😌"},
+    {name: "Interested", positive: true, emoji: "😮"},
+    {name: "Amused", positive: true, emoji: "😆"},
+    {name: "Happy", positive: true, emoji: "😀"},
+    {name: "Serene", positive: true, emoji: "☺"},
+    {name: "Awestruck", positive: true, emoji: "🤩"},
+    {name: "Sleepy", positive: true, emoji: "😴"},
+    // Negative
+    {name: "Afraid", positive: false, emoji: "😨"},
+    {name: "Frustrated", positive: false, emoji: "😖"},
+    {name: "Overwhelmed", positive: false, emoji: "😖"},
+    {name: "Dazed", positive: false, emoji: "😵"},
+    {name: "Confused", positive: false, emoji: "😵"},
+    {name: "Angry", positive: false, emoji: "😡"},
+    {name: "Enraged", positive: false, emoji: "🤬"},
+    {name: "Disgusted", positive: false, emoji: "🤢"},
+    {name: "Sad", positive: false, emoji: "🙁"},
+    {name: "Lonely", positive: false, emoji: "😢"},
+    {name: "Upset", positive: false, emoji: "😭"},
+    {name: "Melancholy", positive: false, emoji: "😔"},
+    {name: "Annoyed", positive: false, emoji: "😒"},
+    {name: "Tired", positive: false, emoji: "🥱"},
+    {name: "Stressed", positive: false, emoji: "😖"},
+] 
+    %>
     <div id="wrapper">
         <section>
             <% if (typeof splash == 'string'){  %>
@@ -15,11 +46,9 @@
             <h2>About <%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
             <p><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %>member<% } else { %>members<% } %>.</p>
             <% if (alterArr.length > 0){ %>
-            <p>Members:</p>
             <div class="grid" style="grid-gap:1em;">
-                <% for ( i in alterArr) { %>
-                    <!-- <a style="background: rgb(200,200,<%= Math.floor(Math.random() * (225 - 200 + 1)) + 200; %>);" href="/alter/<%= alterArr[i].a_id %>" ><%= alterArr[i].name %></a> -->
-                    <a href="/alter/<%= alterArr[i].a_id %>" ><%= alterArr[i].name %></a>
+                <% for ( i in alterArr) {  %>
+                    <a href="/alter/<%= alterArr[i].a_id %>" ><%= alterArr[i].name %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %></a>
                 <% } %>
             </div>
             <% } %>

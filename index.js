@@ -197,18 +197,18 @@ var app = express();
 	// console.log(req.cookies.u_id);
   });
 
-  app.get('/page-welc', (req, res) => {
-	res.render(`pages/email-welcome`, { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) });
-		  splash=null;
-});
-app.get('/page-gb', (req, res) => {
-	res.render(`pages/email-goodbye`, { session: req.session, splash:splash, cookies:req.cookies, alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) });
-		  splash=null;
-});
-app.get('/page-fp', (req, res) => {
-	res.render(`pages/email-forgotpass`, { session: req.session, splash:splash, cookies:req.cookies, alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) });
-		  splash=null;
-});
+//   app.get('/page-welc', (req, res) => {
+// 	res.render(`pages/email-welcome`, { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) });
+// 		  splash=null;
+// });
+// app.get('/page-gb', (req, res) => {
+// 	res.render(`pages/email-goodbye`, { session: req.session, splash:splash, cookies:req.cookies, alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) });
+// 		  splash=null;
+// });
+// app.get('/page-fp', (req, res) => {
+// 	res.render(`pages/email-forgotpass`, { session: req.session, splash:splash, cookies:req.cookies, alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) });
+// 		  splash=null;
+// });
 
   // app.get('/p/:tagId', function(req, res) {
   //   res.send("tagId is set to " + req.params.tagId);

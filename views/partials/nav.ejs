@@ -43,3 +43,54 @@
     <a class="navel" href="/changelog">Changelog</a>
   <button class="navel" onclick="history.back()">Go Back</button>
 </nav>
+<div class="navmobile">
+  <div id="logo" style="display: inline-block; float: left;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/></a></div>
+  <div id="hamburger"><span class="material-symbols-outlined">
+    menu
+    </span></div>
+  <ul class="menu" id="mobilenav" style="display:none;">
+    <% if (cookies.loggedin) { %>
+      <% if (new Date().getHours() >= 0 && new Date().getHours() <= 6) { %>
+              <sup>Evening, <%= cookies.username %>!</sup>
+              <% } else if (new Date().getHours() >= 7 && new Date().getHours() <= 11) {  %>
+          <sup>
+            Morning, <%= cookies.username %>!
+          </sup>
+          <% } else if (new Date().getHours() >= 12 && new Date().getHours() <= 19) {  %>
+            <sup>
+            Afternoon, <%= cookies.username %>!
+          </sup>
+          <% } else if (new Date().getHours() >= 20 && new Date().getHours() <= 23) {  %>
+            <sup>
+            Evening, <%= cookies.username %>!
+          </sup>
+          <% } else { %>
+            <sup>
+            Hi, <%= cookies.username %>!
+          </sup>
+            <% } %>
+      <% } else { %>
+      <sup>Journal Together</sup>
+        <% } %>
+    <% if (cookies.loggedin){ %>
+      <li><a class="navel" href="/logout">Logout</a></li>
+        <% } else { %>
+          <li><a class="navel" href="/signup">Sign Up</a></li>
+          <li><a class="navel" href="/login">Log in</a></li>         
+        <% } %>
+        <li><a class="navel" href="/about">Information</a></li>
+        <% if (cookies.loggedin){ %>
+          <li><a class="navel" href="/system">System</a></li>
+        <% } %>
+        <li><a class="navel" href="/crisis">In crisis?</a></li>
+          <% if (cookies.loggedin){ %>
+          <li><a class="navel" href="/profile">Settings</a></li>
+          <% } %>
+          <li><a class="navel" href="/changelog">Changelog</a></li>
+  </ul>
+</div>
+<script>
+  $( "#hamburger" ).on( "click", function() {
+   $("#mobilenav").toggle("fast");
+} );
+</script>

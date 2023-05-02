@@ -47,6 +47,10 @@ form{
     margin: 0 auto;
 }
 
+.navmobile{
+    display:none;
+  }
+
 nav{
     width: 100%;
     text-align: left;
@@ -319,16 +323,71 @@ form > label{
 text-align: center;
 }
 
+.systemdiv{
+    display: block;
+    vertical-align: middle;
+    margin-top: calc(1em);
+    border-top: 1px solid #911111;
+    padding: 2vh 0;
+}
+.systembutton {
+    vertical-align: middle;
+    text-align: center;
+    display: inline-block;
+    padding: calc(1em);
+    background: powderblue;
+    word-wrap: break-word;
+    width: 10vw;
+    border-radius: 20%;
+    text-decoration: none;
+    margin-right: calc(5vw);
+}
+.systembutton img{
+    display: block;
+    margin: 0 auto;
+    width: calc(3em);
+}
+
+#popup{
+    border: 1px solid black; 
+    background: ghostwhite; 
+    width: 40vw; 
+    padding: 1em; 
+    z-index:9999998; 
+    position: absolute; 
+    top: 20vh; 
+    display: none;
+}
+
 @media only screen and (max-width: 600px) {
   nav a, nav button {
       font-size: 60%;
   }
-  
+  .navmobile{
+    display:block;
+    width: 100%;
+    text-align: left;
+    background: var(--col6);
+    padding: .5em;
+    position: fixed;
+    color: white;
+    top:0;
+    left: 0;
+    filter: drop-shadow(3px 10px 4px rgba(0,0,0, .2));
+    z-index: 200;
+    vertical-align: middle;
+  }
+  .menu li{
+    list-style: none;
+  }
+  #hamburger{
+    -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  cursor: pointer;
+  }
   nav{
-	  width: 100%;
-	  position: fixed;
-	  top: 0;
-	  left: 0;
+	  display:none;
   }
   #wrapper{
       top: 7vh;
@@ -354,6 +413,44 @@ text-align: center;
   #blogpopup{
 	  min-width: 75vw;
   }
+
+  .systemdiv{
+    display: block;
+    vertical-align: middle;
+    margin-top: calc(1em);
+    border-top: 1px solid #911111;
+    padding: 2vh 0;
+    text-align: center;
+}
+.systembutton {
+    vertical-align: middle;
+    text-align: center;
+    display: inline-block;
+    padding: calc(.5em);
+    background: powderblue;
+    word-wrap: break-word;
+    width: 30vw;
+    border-radius: 20%;
+    text-decoration: none;
+    margin-right: calc(5vw);
+}
+.systembutton img{
+    display: block;
+    margin: 0 auto;
+    width: calc(3em);
+}
+#popup{
+    border: 1px solid black; 
+    background: ghostwhite; 
+    width: 70vw; 
+    padding: .5em; 
+    z-index:9999998; 
+    position: absolute; 
+    top: 5vh; 
+    display: none;
+}
+
+/* End Mobile */
 }
 
 img.emoji {

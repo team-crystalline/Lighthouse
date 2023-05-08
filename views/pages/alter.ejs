@@ -34,6 +34,13 @@ form>span{
     display: block;
     margin-bottom:calc(1em);
 }
+table{
+    width: 70%;
+}
+td{
+    padding: calc(.5em);
+    border-bottom: 1px solid rgba(0,0,0,.2)
+}
     </style>
 </head>
 
@@ -194,90 +201,74 @@ form>span{
             <table>
                 <tbody>
                   <tr>
-                    <td>Perceived Age:</td>
-                    <td><% if (session.chosenAlter.age && session.chosenAlter.age > 0) { %>
-                            <%= session.chosenAlter.age %>
-                        <% } else { %>
-                            Unknown
+                    <% if (session.chosenAlter.age && session.chosenAlter.age > 0) { %>
+                            <td>Perceived Age:</td>
+                            <td><%= session.chosenAlter.age %></td>
                         <% } %>
-                    </td>
                   </tr>
                   <tr>
-                    <td>Type</td>
-                    <td><% if (session.chosenAlter.type) { %>
-                        <%= alterTypes[session.chosenAlter.type] %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    
+                    <% if (session.chosenAlter.type) { %>
+                        <td>Type:</td>
+                        <td><%= alterTypes[session.chosenAlter.type] %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Positive Triggers:</td>
-                    <td><% if (session.chosenAlter.triggers_pos) { %>
-                        <%= Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    
+                    <% if (session.chosenAlter.triggers_pos) { %>
+                        <td>Positive Triggers:</td>
+                        <td><%= Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Negative Triggers:</td>
-                    <td><% if (session.chosenAlter.triggers_neg) { %>
-                        <%= Buffer.from(session.chosenAlter.triggers_neg, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    <% if (session.chosenAlter.triggers_neg) { %>
+                        <td>Negative Triggers:</td>
+                        <td><%= Buffer.from(session.chosenAlter.triggers_neg, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Likes:</td>
-                    <td><% if (session.chosenAlter.likes) { %>
-                        <%= Buffer.from(session.chosenAlter.likes, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    <% if (session.chosenAlter.likes) { %>
+                        <td>Likes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.likes, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Dislikes:</td>
-                    <td><% if (session.chosenAlter.dislikes) { %>
-                        <%= Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    <% if (session.chosenAlter.dislikes) { %>
+                        <td>Dislikes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Internal Job:</td>
-                    <td><% if (session.chosenAlter.job) { %>
-                        <%= Buffer.from(session.chosenAlter.job, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    
+                    <% if (session.chosenAlter.job) { %>
+                        <td>Internal Job:</td>
+                        <td><%= Buffer.from(session.chosenAlter.job, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Feels safest when:</td>
-                    <td><% if (session.chosenAlter.safe_place) { %>
-                        <%= Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    
+                    <% if (session.chosenAlter.safe_place) { %>
+                        <td>Feels safest when:</td>
+                        <td><%= Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Wants/Wishes:</td>
-                    <td><% if (session.chosenAlter.wants) { %>
-                        <%= Buffer.from(session.chosenAlter.wants, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    
+                    <% if (session.chosenAlter.wants) { %>
+                        <td>Wants/Wishes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.wants, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
                   <tr>
-                    <td>Needs accommodated for:</td>
-                    <td><% if (session.chosenAlter.acc) { %>
-                        <%= Buffer.from(session.chosenAlter.acc, 'base64').toString() %>
-                    <% } else { %>
-                        Unknown
-                    <% } %></td>
+                    <% if (session.chosenAlter.acc) { %>
+                        <td>Needs accommodated for:</td>
+                        <td><%= Buffer.from(session.chosenAlter.acc, 'base64').toString() %></td>
+                    <% } %>
                   </tr>
-                  <tr>
-                    <td>Other Notes:</td>
-                    <td><% if (session.chosenAlter.notes) { %>
-                        <%= Buffer.from(session.chosenAlter.notes, 'base64').toString() %>
+                  <tr>                    
+                    <% if (session.chosenAlter.notes) { %>
+                        <td>Other Notes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.notes, 'base64').toString() %></td>
                     <% } %></td>
                   </tr>
                 </tbody>

@@ -12,6 +12,7 @@ const PKAPI = require("pkapi.js");
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
+var pluralize = require('pluralize')
 
 const tuning= require('./js/genVars.js');
 
@@ -98,18 +99,6 @@ function getRandomInt(min, max){
 }
 
 function isLoggedIn(req){
-	// if (typeof getCookies(req)['loggedin'] == 'string'){
-	// 	return true;
-	// } else {
-	// 	return false;
-	// }
-
-  // try {
-  //   return req.cookies.loggedin == true;
-  // } catch (e){
-  //   return false;
-  // }
-  // console.log(req.cookies)
   return req.cookies.loggedin == 'true';
 }
 
@@ -178,9 +167,74 @@ var app = express();
     }));
 	app.use(bodyParser.urlencoded({extended:true}));
   app.use(cookieParser());
+//   app.locals({
+//     site: {
+//         title: 'Lighthouse',
+//         description: 'A compartmentalised journalling app designed by a plural person, for plural people.'
+//     },
+//     author: {
+//         name: 'The Lighthouse System',
+//         contact: 'dee_deyes@writelighthouse.com'
+//     },
+// 	capitalise: function(s){
+// 		return s[0].toUpperCase() + s.slice(1);
+// 	}
+// });
+app.locals.capitalise= function(s){
+		return s[0].toUpperCase() + s.slice(1);
+	}
+app.locals.pluralize= pluralize;
 
   app.set('views', path.join(__dirname, 'views'))
-  app.set('view engine', 'ejs')
+  app.set('view engine', 'ejs');
+
+  app.all('*', (req, res) => {
+	// Loads before all other routes.
+	if (isLoggedIn(req)){
+		if (!req.session.system_term){
+			// Is it in their cookies?
+			if (getCookies(req)['system_term']){
+				req.session.system_term=getCookies(req)['system_term'];
+			} else {
+				// Can We grab it?
+					client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  req.session.system_term="system";
+					  }
+					  if (result.rows.length==0){
+						// No match.
+						req.session.system_term= "system";
+					  } else {
+						req.session.system_term= result.rows[0].system_term;
+					  }
+					});
+			}
+		}
+		if (!req.session.alter_term){
+			// Is it in their cookies?
+			if (getCookies(req)['alter_term']){
+				req.session.alter_term=getCookies(req)['alter_term'];
+			} else {
+				// Can We grab it?
+					client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  req.session.alter_term="alter";
+					  }
+					  if (result.rows.length==0){
+						// No match.
+						req.session.alter_term= "alter";
+					  } else {
+						req.session.alter_term= result.rows[0].alter_term;
+					  }
+					});
+			}
+		}
+	}
+
+	req.next();
+  });
 
   // PAGES- GET REQUEST
   app.get('/', (req, res) => {
@@ -267,6 +321,8 @@ var app = express();
 	 res.clearCookie('u_id');
 	 res.clearCookie('cookie1');
 	 res.clearCookie('cookie2');
+	 res.clearCookie('system_term');
+	 res.clearCookie('alter_term');
      res.redirect("/");
   });
 
@@ -678,7 +734,8 @@ var sysArr;
 					console.log(err.stack);
 					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
 				} else {
-					req.session.sys_rules=result.rows;
+					req.session.alter_term=result.rows[0].alter_term;
+					req.session.system_term=result.rows[0].system_term;
 				}
 				res.render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies });
 				splash=null;
@@ -813,6 +870,29 @@ var sysArr;
 				  
 			  } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 
+		  } else {
+			console.log("Not a deletion.");
+			if (req.body.altTerm){
+				// Updating alter term
+				client.query({text: 'UPDATE users SET alter_term=$1 WHERE id=$2', values: [req.body.altTerm, getCookies(req)['u_id']]}, (err, result)=>{
+					if (err) {
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					} else {
+						req.session.alter_term= req.body.altTerm;
+					}
+				});
+			}
+			if (req.body.sysTerm){
+				// Updating alter term
+				client.query({text: 'UPDATE users SET system_term=$1 WHERE id=$2', values: [req.body.sysTerm, getCookies(req)['u_id']]}, (err, result)=>{
+					if (err) {
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					} else {
+						req.session.system_term= req.body.sysTerm;
+					}
+				});
+			}
+			res.status(200).redirect(req.get('referer'));;
 		  }
 		});
 	});
@@ -1399,9 +1479,29 @@ var sysArr;
 						  });
 						}
 					  });
-					splash=`Welcome, ${req.body.username}! Please log in.`;
-					res.redirect("/");
+					/*
+					  req.session.alt_term= result.rows[0].alter_term;
+				req.session.sys_term= result.rows[0].system_term;
+			   req.session.loggedin = true;
+			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
+					*/
+					// splash=`Welcome, ${req.body.username}! Please log in.`;
+					// res.redirect("/");
                     //   res.render(`pages/registered`, { session: req.session, splash:splash,cookies:req.cookies });
+					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
+					  } else {
+						req.session.alter_term= result.rows[0].alter_term;
+						req.session.system_term= result.rows[0].system_term;
+						req.session.loggedin = true;
+						req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
+						
+					  }
+					});
+					splash=`Welcome to Lighthouse, ${req.body.username}! You are now logged in.`;
+						res.redirect("/");
                   }
               });
             }
@@ -1424,21 +1524,18 @@ var sysArr;
 			   splash= "Wrong credentials.";
 			   res.redirect('/login');
 		   } else {
+				req.session.alter_term= result.rows[0].alter_term;
+				req.session.system_term= result.rows[0].system_term;
 			   req.session.loggedin = true;
 			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
          // getCookies(req)['u_id']= result.rows[0].id;
 				 // Add to cookies
          if (req.body.remember){
-           // console.log("Remembering the user.");
-           res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+           res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
          } else {
            // console.log("Let cookies expire at end of session.");
-           res.cookie('loggedin', true, {httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{httpOnly: true }).cookie('u_id', result.rows[0].id,{httpOnly: true });
+           res.cookie('loggedin', true, {httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{httpOnly: true }).cookie('u_id', result.rows[0].id,{httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{httpOnly: true }).cookie('system_term', result.rows[0].system_term,{httpOnly: true });
          }
-
-         // req.session.cookie.maxAge = (1000 * 60 * 60 * 24 * 7 * 2); //2 weeks
-				// console.log(typeof(getCookies(req)['loggedin']));
-				 // Redirect to index.
 					res.redirect(302, '/');
 		   }
        }

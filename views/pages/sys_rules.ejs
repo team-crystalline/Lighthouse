@@ -17,8 +17,8 @@
             <p class="splash"><%- splash %></p>
         <% } %>
         <section>
-            <h2>Rules for Your System</h2>
-            <p>Rules are typically an honour-system thing to establish boundaries with parts. Example: "Do not spend copious amounts of money at once without asking other parts." Remember: rules in a system don't work like rules in a house or at work. If a part violates a rule, there should not be external or internal punishment at any point. Parts who continue to violate rules should be discussed with a trusted, qualified professional.</p>
+            <h2>Rules for Your <%= capitalise(session.system_term) %></h2>
+            <p>Rules are typically an honour-system thing to establish boundaries within your <%= session.system_term %>. Example: "Do not spend copious amounts of money at once without asking other parts." Remember: rules in a <%= session.system_term %> don't work like rules in a house or at work. If  <%= pluralize(session.alter_term) %> violate a rule, there should not be external or internal punishment at any point. <%= capitalise(pluralize(session.alter_term)) %> who would continue to violate rules should be discussed with a trusted, qualified professional.</p>
             <form method="post">
               <label for="rule">New Rule: </label>
               <input type="text" name="rule"><br/>

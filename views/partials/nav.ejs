@@ -1,25 +1,13 @@
+<%
+// function capitalise(s)
+// {
+//     return s[0].toUpperCase() + s.slice(1);
+// } 
+%>
 <nav>
   <div id="logo" style="display: inline-block;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/>
     <% if (cookies.loggedin) { %>
-		<% if (new Date().getHours() >= 0 && new Date().getHours() <= 6) { %>
-            <sup>Evening, <%= cookies.username %>!</sup>
-            <% } else if (new Date().getHours() >= 7 && new Date().getHours() <= 11) {  %>
-				<sup>
-					Morning, <%= cookies.username %>!
-				</sup>
-				<% } else if (new Date().getHours() >= 12 && new Date().getHours() <= 19) {  %>
-					<sup>
-					Afternoon, <%= cookies.username %>!
-				</sup>
-				<% } else if (new Date().getHours() >= 20 && new Date().getHours() <= 23) {  %>
-					<sup>
-					Evening, <%= cookies.username %>!
-				</sup>
-				<% } else { %>
-					<sup>
-					Hi, <%= cookies.username %>!
-				</sup>
-					<% } %>
+      <sup>Hello, <%= cookies.username %>!</sup>
     <% } else { %>
     <sup>Journal Together</sup>
       <% } %>
@@ -34,7 +22,12 @@
   <!-- <a class="navel" href="/">Home</a> -->
   <a class="navel" href="/about">Information</a>
   <% if (cookies.loggedin){ %>
-      <a class="navel" href="/system">System</a>
+    <% if (session.system_term) { %> 
+      <a class="navel" href="/system">My <%= capitalise(session.system_term) %></a>
+    <% } else { %>
+      <a class="navel" href="/system">My <%= session.system_term %></a>
+      <% } %>
+      
   <% } %>
   <a class="navel" href="/crisis">In crisis?</a>
 	  <% if (cookies.loggedin){ %>
@@ -50,25 +43,7 @@
     </span></div>
   <ul class="menu" id="mobilenav" style="display:none;">
     <% if (cookies.loggedin) { %>
-      <% if (new Date().getHours() >= 0 && new Date().getHours() <= 6) { %>
-              <sup>Evening, <%= cookies.username %>!</sup>
-              <% } else if (new Date().getHours() >= 7 && new Date().getHours() <= 11) {  %>
-          <sup>
-            Morning, <%= cookies.username %>!
-          </sup>
-          <% } else if (new Date().getHours() >= 12 && new Date().getHours() <= 19) {  %>
-            <sup>
-            Afternoon, <%= cookies.username %>!
-          </sup>
-          <% } else if (new Date().getHours() >= 20 && new Date().getHours() <= 23) {  %>
-            <sup>
-            Evening, <%= cookies.username %>!
-          </sup>
-          <% } else { %>
-            <sup>
-            Hi, <%= cookies.username %>!
-          </sup>
-            <% } %>
+      <sup>Hello, <%= cookies.username %>!</sup>
       <% } else { %>
       <sup>Journal Together</sup>
         <% } %>

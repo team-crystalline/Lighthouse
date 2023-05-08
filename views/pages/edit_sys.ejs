@@ -12,14 +12,13 @@
             <p class="splash"><%- splash %></p>
         <% } %>
         <section>
-            <h2>Edit System- <%=  Buffer.from(alt.sys_alias, 'base64').toString() %></h2>
-            <p>You can rename the system. Coming up: Move alters across systems.</p>
+            <h2>Edit <%= capitalise(session.system_term) %>- <%=  Buffer.from(alt.sys_alias, 'base64').toString() %></h2>
+            <p>You can rename the <%= session.system_term %>.</p>
             <form method="post">
                 <label for="sysname"><%=  Buffer.from(alt.sys_alias, 'base64').toString() %> will now be known as....</label>
                 <input type="text" autocomplete="off" name="sysname" placeholder="Put a cool name here">
                 <input type="submit" name="submit" value="Make it so">
             </form>
-            <% console.table(alters) %>
             <div class="grid">
                 <% for (i in alters){ %>
                     <a href="/alter/<%= alters[i].alt_id %>" class="alterbutton">Edit <br/><%- Buffer.from(alters[i].name, 'base64').toString() %></a>

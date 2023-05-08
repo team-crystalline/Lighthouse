@@ -78,7 +78,7 @@ var journSkin=[
                 <p class="splash"><%- splash %></p>
             <% } %>
             <h2><% if (session.chosenSys.icon) { %> <img src="/img/svg/<%- session.chosenSys.icon %>.svg" class="vtinyimg"> <% } %>About <%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
-            <p><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %>member<% } else { %>members<% } %>.</p>
+            <p>This <%= session.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= session.alter_term %><% } else { %><%= pluralize(session.alter_term)%><% } %>.</p>
             <% if (alterArr.length > 0){ %>
             <div class="grid" style="grid-gap:1em;">
                 <% for ( i in alterArr) {  %>
@@ -88,13 +88,13 @@ var journSkin=[
             <% } %>
             <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="deletebtn">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="editbtn">Edit</a>
             <form method="post" style="margin-top: calc(2vh);">
-                <label for="altname">Add New Alter</label>
-                <input type="text" name="altname" placeholder="New Alter Name Here" autofocus="autofocus">
+                <label for="altname">Add a New <%= capitalise(session.alter_term) %></label>
+                <input type="text" name="altname" placeholder="New <%= capitalise(session.alter_term) %> Name Here" autofocus="autofocus">
                 <input type="submit" name="submit" value="Add">
             </form>
         </section>
         <section>
-            <h3>Set an icon for this system</h3>
+            <h3>Set an icon for this <%= capitalise(session.system_term) %></h3>
             <form method="post">
             <div class="parent" style="height: auto;margin:auto;">
                 <% for (let i=0; i < journSkin.length; i++){ %>

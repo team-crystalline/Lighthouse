@@ -13,9 +13,9 @@
           <% if (typeof splash == 'string'){  %>
               <p class="splash"><%- splash %></p>
           <% } %>
-            <h2>Your System</h2>
+            <h2>Your <%= capitalise(session.system_term) %></h2>
             <div class="grid-sm">
-              <a href="/rules">System Rules</a>
+              <a href="/rules"><%= capitalise(session.system_term) %> Rules</a>
               <a href="/inner-world">Inner World</a>
             </div>
             <ul>
@@ -25,13 +25,12 @@
                 </div>
             <% } %>
         </ui>
-            <p>Lighthouse supports having multiple systems for anyone who might need it.</p>
             <!-- Block for system list. Like system1, system 2, etc. -->
-            <button onclick="toggleForm()" id="tbutton">Add a System</button>
+            <button onclick="toggleForm()" id="tbutton">Add a <%= capitalise(session.system_term) %></button>
             <form method="post" class="toggle" style="display: none;" aria-hidden="true" id="toggle">
-                <label for="sysname">System Alias</label>
+                <label for="sysname"><%= capitalise(session.system_term) %> Alias</label>
                 <input name="sysname" type="text" autocomplete="off" placeholder="Alias" minlength="3" required>
-                <input type="submit" name="create" value="Create System">
+                <input type="submit" name="create" value="Create <%= capitalise(session.system_term) %>">
             </form>
             <!-- <a href="/system-findpk">Import Public members from PluralKit</a> -->
             <hr/>

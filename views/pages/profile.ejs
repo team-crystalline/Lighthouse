@@ -10,6 +10,11 @@
         <div id="wrapper">
 			<h1>Edit Your Account</h1>
 				<form method="post" style="margin-top:calc(.5em);">
+					<label for="altTerm">Term preferred for "alter": </label>
+					<input type="text" name="altTerm" placeholder="<%- session.alter_term %>"><br>
+					<label for="sysTerm">Term preferred for "system": </label>
+					<input type="text" name="sysTerm" placeholder="<%- session.system_term %>">
+					<input type="submit" value="Set Terms">
 				</form>
 			<!-- <p>Only account deletion is currently implemented.</p> -->
 			<section style="border-top: 1px solid black; margin-top: calc(3vh);">

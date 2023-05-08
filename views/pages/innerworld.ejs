@@ -11,7 +11,7 @@
                     <p class="splash"><%- splash %></p>
                 <% } %>
                 <h2>Inner World</h2>
-                <p>An <strong>inner world</strong> is a visualisation tool for people to visualise parts, memory storage, feelings, and more. People with DID or OSDD more often than not have an inner world. Inner worlds can be as small as a singular room, or as big as an entire planet. In the end, it's all about what makes you feel safest. Think of it as your happy place. Here, you can describe parts of your inner world for other parts who may struggle to visualise it.</p>
+                <p>An <strong>inner world</strong> is a visualisation tool for people to visualise <%= pluralize(session.alter_term) %>, memory storage, feelings, and more. People with DID or OSDD more often than not have an inner world. Inner worlds can be as small as a singular room, or as big as an entire planet. In the end, it's all about what makes you feel safest. Think of it as your happy place. Here, you can describe sections of your inner world for other <%= pluralize(session.alter_term) %> who may struggle to visualise it.</p>
                 <form method="post">
                   <label for="key">Name</label><br/>
                   <input type="text" name="key" required><br/>

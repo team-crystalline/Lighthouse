@@ -40,7 +40,7 @@
                 <div class="column">
                 <label for="age" >Perceived Age</label>
                 <input type="number" name="age" value="<%= session.chosenAlter.age %>">
-                <label for="type" id="typeinfo" style="display: inline-block;width:calc(15em);max-width:calc(15em);">Alter Type</label>
+                <label for="type" id="typeinfo" style="display: inline-block;width:calc(15em);max-width:calc(15em);"><%= capitalise(session.alter_term) %> Type</label>
                 <select name="type" id="typeSel" style="margin-bottom:calc(1em);">
                     <option disabled selected>Pick One...</option>
                     <% for (i in alterTypes) { %>
@@ -62,11 +62,11 @@
                 <textarea name="dislikes"><% if (session.chosenAlter.dislikes !== null) { %><%- Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %><% } %></textarea>
             </div>
                 <div class="column">
-                <label for="internalJob">A brief summary of what <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> does for the system:</label>
+                <label for="internalJob">A brief summary of what <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> does for the <%= session.system_term %>:</label>
                 <input type="text" name="internalJob" value="<% if (session.chosenAlter.job !== null) { %><%- Buffer.from(session.chosenAlter.job, 'base64').toString() %><% } %>">
                 <label for="safety"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> feels safest when...</label>       
                 <textarea name="safety"><% if (session.chosenAlter.safe_place !== null) { %><%- Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %><% } %></textarea>
-                <label for="acc"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> would like accommodation from the system for... (e.g.: Emotional regulation, memory loss)</label>       
+                <label for="acc"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> would like accommodation from the <%= session.system_term %> for... (e.g.: Emotional regulation, memory loss)</label>       
                 <textarea name="acc"><% if (session.chosenAlter.acc !== null) { %><%- Buffer.from(session.chosenAlter.acc, 'base64').toString() %><% } %></textarea>
                 <label for="wish">A few things <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> wishes for (e.g. "to feel safer internally", "to communicate with other parts")</label>       
                 <textarea name="wish"><% if (session.chosenAlter.wants !== null) { %><%- Buffer.from(session.chosenAlter.wants, 'base64').toString() %><% } %></textarea>
@@ -82,12 +82,13 @@
     <%- include ("../partials/footer.ejs") %>
     <script>
         	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."},{name: "Other", desc: "either falls under multiple types listed, or none at all. (Specify in the notes?)"}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
-            
+            let alterTermCap= "<%= capitalise(session.alter_term) %>";
+            let alterTermLow= "<%= session.alter_term %>";
             $(document).ready(function(){
             $("#typeSel").change(function(){
                 var selectedAlt = $(this).children("option:selected").val();
-                // console.log(selectedAlt);
-                $("#typeinfo").html(`Alter Type<br><small>This alter ${alterTypes[selectedAlt].desc}</small>`);
+                
+                $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`);
             });
         });
     </script>

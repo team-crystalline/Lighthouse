@@ -332,12 +332,35 @@ app.locals.pluralize= pluralize;
 		 splash=null;
   });
 
+  app.get('/wish', (req, res) => {
+	if (isLoggedIn(req)){
+		client.query({text:'SELECT * FROM wishlist WHERE user_id=$1', values: [getCookies(req)['u_id']]}, (err, result)=>{
+			if (err){
+				console.log(err.stack);
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+			}
+			var wishArr= new Array();
+			for (i in result.rows){
+				console.log(result.rows[i].wish)
+				wishArr.push({text: decryptWithAES(result.rows[i].wish), checked:result.rows[i].is_filled});
+			}
+			// for (i in result.rows){
+			// 	wishArr[i].text= decryptWithAES(result.rows[i].wish);
+			// 	wishArr[i].isFilled= result.rows[i].is_filled;
+			// }
+			res.render(`pages/wishlist`, { session: req.session, splash:splash,cookies:req.cookies, wishArr:wishArr });
+				splash=null;
+		});
+		
+	}else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+});
+
 	app.get('/inner-world', (req, res, next) => {
 		if (isLoggedIn(req)){
 			client.query({text:'SELECT * FROM inner_worlds WHERE u_id=$1', values: [getCookies(req)['u_id']]}, (err, result)=>{
 				if (err){
 					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });;
+					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				} else {
 					req.session.innerWorld= result.rows;
 				}
@@ -520,6 +543,7 @@ var sysArr;
 			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		   } else {
 			   req.session.chosenAlter = result.rows[0];
+			   req.session.chosenAlter.reason = `${decryptWithAES(result.rows[0].reason)}`;
 		   }
 		   client.query({text: "SELECT * FROM journals WHERE alt_id=$1;",values: [`${req.params.id}`]}, (err, nresult) => {
 			   if (err) {
@@ -570,6 +594,8 @@ var sysArr;
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  req.session.chosenAlter = result.rows[0];
+			  req.session.chosenAlter.reason= `${decryptWithAES(result.rows[0].reason)}`;
+			  
 			  res.render(`pages/set_mood`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes });
 		  }
 		});
@@ -764,7 +790,8 @@ var sysArr;
 		  } else {
 			if (result.rows.length==0){
 				// Woops. Add new mood!
-				client.query({text: "INSERT INTO alter_moods (alt_id, mood, reason, timestamp) VALUES ($1, $2, $3, $4);",values: [`${req.params.alt}`, req.body.mood, req.body.reason, `${now.getUTCFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}+${now.getTimezoneOffset()}`]}, (err, result) => {
+				// `${encryptWithAES(req.body.jTitle)}`
+				client.query({text: "INSERT INTO alter_moods (alt_id, mood, reason, timestamp) VALUES ($1, $2, $3, $4);",values: [`${req.params.alt}`, req.body.mood, `${encryptWithAES(req.body.reason)}`, `${now.getUTCFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}+${now.getTimezoneOffset()}`]}, (err, result) => {
 					if (err) {
 						console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -775,7 +802,7 @@ var sysArr;
 						res.redirect(302,`/alter/${req.params.alt}`);
 					});
 			} else {
-				client.query({text: "UPDATE alter_moods SET mood=$2, reason=$3, timestamp=$4 WHERE alt_id=$1;",values: [`${req.params.alt}`, req.body.mood, req.body.reason, `${now.getUTCFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}+${now.getTimezoneOffset()}`]}, (err, result) => {
+				client.query({text: "UPDATE alter_moods SET mood=$2, reason=$3, timestamp=$4 WHERE alt_id=$1;",values: [`${req.params.alt}`, req.body.mood, `${encryptWithAES(req.body.reason)}`, `${now.getUTCFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}+${now.getTimezoneOffset()}`]}, (err, result) => {
 					if (err) {
 						console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1429,6 +1456,24 @@ var sysArr;
 
 		  }
 		});
+	});
+
+	app.post('/wish', (req, res) => {
+		if (isLoggedIn(req)){
+			if (req.body.createWish){
+				client.query({text: "INSERT INTO wishlist (user_id, wish) VALUES ($1, $2);",values: [getCookies(req)['u_id'], `${encryptWithAES(req.body.wish)}`]}, (err, result) => {
+					if (err) {
+					  console.log(err.stack);
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+				  } else {
+					splash="Added your wish to the list!";
+					res.render(`pages/wishlist`, { session: req.session, splash:splash,cookies:req.cookies });
+						splash=null;
+				  }
+				});
+			}
+			
+		} else { res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies })}
 	});
 
   app.post('/signup', function(req, res) {

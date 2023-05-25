@@ -7,6 +7,7 @@
     --col5: #911111;
 	--col6: #52565c;
     --col7: #ccebe8;
+    --col8:#065966;
 }
 hr {
     display:block;
@@ -32,14 +33,14 @@ body{
     padding-top:1em;
 }
 a{
-    color: var(--col4);
+    color: var(--col1);
     transition: 0.7s;
 }
 a:visited{
-    color: var(--col5);
+    color: var(--col8);
 }
 a:hover{
-    color: var(--col3);
+    color: #165863;
 }
 *{
     font-family: 'Lexend',Verdana, Arial,sans-serif;

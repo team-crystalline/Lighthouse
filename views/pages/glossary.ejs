@@ -46,17 +46,30 @@
         <hr>
         <section>
             <h3>All Terms</h3>
-            <% var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""); %>
+            <% var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""); 
+               var termsLetters= new Array();
+               for (t in terms) { 
+                termsLetters.push(terms[t].start_letter);
+               } 
+               %>
             <div style="display:flex; justify-content: space-around;">
-                <% for (i in abc){ %>
+                <% for (i in abc){ 
+                    var count = termsLetters.filter(x => x == abc[i]).length;
+                    if (count > 0) {
+                    %>
                     <a href="/glossary#<%-abc[i] %>"><%- abc[i]%></a>
+                    <% } %>
                 <% } %>
             </div>
             
-            <% for (n in abc) { %>
+            <% for (n in abc) { 
+                var count = termsLetters.filter(x => x == abc[n]).length;
+                    if (count > 0) {
+                %>
                 <h3 class="lettc" id="<%- abc[n] %>"><%- abc[n] %></h3>
                 <div class="collapsible">
                     <% for (i in terms) { 
+                        
                         if (terms[i].start_letter == abc[n]){ %>
                             <div id="<%- terms[i].term %>" style="scroll-margin-top: 10em;">
                     <% if (terms[i].essential== true) { %> 
@@ -69,7 +82,8 @@
                         <% } %>
                     <% } %>
                 </div>
-                <!-- Loop -->
+                <!-- End ABC Loop -->
+             <% } %>
            <% } %>
         </section>
     </div>

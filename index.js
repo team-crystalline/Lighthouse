@@ -18,6 +18,11 @@ const tuning= require('./js/genVars.js');
 
 require('dotenv').config();
 
+function getKeyByValue(object, value) {
+	return Object.keys(object).find(key => object[key] === value);
+  }
+  
+
 const getCookies = (req) => {
  // We extract the raw cookies from the request headers
  if (!req.headers.cookie) return 'undefined';
@@ -431,20 +436,7 @@ app.get('/wish-d/:id', (req, res) => {
 		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 
-	app.get('rules/delete/:id', (req, res)=>{
-		if (isLoggedIn(req)){
-			client.query({text: "DELETE FROM sys_rules WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
-				if (err) {
-				console.log(err.stack);
-				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-			} else {
-				req.session.sys_rules= null;
-			}
-			res.redirect("/rules");
-			});
-		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
-	});
-
+	
 	app.get('/inner-world/delete/:id', (req, res)=>{
 		if (isLoggedIn(req)){
 			client.query({text: "DELETE FROM inner_worlds WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
@@ -1053,14 +1045,26 @@ var sysArr;
 
 	app.post('/rules', (req, res)=>{
 		if (isLoggedIn(req)){
-			client.query({text:`INSERT INTO sys_rules (u_id, rule) VALUES ($1, $2)`, values:[getCookies(req)['u_id'], `'${Buffer.from(req.body.rule).toString('base64')}'`]}, (err, result)=>{
-				if (err){
-					console.log(err.stack);
-					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });;
-				} else {
-					res.redirect("/rules");
-				}
-			});
+			if (req.body.create){
+				// Create rule.
+				console.log("Create rule.");
+				client.query({text:`INSERT INTO sys_rules (u_id, rule) VALUES ($1, $2)`, values:[getCookies(req)['u_id'], `'${Buffer.from(req.body.rule).toString('base64')}'`]}, (err, result)=>{
+					if (err){
+						console.log(err.stack);
+						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });;
+					}
+				});
+			} else {
+				// Delete Rule
+				client.query({text:`DELETE FROM sys_rules WHERE id=$1;`, values:[getKeyByValue(req.body,"Remove")]}, (err, result)=>{
+					if (err){
+						console.log(err.stack);
+						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });;
+					}
+				});
+			}
+			res.redirect(req.get('referer'));
+			
 		} else {
 				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash, cookies:req.cookies });
 		}

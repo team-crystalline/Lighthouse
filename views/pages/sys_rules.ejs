@@ -22,12 +22,12 @@
             <form method="post">
               <label for="rule">New Rule: </label>
               <input type="text" name="rule"><br/>
-              <input type="submit" value="Add New Rule">
+              <input type="submit" value="Add New Rule" name="create">
             </form>
             <ol>
               <% for (i in session.sys_rules){ %>
-                <li><%= Buffer.from(session.sys_rules[i].rule, 'base64').toString() %> <br/><a href="/rules/delete/<%= session.sys_rules[i].id %>" ><i class="fas fa-trash-alt"></i></a></li>
-                <!-- <a class="deletebtn" href="/rules/delete/<%= session.sys_rules[i].id %>" style="padding:.5em; font-size: 80%;">Delete</a> -->
+                <li><%= Buffer.from(session.sys_rules[i].rule, 'base64').toString() %> <form method="post"><input type="submit" name="<%= session.sys_rules[i].id %>" value="Remove"></form></li>
+                
               <% } %>
             </ol>
         </section>

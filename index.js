@@ -323,6 +323,7 @@ app.locals.pluralize= pluralize;
 	});
   });
 
+
   app.get("/pluralkit", (req, res)=> {
 	if (isLoggedIn(req)){
 		res.render(`pages/pluralkit`, { session: req.session, splash:splash, cookies:req.cookies, lang:req.acceptsLanguages()[0] });
@@ -1718,7 +1719,7 @@ var sysArr;
 	app.post('/pluralkit', (req, res)=> {
 		if (isLoggedIn(req)){
 			// req.body.altArr. Split by --,--
-			var splitList= (req.body.altArr).split("--,--");
+			var splitList= (JSON.parse(req.body.altArr));
 
 			client.query({text: "INSERT INTO systems (sys_alias, user_id) VALUES ($1, $2)",values: [`'${Buffer.from("Imported from Pluralkit").toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
 				if (err) {
@@ -1734,13 +1735,23 @@ var sysArr;
 							let newSysID= result.rows[0].sys_id;
 							// Insert each alter into this new system.
 							for (i in splitList){
-								// console.log(splitList[i]);
-								client.query({text: "INSERT INTO alters (name, sys_id) VALUES($1, $2);",values: [`'${Buffer.from(splitList[i]).toString('base64')}'`, result.rows[0].sys_id]}, (err, result) => {
-									if (err) {
-									  console.log(err.stack);
-									  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-									}
-								});
+								// console.log(splitList[i].img);
+								if (splitList[i].img){
+									client.query({text: "INSERT INTO alters (name, sys_id, img_url) VALUES($1, $2, $3);",values: [`'${Buffer.from(splitList[i].name).toString('base64')}'`, result.rows[0].sys_id, `'${Buffer.from(splitList[i].img).toString('base64')}'`]}, (err, result) => {
+										if (err) {
+										  console.log(err.stack);
+										  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+										}
+									});
+								} else {
+									client.query({text: "INSERT INTO alters (name, sys_id) VALUES($1, $2);",values: [`'${Buffer.from(splitList[i].name).toString('base64')}'`, result.rows[0].sys_id]}, (err, result) => {
+										if (err) {
+										  console.log(err.stack);
+										  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+										}
+									});
+								}
+								
 							}
 							splash="System Added.";
 							res.redirect("/system");

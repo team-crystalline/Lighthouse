@@ -48,9 +48,9 @@
             if (!sysInfo.message){
                 // System found.
                 for (i in sysInfo){
-                $("#roster").append(`<li>${sysInfo[i].name}</li>`);
-                systemArray.push(sysInfo[i].name);
-                $("#altField").val(`${systemArray.join("--,--")}`);
+                $("#roster").append(`<li>${sysInfo[i].display_name || sysInfo[i].name} <img src="${sysInfo[i].avatar_url}" class="vtinyimg"></li>`);
+                systemArray.push({name: sysInfo[i].display_name || sysInfo[i].name, img: sysInfo[i].avatar_url});
+                $("#altField").val(`${JSON.stringify(systemArray)}`);
             }
             $("#submitAlt").show("fast");
                 

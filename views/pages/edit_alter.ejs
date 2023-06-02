@@ -40,18 +40,9 @@
                 <div class="column">
                 <label for="age" >Perceived Age</label>
                 <input type="number" name="age" value="<%= session.chosenAlter.age %>">
-                <label for="type" id="typeinfo" style="display: inline-block;width:calc(15em);max-width:calc(15em);"><%= capitalise(session.alter_term) %> Type</label>
-                <select name="type" id="typeSel" style="margin-bottom:calc(1em);">
-                    <option disabled selected>Pick One...</option>
-                    <% for (i in alterTypes) { %>
-                        <% if (i == session.chosenAlter.type) { %>
-                            <option value="<%= i %>" name="<%= alterTypes[i] %>" selected> <%= alterTypes[i] %></option>
-                            <% } else { %>
-                                <option value="<%= i %>" name="<%= alterTypes[i] %>"> <%= alterTypes[i] %></option>
-                                <% } %>
-                        
-                        <% } %>
-                </select>
+                <label for="type" id="typeinfo"><%= capitalise(session.alter_term) %> Type</label>
+                <input type="text" name="type" placeholder="<%= session.chosenAlter.type %>">
+                <span style="display:block; margin-bottom:.5em">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
                 <label for="postr">Positive Triggers</label>       
                 <textarea name="postr"><% if (session.chosenAlter.triggers_pos !== null) { %><%- Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %><% } %></textarea>    
                 <label for="negtr">Negative Triggers</label>       
@@ -81,14 +72,14 @@
     </div>
     <%- include ("../partials/footer.ejs") %>
     <script>
-        	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."},{name: "Other", desc: "either falls under multiple types listed, or none at all. (Specify in the notes?)"}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
+        	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
             let alterTermCap= "<%= capitalise(session.alter_term) %>";
             let alterTermLow= "<%= session.alter_term %>";
             $(document).ready(function(){
             $("#typeSel").change(function(){
                 var selectedAlt = $(this).children("option:selected").val();
                 
-                $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`);
+                // $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`);
             });
         });
     </script>

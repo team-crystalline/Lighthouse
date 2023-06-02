@@ -38,7 +38,7 @@ const getCookies = (req) => {
  return parsedCookies;
 };
 
-var alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Other", "Introject (Mixed)"]
+var alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Introject (Mixed)"]
 
 const api = new PKAPI({
 	base_url: "https://api.pluralkit.me", // base api url

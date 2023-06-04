@@ -135,9 +135,9 @@ function fetchPKAlters(id){
 var splash;
 // fetchPKAlters("exmpl");
 
-function randomise(arr){
-      return arr[Math.floor(Math.random()*arr.length)];
-}
+// function randomise(arr){
+//       return arr[Math.floor(Math.random()*arr.length)];
+// }
 
 
 function apiEyesOnly(req) {
@@ -254,7 +254,9 @@ app.locals.moods=[
     {name: "Tired", positive: false, emoji: "🥱"}, // 23
     {name: "Stressed", positive: false, emoji: "😖"}, // 24
 ]
-
+app.locals.randomise= function (arr){
+	return arr[Math.floor(Math.random()*arr.length)];
+}
 function encryptWithAES(text){
 	const passphrase = process.env.cryptkey;
 	return CryptoJS.AES.encrypt(text, passphrase).toString();

@@ -45,6 +45,7 @@
  * @public
  */
 
+
 var fs = require('fs');
 var path = require('path');
 var utils = require('./utils');
@@ -65,6 +66,7 @@ var _OPTS_PASSABLE_WITH_DATA = ['delimiter', 'scope', 'context', 'debug', 'compi
 // so we make an exception for `renderFile`
 var _OPTS_PASSABLE_WITH_DATA_EXPRESS = _OPTS_PASSABLE_WITH_DATA.concat('cache');
 var _BOM = /^\uFEFF/;
+var _JS_IDENTIFIER = /^[a-zA-Z_$][0-9a-zA-Z_$]*$/;
 
 /**
  * EJS template function cache. This can be a LRU object from lru-cache NPM
@@ -306,7 +308,7 @@ function fileLoader(filePath){
  */
 
 function includeFile(path, options) {
-  var opts = utils.shallowCopy({}, options);
+  var opts = utils.shallowCopy(utils.createNullProtoObjWherePossible(), options);
   opts.filename = getIncludePath(path, opts);
   if (typeof options.includer === 'function') {
     var includerResult = options.includer(path, opts.filename);
@@ -412,8 +414,8 @@ exports.compile = function compile(template, opts) {
  */
 
 exports.render = function (template, d, o) {
-  var data = d || {};
-  var opts = o || {};
+  var data = d || utils.createNullProtoObjWherePossible();
+  var opts = o || utils.createNullProtoObjWherePossible();
 
   // No options object -- if there are optiony names
   // in the data, copy them to options
@@ -484,7 +486,7 @@ exports.renderFile = function () {
     opts.filename = filename;
   }
   else {
-    data = {};
+    data = utils.createNullProtoObjWherePossible();
   }
 
   return tryHandleCache(opts, data, cb);
@@ -506,8 +508,8 @@ exports.clearCache = function () {
 };
 
 function Template(text, opts) {
-  opts = opts || {};
-  var options = {};
+  opts = opts || utils.createNullProtoObjWherePossible();
+  var options = utils.createNullProtoObjWherePossible();
   this.templateText = text;
   /** @type {string | null} */
   this.mode = null;
@@ -588,12 +590,21 @@ Template.prototype = {
         '  var __output = "";\n' +
         '  function __append(s) { if (s !== undefined && s !== null) __output += s }\n';
       if (opts.outputFunctionName) {
+        if (!_JS_IDENTIFIER.test(opts.outputFunctionName)) {
+          throw new Error('outputFunctionName is not a valid JS identifier.');
+        }
         prepended += '  var ' + opts.outputFunctionName + ' = __append;' + '\n';
+      }
+      if (opts.localsName && !_JS_IDENTIFIER.test(opts.localsName)) {
+        throw new Error('localsName is not a valid JS identifier.');
       }
       if (opts.destructuredLocals && opts.destructuredLocals.length) {
         var destructuring = '  var __locals = (' + opts.localsName + ' || {}),\n';
         for (var i = 0; i < opts.destructuredLocals.length; i++) {
           var name = opts.destructuredLocals[i];
+          if (!_JS_IDENTIFIER.test(name)) {
+            throw new Error('destructuredLocals[' + i + '] is not a valid JS identifier.');
+          }
           if (i > 0) {
             destructuring += ',\n  ';
           }
@@ -684,13 +695,14 @@ Template.prototype = {
     // Adds a local `include` function which allows full recursive include
     var returnedFn = opts.client ? fn : function anonymous(data) {
       var include = function (path, includeData) {
-        var d = utils.shallowCopy({}, data);
+        var d = utils.shallowCopy(utils.createNullProtoObjWherePossible(), data);
         if (includeData) {
           d = utils.shallowCopy(d, includeData);
         }
         return includeFile(path, opts)(d);
       };
-      return fn.apply(opts.context, [data || {}, escapeFn, include, rethrow]);
+      return fn.apply(opts.context,
+        [data || utils.createNullProtoObjWherePossible(), escapeFn, include, rethrow]);
     };
     if (opts.filename && typeof Object.defineProperty === 'function') {
       var filename = opts.filename;
@@ -967,6 +979,8 @@ if (typeof window != 'undefined') {
 'use strict';
 
 var regExpChars = /[|\\{}()[\]^$+*?.]/g;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var hasOwn = function (obj, key) { return hasOwnProperty.apply(obj, [key]); };
 
 /**
  * Escape characters reserved in regular expressions.
@@ -1039,9 +1053,25 @@ exports.escapeXML = function (markup) {
     : String(markup)
       .replace(_MATCH_HTML, encode_char);
 };
-exports.escapeXML.toString = function () {
+
+function escapeXMLToString() {
   return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr;
-};
+}
+
+try {
+  if (typeof Object.defineProperty === 'function') {
+  // If the Function prototype is frozen, the "toString" property is non-writable. This means that any objects which inherit this property
+  // cannot have the property changed using an assignment. If using strict mode, attempting that will cause an error. If not using strict
+  // mode, attempting that will be silently ignored.
+  // However, we can still explicitly shadow the prototype's "toString" property by defining a new "toString" property on this object.
+    Object.defineProperty(exports.escapeXML, 'toString', { value: escapeXMLToString });
+  } else {
+    // If Object.defineProperty() doesn't exist, attempt to shadow this property using the assignment operator.
+    exports.escapeXML.toString = escapeXMLToString;
+  }
+} catch (err) {
+  console.warn('Unable to set escapeXML.toString (is the Function prototype frozen?)');
+}
 
 /**
  * Naive copy of properties from one object to another.
@@ -1056,8 +1086,16 @@ exports.escapeXML.toString = function () {
  */
 exports.shallowCopy = function (to, from) {
   from = from || {};
-  for (var p in from) {
-    to[p] = from[p];
+  if ((to !== null) && (to !== undefined)) {
+    for (var p in from) {
+      if (!hasOwn(from, p)) {
+        continue;
+      }
+      if (p === '__proto__' || p === 'constructor') {
+        continue;
+      }
+      to[p] = from[p];
+    }
   }
   return to;
 };
@@ -1075,10 +1113,20 @@ exports.shallowCopy = function (to, from) {
  * @private
  */
 exports.shallowCopyFromList = function (to, from, list) {
-  for (var i = 0; i < list.length; i++) {
-    var p = list[i];
-    if (typeof from[p] != 'undefined') {
-      to[p] = from[p];
+  list = list || [];
+  from = from || {};
+  if ((to !== null) && (to !== undefined)) {
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i];
+      if (typeof from[p] != 'undefined') {
+        if (!hasOwn(from, p)) {
+          continue;
+        }
+        if (p === '__proto__' || p === 'constructor') {
+          continue;
+        }
+        to[p] = from[p];
+      }
     }
   }
   return to;
@@ -1119,6 +1167,32 @@ exports.cache = {
 exports.hyphenToCamel = function (str) {
   return str.replace(/-[a-z]/g, function (match) { return match[1].toUpperCase(); });
 };
+
+/**
+ * Returns a null-prototype object in runtimes that support it
+ *
+ * @return {Object} Object, prototype will be set to null where possible
+ * @static
+ * @private
+ */
+exports.createNullProtoObjWherePossible = (function () {
+  if (typeof Object.create == 'function') {
+    return function () {
+      return Object.create(null);
+    };
+  }
+  if (!({__proto__: null} instanceof Object)) {
+    return function () {
+      return {__proto__: null};
+    };
+  }
+  // Not possible, just pass through
+  return function () {
+    return {};
+  };
+})();
+
+
 
 },{}],3:[function(require,module,exports){
 
@@ -1623,7 +1697,7 @@ module.exports={
     "engine",
     "ejs"
   ],
-  "version": "3.1.6",
+  "version": "3.1.8",
   "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
   "license": "Apache-2.0",
   "bin": {
@@ -1639,22 +1713,22 @@ module.exports={
   "bugs": "https://github.com/mde/ejs/issues",
   "homepage": "https://github.com/mde/ejs",
   "dependencies": {
-    "jake": "^10.6.1"
+    "jake": "^10.8.5"
   },
   "devDependencies": {
     "browserify": "^16.5.1",
     "eslint": "^6.8.0",
     "git-directory-deploy": "^1.5.1",
-    "jsdoc": "^3.6.4",
+    "jsdoc": "^4.0.2",
     "lru-cache": "^4.0.1",
-    "mocha": "^7.1.1",
+    "mocha": "^10.2.0",
     "uglify-js": "^3.3.16"
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -u tdd"
   }
 }
 

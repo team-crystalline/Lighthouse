@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+        <style>
+            .planSection{
+                border-bottom: 1px solid var(--col1);
+            }
+            .planSection:last-child{
+                border: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <section>
+                <h2>Before, During, After</h2>
+                <p>A <strong>Before, During, After</strong> plan is specifically for an upcoming event or trauma that you know may be stressful or even traumatic to <%- pluralize(session.alter_term) %> in your <%- session.system_term %>. The goal is to keep splitting/splintering to a minimum during a stressful event</p>
+                <form>
+                    <label for ="planname">Name This Plan: </label> <input type="text" id="planname" name="planname">
+                    <div style="display: flex; justify-content:space-around;">
+                      <div style="width:30%; text-align:center;">
+                        <h3>Before</h3>
+                        <label for="planbefore">What will you and the other <%- pluralize(session.alter_term) %> do to be ready for this event?</label><br>
+                        <textarea name="planbefore" id="planbefore" rows="10" cols="15"></textarea>
+                    </div>
+                    <div style="width:30%; text-align:center;">
+                        <h3>During</h3>
+                        <label for="planduring">How will the <%- session.system_term %> stay grounded during this event?</label><br>
+                        <textarea name="planduring" id="planduring" rows="10" cols="15"></textarea>
+                    </div>
+                    <div style="width:30%; text-align:center;">
+                        <h3>After</h3>
+                        <label for="planafter">What can everyone do to ensure each others' safety and solace?</label><br>
+                        <textarea name="planafter" id="planafter" rows="10" cols="15"></textarea>
+                    </div>  
+                    </div>
+                    <center><button name="create" id="planSub">Create Plan</button> <input type="reset" value="Start Over"></center>
+                </form>
+                
+            </section>
+            <hr>
+            <section>
+                <h1 style="text-align:center;">Your <%- capitalise(session.system_term) %> Plans</h1>
+                <center><img id="wait" style="display:none" src="/img/svg/bubbles.svg" class="tinyimg" alt="bubble loading bar"></center>
+                <div id="plans">
+
+                </div>
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+    <script>
+        var getFirstBrowserLanguage = function () {
+    var nav = window.navigator,
+    browserLanguagePropertyKeys = ['language', 'browserLanguage', 'systemLanguage', 'userLanguage'],
+    i,
+    language;
+
+    // support for HTML 5.1 "navigator.languages"
+    if (Array.isArray(nav.languages)) {
+      for (i = 0; i < nav.languages.length; i++) {
+        language = nav.languages[i];
+        if (language && language.length) {
+          return language;
+        }
+      }
+    }
+
+    // support for other well known properties in browsers
+    for (i = 0; i < browserLanguagePropertyKeys.length; i++) {
+      language = nav[browserLanguagePropertyKeys[i]];
+      if (language && language.length) {
+        return language;
+      }
+    }
+
+    return null;
+  };
+        async function fetchPosts(){
+            console.log("Fetching!");
+            $("#wait").show(`fast`);
+            $("#plans").html("");
+                let response = await fetch(`/bda`, {
+            headers: {
+            "api-lh-call": "api-lh-call"
+            }
+        });
+        let body = await response.text();
+        let bodyInfo = JSON.parse(body);
+        for (i in bodyInfo.body){
+
+            $("#plans").append(`<section class="planSection"><h2>${bodyInfo.body[i].alias}</h2><div style="padding-left:1em"><h3>BEFORE</h3><pre>${bodyInfo.body[i].before}</pre><h3>DURING</h3><pre>${bodyInfo.body[i].during}</pre><h3>AFTER</h3><pre>${bodyInfo.body[i].after}</pre></div></section>`)
+        }
+        $("#wait").hide(`fast`);
+            }
+        $(document).ready(function(){
+            fetchPosts();
+        })
+        
+        $("#planSub").click(async function(){
+            event.preventDefault();
+            $("#wait").toggle(`fast`);
+                const response = await fetch("/bda", {
+                        method: "POST",
+                        headers:{
+                            "api-lh-call": "api-lh-call",
+                            'Accept': 'application/json',
+                             'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            "create": "create",
+                            "name":  $("#planname").val(),
+                            "before": $("#planbefore").val(),
+                            "during": $("#planduring").val(),
+                            "after": $("#planafter").val(),
+                        })
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                    if (result.code == 200){
+                        // Load it below!
+                        fetchPosts();
+                    }
+                    
+        })
+    </script>
+</html>

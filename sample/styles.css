@@ -343,6 +343,20 @@ body[data-revision-history='true'] .ck.ck-pagination-view-line::after {
 	right: unset !important;
 }
 
+/* --------- DOCUMENT OUTLINE FEATURE ------------------------------------------------------------------------------ */
+
+.document-outline-container {
+	max-height: 80vh;
+	overflow-y: auto;
+	margin-bottom: 1em;
+}
+
+.document-outline-container .ck.ck-document-outline {
+	min-height: 100%;
+	border: 1px solid var(--ck-color-base-border);
+	background-color: hsl(0, 0%, 96%);
+}
+
 /* --------- SAMPLE GENERIC STYLES (not related to CKEditor) ------------------------------------------------------- */
 body, html {
 	padding: 0;
@@ -472,8 +486,6 @@ footer {
 	color: rgba(0,0,0,.4);
 }
 
-
-
 /* --------- RWD --------------------------------------------------------------------------------------------------- */
 @media screen and ( max-width: 800px ) {
 	:root {
@@ -496,5 +508,3 @@ footer {
 		font-size: 1.5em;
 	}
 }
-
-

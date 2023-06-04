@@ -25,6 +25,7 @@
               <a title= "<%= capitalise(session.system_term) %> Rules" href="/rules"><%= capitalise(session.system_term) %> Rules</a>
               <a title="Your Inner World" href="/inner-world">Inner World</a>
               <a title="Your <%= capitalise(session.system_term) %>'s wants, needs, and wishes" href="/wish">Wants & Wishes</a>
+              <a title="Worksheets for trauma (WIP)" href="/worksheets">Worksheets</a>
             </div>
             <ul>
             <% for ( i in session.sys ) { %>
@@ -53,24 +54,37 @@
                     <input type="submit" name="post" value="Write post">
                     <input type="reset" name="reset" value="Start Over">
                     <!-- <textarea id="example"></textarea> -->
-
                     <script>ClassicEditor
-                        .create( document.querySelector( '#editor' ), {
-                            fontColor: {
-            colors: [
-                {color: 'red',label: 'Red'},{color: '#ff691f',label: 'Orange'},{ color: '#ffc20a',label: 'Yellow'},{color: 'green',label: 'Green'},{color: 'teal',label: 'Teal'},{color: 'blue',label: 'Blue'},{color: 'purple',label: 'Purple'},{color: '#ff0f83',label: 'Pink'},{color:'#663c28', label: 'Brown'}, {color: 'lightgray', label: 'Silver'}, {color: 'gray', label: 'Stone'}, {color: 'black', label: 'Black'}, {color: 'white', label: "White"}
-            ]}
-                        } )
-                        .then( editor => {
-                          window.editor = editor;
-                        } )
-                        .catch( error => {
-                          console.error( 'Oops, something went wrong!' );
-                          console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                          console.warn( 'Build id: c0gefhhqxz8y-2hxzvv2htugp' );
-                          console.error( error );
-                        } );
-                    </script>
+                      .create( document.querySelector( '#editor' ), {
+                        licenseKey: '',
+                        fontColor: {
+                                colors: [
+                                    {color: 'red',label: 'Red'},
+                                    {color: '#ff691f',label: 'Orange'},
+                                    { color: '#ffc20a',label: 'Yellow'},
+                                    {color: 'green',label: 'Green'},
+                                    {color: 'teal',label: 'Teal'},
+                                    {color: 'blue',label: 'Blue'},
+                                    {color: 'purple',label: 'Purple'},
+                                    {color: '#ff0f83',label: 'Pink'},
+                                    {color:'#663c28', label: 'Brown'}, 
+                                    {color: 'lightgray', label: 'Silver'}, 
+                                    {color: 'gray', label: 'Stone'}, 
+                                    {color: 'black', label: 'Black'}, 
+                                    {color: 'white', label: "White"}
+                                  ]
+                              }
+                      } )
+                      .then( editor => {
+                        window.editor = editor;
+                      } )
+                      .catch( error => {
+                        console.error( 'Oops, something went wrong!' );
+                        console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+                        console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
+                        console.error( error );
+                      } );
+                  </script>
                 </form>
                 <% for (i in session.cPosts) { %>
                     <article>

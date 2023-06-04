@@ -139,17 +139,6 @@ function randomise(arr){
       return arr[Math.floor(Math.random()*arr.length)];
 }
 
-const encryptWithAES = (text) => {
-  const passphrase = process.env.cryptkey;
-  return CryptoJS.AES.encrypt(text, passphrase).toString();
-};
-
-const decryptWithAES = (ciphertext) => {
-  const passphrase = process.env.cryptkey;
-  const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
-  const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  return originalText;
-};
 
 function apiEyesOnly(req) {
 	if (req.headers['api-lh-call']) {
@@ -180,7 +169,11 @@ var app = express();
 	resave: true,
 	saveUninitialized: true
     }));
-	app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
+	// app.use(bodyParser.urlencoded({
+	// 	extended: true
+	// }));
+	// app.use(express.json());
   app.use(cookieParser());
 //   app.locals({
 //     site: {
@@ -195,6 +188,21 @@ var app = express();
 // 		return s[0].toUpperCase() + s.slice(1);
 // 	}
 // });
+app.locals.editorColours=[
+	{color: 'red',label: 'Red'},
+	{color: '#ff691f',label: 'Orange'},
+	{ color: '#ffc20a',label: 'Yellow'},
+	{color: 'green',label: 'Green'},
+	{color: 'teal',label: 'Teal'},
+	{color: 'blue',label: 'Blue'},
+	{color: 'purple',label: 'Purple'},
+	{color: '#ff0f83',label: 'Pink'},
+	{color:'#663c28', label: 'Brown'}, 
+	{color: 'lightgray', label: 'Silver'}, 
+	{color: 'gray', label: 'Stone'}, 
+	{color: 'black', label: 'Black'}, 
+	{color: 'white', label: "White"}
+]
 app.locals.journalArr= [
 	{val: '1', c: "Red"}, 
 	{val: '2', c: "Orange"}, 
@@ -246,6 +254,19 @@ app.locals.moods=[
     {name: "Tired", positive: false, emoji: "🥱"}, // 23
     {name: "Stressed", positive: false, emoji: "😖"}, // 24
 ]
+
+function encryptWithAES(text){
+	const passphrase = process.env.cryptkey;
+	return CryptoJS.AES.encrypt(text, passphrase).toString();
+  }
+   
+  function decryptWithAES(ciphertext){
+	const passphrase = process.env.cryptkey;
+	const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
+	const originalText = bytes.toString(CryptoJS.enc.Utf8);
+	return originalText;
+  }
+  
 app.locals.capitalise= function(s){
 		return s[0].toUpperCase() + s.slice(1);
 	}
@@ -321,6 +342,39 @@ app.locals.pluralize= pluralize;
 	        splash=null;
 		}
 	});
+  });
+
+  app.get('/worksheets', (req, res) => {
+	if (isLoggedIn(req)){
+		res.render(`pages/worksheets`, { session: req.session, splash:splash, cookies:req.cookies });
+	splash=null;
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	
+  });
+  app.get('/bda', (req, res) => {
+	if (isLoggedIn(req)){
+		if (apiEyesOnly(req)){
+			// This is an API Call.
+			client.query({text: "SELECT * FROM bda_plans WHERE u_id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
+				if (err) {
+				  console.log(err.stack);
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+			  } else {
+				let bdaArr= new Array();
+				// Object { id: "sdfsdf", before: "sdfsdf", during: "sdfsdf", after: "sdfsdf", is_active: true, alias: "adasd", timestamp: "2023-06-03T23:36:59.412Z" }
+				for (i in result.rows){
+					bdaArr.push({id: result.rows[i].id, before: decryptWithAES(result.rows[i].before), during: decryptWithAES(result.rows[i].during), after: decryptWithAES(result.rows[i].after), is_active:result.rows[i].is_active, alias: decryptWithAES(result.rows[i].alias), timestamp: result.rows[i].timestamp})
+				}
+				  return res.status(200).json({code:200, body: bdaArr})
+			  }
+		  });
+		} else {
+			res.render(`pages/bda`, { session: req.session, splash:splash, cookies:req.cookies });
+		}
+		
+	splash=null;
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	
   });
 
 
@@ -935,6 +989,24 @@ var sysArr;
 
 
 	*/
+
+	app.post('/bda', (req, res)=>{
+		if (apiEyesOnly(req)){
+			if (req.body.create){
+				client.query({text: "INSERT INTO bda_plans (u_id, before, during, after, alias, timestamp) VALUES ($1, $2, $3, $4, $5, to_timestamp($6 / 1000.0))",values: [getCookies(req)['u_id'], `${encryptWithAES(req.body.before)}`, `${encryptWithAES(req.body.during)}`, `${encryptWithAES(req.body.after)}`, `${encryptWithAES(req.body.name)}`, `${Date.now()}`]}, (err, result) => {
+					if (err) {
+					  console.log(err.stack);
+					  res.status(400).json({code: 400, message: err.stack});
+				  } else {
+					return res.status(200).json({code:200});
+				  }
+				  });
+			}
+		} else {
+			return res.status(403).json({code:403})
+		}
+		
+	})
 	app.post('/mood/:alt', function(req, res){
 		// console.table(req.session.chosenSys);
 		var now = new Date();
@@ -1987,6 +2059,12 @@ var sysArr;
        }
    });
  });
+
+ /*
+
+ 			OTHER ROUTES (Delete, Put)
+
+ */
 
  	// ROBOTS.TXT
 	 app.get("/sitemap.xml", function(req, res) {

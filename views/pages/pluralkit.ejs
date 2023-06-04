@@ -29,7 +29,7 @@
     <script>
         async function getPK(){
             event.preventDefault();
-            $("#Wait").html("<em>Hang on...</em>");
+            $("#Wait").html(`<img src="/img/svg/bubbles.svg" class="tinyimg">`);
             var pkID= $("#pid").val();
             if (pkID.length <5 ){
                 // Blank.

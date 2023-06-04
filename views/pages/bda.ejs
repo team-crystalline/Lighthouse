@@ -109,7 +109,6 @@
             planString+= `</div></section>`;
             $("#plans").append(planString);
             }
-            // $("#plans").append(`<section class="planSection"><h2>${bodyInfo.body[i].alias}</h2><div style="padding-left:1em"><h3>BEFORE</h3><p>${bodyInfo.body[i].before}</p><h3>DURING</h3><p>${bodyInfo.body[i].during}</p><h3>AFTER</h3><p>${bodyInfo.body[i].after}</p></div></section>`)
             
         $("#wait").hide(`fast`);
         }
@@ -138,6 +137,10 @@
                     });
                     const result = await response.json();
                     console.log(result);
+                    $("#planname").val("");
+                    $("#planbefore").val("");
+                    $("#planduring").val("");
+                    $("#planafter").val("");
                     if (result.code == 200){
                         // Load it below!
                         fetchPosts();

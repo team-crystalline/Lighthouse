@@ -14,6 +14,7 @@ const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 var pluralize = require('pluralize');
 var pjson = require('./package.json');
+var flash = require('express-flash');
 console.log( `Lighthouse v${pjson.version}`);
 
 const tuning= require('./js/genVars.js');
@@ -165,6 +166,7 @@ client.connect();
 
 
 var app = express();
+app.use(flash());
   app.use('/', express.static(__dirname + '/public'))
   app.use(session({
 	secret: process.env.sec,
@@ -227,7 +229,6 @@ app.locals.journalArr= [
 ]
 
 app.locals.legacyJournal= {val: '19', c: "Legacy"};
-
 app.locals.moods=[
     // Positive
     {name: "Joyous", positive: true, emoji: "😄"}, // 0
@@ -281,6 +282,7 @@ app.locals.pluralize= pluralize;
 
   app.all('*', (req, res) => {
 	// Loads before all other routes.
+	res.locals.messages = req.flash();
 	if (isLoggedIn(req)){
 		if (!req.session.system_term){
 			// Is it in their cookies?
@@ -459,7 +461,7 @@ app.get('/thank-you', (req, res, next) => {
   });
 
   app.get('/logout', (req, res)=>{
-     splash= `See you soon, ${req.session.username || "friend"}`;
+     splash= req.flash("flash",`See you soon, ${req.session.username || "friend"}`);
 	 req.session.destroy();
 	 res.clearCookie('loggedin');
 	 res.clearCookie('username');
@@ -515,7 +517,7 @@ app.get('/wish/:id', (req, res) => {
 				console.log(err.stack);
 					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			}
-			splash="Wish granted!";
+			splash=req.flash("flash","Wish granted!");
 			res.redirect("/wish");
 		});
 		
@@ -529,7 +531,7 @@ app.get('/wish-d/:id', (req, res) => {
 				console.log(err.stack);
 					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			}
-			splash="Wish deleted!";
+			splash=req.flash("flash","Wish deleted!");
 			
 		});
 		res.redirect("/wish");
@@ -1029,7 +1031,7 @@ var sysArr;
 					}
 					req.session.chosenAlter.mood= req.body.mood;
 					req.session.chosenAlter.reason=req.body.reason;
-						splash="Mood updated!";
+						splash=req.flash("flash","Mood updated!");
 						res.redirect(302,`/alter/${req.params.alt}`);
 					});
 			} else {
@@ -1041,7 +1043,7 @@ var sysArr;
 					// Might as well change session vars here??? idk
 					req.session.chosenAlter.mood= req.body.mood;
 					req.session.chosenAlter.reason=req.body.reason;
-						splash="Mood updated!";
+						res.locals.messages=req.flash("flash","Mood updated!");
 						res.redirect(302,`/alter/${req.params.alt}`);
 					});
 			}
@@ -1110,7 +1112,7 @@ var sysArr;
 							}
 							// Clear all cookies/session data.
 							   
-							   splash= `Sorry to see you go. You can remake your account at any time.`;
+							   splash= req.flash("flash",`Sorry to see you go. You can remake your account at any time.`);
 							   req.session.destroy();
 							   res.clearCookie('loggedin');
 							   res.clearCookie('username');
@@ -1157,7 +1159,7 @@ var sysArr;
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					} else {
 						// req.session.email= req.body.newEmail;
-						splash="Profile Updated!";
+						splash=req.flash("flash","Profile Updated!");
 						req.session.email= req.body.newEmail;
 						res.status(200).cookie('email',  req.body.newEmail,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.body.newEmail, theirName: req.session.username });
 					}
@@ -1169,7 +1171,7 @@ var sysArr;
 					if (err) {
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					} else {
-						splash="Profile Updated!";
+						splash=req.flash("flash","Profile Updated!");
 						req.session.username= req.body.newName;
 						res.status(200).cookie('username',  req.body.newName,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.session.email, theirName: req.body.newName });
 					}
@@ -1182,7 +1184,7 @@ var sysArr;
 					if (err) {
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					} else {
-						splash="Password Updated!";
+						splash=req.flash("flash","Password Updated!");
 						res.status(200).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.session.email, theirName: req.session.username });
 					}
 				});
@@ -1206,7 +1208,7 @@ var sysArr;
 					     res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					   } else {
 					      // Code here
-								splash="Updated your password. You can now log in!";
+								splash= req.flash("flash","Updated your password. You can now log in!");
 								res.redirect("/login");
 					   }
 					 });
@@ -1226,7 +1228,7 @@ var sysArr;
 			} else {
 				if ((result.rows).length == 0){
 					// User doesn't exist.
-					splash= "That email isn't in use, actually. Did you mean to sign up?";
+					splash= req.flash("flash","That email isn't in use, actually. Did you mean to sign up?");
 					res.render(`pages/forgot_pass`, { session: req.session, splash:splash,cookies:req.cookies});
 				} else {
 					req.session.user= result.rows[0];
@@ -1312,7 +1314,7 @@ var sysArr;
 									console.log(err.stack);
 									res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 								} else {
-									splash=`${Buffer.from(req.session.chosenAlter.name, 'base64').toString()} deleted.`;
+									splash=req.flash("flash",`${Buffer.from(req.session.chosenAlter.name, 'base64').toString()} deleted.`);
 									req.session.chosenAlter= null;
 									res.redirect(`/system`);
 								}
@@ -1432,7 +1434,7 @@ var sysArr;
 						  console.log(err.stack);
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash });
 					  } else {
-						  splash=`<strong>All set!</strong> Journal created.`;
+						  splash= req.flash("flash",`<strong>All set!</strong> Journal created.`);
 						  res.redirect(`/alter/${req.params.id}`);
 					  }
 				  });
@@ -1443,7 +1445,7 @@ var sysArr;
 							  console.log(err.stack);
 							  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 						  } else {
-							  splash=`<strong>All set!</strong> ${req.body.altname}'s information has been updated.`;
+							  splash= req.flash("flash",`<strong>All set!</strong> ${req.body.altname}'s information has been updated.`);
 							  res.redirect(`/alter/${req.params.id}`);
 						  }
 					  });
@@ -1454,7 +1456,7 @@ var sysArr;
 						  console.log(err.stack);
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					  } else {
-						  splash=`<strong>All set!</strong> This journal's password has been reset.`;
+						  splash= req.flash("flash",`<strong>All set!</strong> This journal's password has been reset.`);
 						  res.redirect(`/alter/${req.params.id}`);
 					  }
 				  });
@@ -1465,7 +1467,7 @@ var sysArr;
 						  console.log(err.stack);
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					  } else {
-						  splash=`<strong>All set!</strong> Journal skin updated.`;
+						  splash= req.flash("flash",`<strong>All set!</strong> Journal skin updated.`);
 						  res.redirect(`/alter/${req.params.id}`);
 					  }
 				  });
@@ -1476,13 +1478,12 @@ var sysArr;
 						console.log(err.stack);
 						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					} else {
-						// splash=`<strong>All set!</strong> Journal made.`;
 						// res.redirect(`/alter/${req.params.id}`);
 					if (result.rows[0].password == `'${CryptoJS.SHA3(req.body.logPass)}'`){
 						req.session.journalUser= req.params.id;
 						res.redirect(`/journal/${req.params.id}`);
 					} else {
-						splash=`<strong>No, not quite...</strong> That's not the right password.`;
+						splash= req.flash("flash",`<strong>No, not quite...</strong> That's not the right password.`);
 						res.redirect(`/alter/${req.params.id}`);
 					}
 					}
@@ -1603,7 +1604,7 @@ var sysArr;
 			  }
 			});
 		}
-		splash="Page updated!"
+		splash= req.flash("flash","Page updated!");
 		res.redirect(`/alter/${req.params.id}`);
 	});
 
@@ -1674,14 +1675,14 @@ var sysArr;
 					        console.log(err.stack);
 					        res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					      } else {
-					          splash=`Added ${req.body.sysname}.`;
+					          splash= req.flash("flash",`Added ${req.body.sysname}.`);
 							  // res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
 							  res.redirect("/system");
 					      }
 					  });
 				  } else {
 					// res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys });
-					splash=`You already have a system with the alias "${req.body.sysname}". Please use a unique name. Sorry!`;
+					splash= req.flash("flash",`You already have a system with the alias "${req.body.sysname}". Please use a unique name. Sorry!`);
 					res.render(`pages/system`, { session: req.session, splash:splash, sysArr: req.session.sys,cookies:req.cookies });
 				  }
 			  }
@@ -1738,7 +1739,7 @@ var sysArr;
 										  console.log(err.stack);
 										  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 									  }
-									  splash=`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`;
+									  splash= req.flash("flash",`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`);
 									  req.session.chosenSys= null;
 									  res.redirect("/system");
 								  });
@@ -1768,7 +1769,7 @@ var sysArr;
 						  console.log(err.stack);
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					  } else {
-						  splash=`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`;
+						  splash= req.flash("flash",`${Buffer.from(req.session.chosenSys.sys_alias, 'base64').toString()} has been permanently deleted.`);
 						  req.session.chosenSys= null;
 						  res.redirect("/system");
 					  }
@@ -1790,7 +1791,7 @@ var sysArr;
 					  console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				  } else {
-					splash="Added your wish to the list!";
+					splash= req.flash("flash","Added your wish to the list!");
 					res.redirect(req.get('referer'));
 						splash=null;
 				  }
@@ -1837,7 +1838,7 @@ var sysArr;
 								}
 								
 							}
-							splash="System Added.";
+							splash= req.flash("flash","System Added.");
 							res.redirect("/system");
 						}
 					});
@@ -1863,7 +1864,7 @@ var sysArr;
             // console.log(res.rows)
             if (result.rows.length > 0){
                 console.log("Already exists.");
-                splash="<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>";
+                splash= req.flash("flash","<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>");
                 res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
             } else {
                 // Write to the db
@@ -1902,7 +1903,6 @@ var sysArr;
 			   req.session.loggedin = true;
 			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
 					*/
-					// splash=`Welcome, ${req.body.username}! Please log in.`;
 					// res.redirect("/");
                     //   res.render(`pages/registered`, { session: req.session, splash:splash,cookies:req.cookies });
 					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
@@ -1917,7 +1917,7 @@ var sysArr;
 						
 					  }
 					});
-					splash=`Welcome to Lighthouse, ${req.body.username}! You are now logged in.`;
+					splash= req.flash("flash",`Welcome to Lighthouse, ${req.body.username}! You are now logged in.`);
 						res.redirect("/");
                   }
               });
@@ -1939,7 +1939,7 @@ var sysArr;
 				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
 				if (result.rows.length == 0){
-					splash= "Wrong credentials.";
+					splash= req.flash("flash","Wrong credentials.");
 					res.redirect(req.get('referer'));
 				} else {
 					 req.session.alter_term= result.rows[0].alter_term;
@@ -1973,7 +1973,7 @@ var sysArr;
             // console.log(res.rows)
             if (result.rows.length > 0){
                 console.log("Already exists.");
-                splash="<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>";
+                splash= req.flash("flash","<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>");
                 res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
             } else {
                 // Write to the db
@@ -2012,7 +2012,6 @@ var sysArr;
 			   req.session.loggedin = true;
 			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
 					*/
-					// splash=`Welcome, ${req.body.username}! Please log in.`;
 					// res.redirect("/");
                     //   res.render(`pages/registered`, { session: req.session, splash:splash,cookies:req.cookies });
 					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
@@ -2027,7 +2026,7 @@ var sysArr;
 						
 					  }
 					});
-					splash=`Welcome to Lighthouse, ${req.body.username}! You are now logged in.`;
+					splash= req.flash("flash",`Welcome to Lighthouse, ${req.body.username}! You are now logged in.`);
 						res.redirect("/");
                   }
               });
@@ -2050,7 +2049,7 @@ var sysArr;
            res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
        } else {
 		   if (result.rows.length == 0){
-			   splash= "Wrong credentials.";
+			   splash= req.flash("flash","Wrong credentials.");
 			   res.redirect('/login');
 		   } else {
 				req.session.alter_term= result.rows[0].alter_term;

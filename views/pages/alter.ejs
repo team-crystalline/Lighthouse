@@ -47,8 +47,8 @@ td{
 <body>
     <%- include ("../partials/nav.ejs") %>
     <div id="wrapper">
-        <% if (typeof splash == 'string'){  %>
-            <p class="splash"><%- splash %></p>
+        <% if (locals.messages.length > 0) { %>
+            <div class="splash"><%- messages %></div>
         <% } %>
         <section>
             <h2><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s page</h2>

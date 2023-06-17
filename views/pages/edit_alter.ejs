@@ -44,7 +44,7 @@
                 <label for="pronouns" >Pronouns</label>
                 <input type="text" name="pronouns" <% if (session.chosenAlter.pronouns){ %> placeholder="<%= Buffer.from(session.chosenAlter.pronouns, "base64").toString() %>" <% } %>>
                 <label for="age" >Perceived Age</label>
-                <input type="number" name="age" value="<%= session.chosenAlter.age %>">
+                <input type="text" name="age" <% if (session.chosenAlter.agetext){ %> placeholder="<%= Buffer.from(session.chosenAlter.agetext, "base64").toString() %>" <% } %>>
                 <label for="type" id="typeinfo"><%= capitalise(session.alter_term) %> Type</label>
                 <input type="text" name="type" placeholder="<%= session.chosenAlter.type %>">
                 <span style="display:block; margin-bottom:.5em">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
@@ -58,6 +58,10 @@
                 <textarea name="dislikes"><% if (session.chosenAlter.dislikes !== null) { %><%- Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %><% } %></textarea>
             </div>
                 <div class="column">
+                <label for="birthday">Perceived Birthday:</label>
+                <input type="text" name="birthday" value="<% if (session.chosenAlter.birthday !== null) { %><%- Buffer.from(session.chosenAlter.birthday, 'base64').toString() %><% } %>">
+                <label for="firstnoted">General date of when <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> might've come about:</label>
+                <input type="text" name="firstnoted" value="<% if (session.chosenAlter.first_noted !== null) { %><%- Buffer.from(session.chosenAlter.first_noted, 'base64').toString() %><% } %>">
                 <label for="internalJob">A brief summary of what <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> does for the <%= session.system_term %>:</label>
                 <input type="text" name="internalJob" value="<% if (session.chosenAlter.job !== null) { %><%- Buffer.from(session.chosenAlter.job, 'base64').toString() %><% } %>">
                 <label for="safety"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> feels safest when...</label>       

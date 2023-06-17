@@ -695,7 +695,7 @@ var sysArr;
   app.get("/edit-alter/:id", (req, res, next)=>{
 
 	if (isLoggedIn(req)){
-		client.query({text: "SELECT alters.pronouns, alters.name, alters.alt_id, alters.sys_id, systems.sys_alias,alters.triggers_pos, alters.triggers_neg, alters.age,alters.likes,alters.dislikes,alters.job,alters.safe_place,alters.wants,alters.acc,alters.notes,alters.type,alters.img_url FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+		client.query({text: "SELECT alters.pronouns, alters.name, alters.alt_id, alters.sys_id, systems.sys_alias,alters.triggers_pos, alters.triggers_neg,alters.likes,alters.dislikes,alters.job,alters.safe_place,alters.wants,alters.acc,alters.notes,alters.type,alters.img_url,alters.agetext, alters.birthday,alters.first_noted FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1455,7 +1455,23 @@ var sysArr;
 			});
 		}
 		if (req.body.age){
-			client.query({text: "UPDATE alters SET age=$1 WHERE alt_id=$2",values: [req.body.age,`${req.params.id}`]}, (err, result) => {
+			client.query({text: "UPDATE alters SET agetext=$1 WHERE alt_id=$2",values: [`'${Buffer.from(req.body.age).toString('base64')}'`,`${req.params.id}`]}, (err, result) => {
+				if (err) {
+				  console.log(err.stack);
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+			  }
+			});
+		}
+		if (req.body.birthday){
+			client.query({text: "UPDATE alters SET birthday=$1 WHERE alt_id=$2",values: [`'${Buffer.from(req.body.birthday).toString('base64')}'`,`${req.params.id}`]}, (err, result) => {
+				if (err) {
+				  console.log(err.stack);
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+			  }
+			});
+		}
+		if (req.body.firstnoted){
+			client.query({text: "UPDATE alters SET first_noted=$1 WHERE alt_id=$2",values: [`'${Buffer.from(req.body.firstnoted).toString('base64')}'`,`${req.params.id}`]}, (err, result) => {
 				if (err) {
 				  console.log(err.stack);
 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });

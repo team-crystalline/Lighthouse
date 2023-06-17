@@ -159,9 +159,21 @@ td{
             <table>
                 <tbody>
                   <tr>
-                    <% if (session.chosenAlter.age && session.chosenAlter.age > 0) { %>
+                    <% if (session.chosenAlter.agetext) { %>
                             <td>Perceived Age:</td>
-                            <td><%= session.chosenAlter.age %></td>
+                            <td><%= Buffer.from(session.chosenAlter.agetext, 'base64').toString() %></td>
+                        <% } %>
+                  </tr>
+                  <tr>
+                    <% if (session.chosenAlter.birthday) { %>
+                            <td>Perceived Birthday:</td>
+                            <td><%= Buffer.from(session.chosenAlter.birthday, 'base64').toString() %></td>
+                        <% } %>
+                  </tr>
+                  <tr>
+                    <% if (session.chosenAlter.first_noted) { %>
+                            <td>First Noted:</td>
+                            <td><%= Buffer.from(session.chosenAlter.first_noted, 'base64').toString() %></td>
                         <% } %>
                   </tr>
                   <tr>

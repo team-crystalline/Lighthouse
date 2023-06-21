@@ -1,11 +1,11 @@
 /* Mermaid Theme Colours */
 :root{
-    --col1: #131da3;
-    --col2: #d782da;
+    --col1: #0e659e;
+    --col2: #f185f5;
     --col3: #53d0f7;
     --col4: #3c975a;
     --col5: #a376f7;
-	--col6: #135e51;
+	--col6: #26645a;
     --col7: #b1f1ee;
     --col8: #161f50;
 }
@@ -15,3 +15,20 @@ html{
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+
+a{
+    color: var(--col5);
+}
+a:hover{
+    color: var(--col4);
+}
+
+a:visited{
+    color: var(--col5);
+}
+
+.navel, button, input[type=submit], input[type=reset], .linkbutton {
+    color: var(--col1);
+}
+

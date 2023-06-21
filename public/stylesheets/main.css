@@ -132,6 +132,9 @@ button:disabled, input[type=submit]:disabled{
     text-decoration: none;
     transition: .3s;
 }
+.navel:visited{
+    color: var(--col1);
+}
 
 .infodd{
     border: 1px solid red;
@@ -212,16 +215,20 @@ footer{
 #logo a{
     color: white;
     text-decoration: none;
+    vertical-align: middle;
 }
 
-#logoname{
+#logoname, #mobilenav{
     color: var(--col7);
 	font-family: 'Berkshire Swash','Lobster Two', cursive;
 }
-#logoname > *{
-    color: var(--col7);
+#logoname > *, #mobilenav >*, #hamburger > *{
+    color: var(--col2);
 }
 
+#hamburger > span{
+    vertical-align: middle;
+}
 #subnav ul{
     list-style: none;
 }
@@ -349,13 +356,14 @@ footer{
 .splash{
     width: 30vw;
     /* background: var(--col2); */
-    background: url('../img/svg/splash-fish.svg'), var(--col2);
+    background: url('../img/svg/splash-fish.svg'), var(--col4);
     background-repeat: no-repeat;
     background-position: right;
     padding: calc(2em);
     border: 2px solid var(--col1);
     border-radius: 15px;
     margin: calc(1em) auto auto auto;
+    color: var(--col2);
 }
 
 .editbtn, .deletebtn {
@@ -473,6 +481,7 @@ button[disabled=disabled]{
   #logo img{
       width:10vw;
 	  margin-bottom: 1vh;
+      vertical-align: middle;
   }
   footer{
 	  width: 95%;
@@ -519,6 +528,12 @@ button[disabled=disabled]{
     top: 5vh; 
     display: none;
     box-shadow: 0px 0px 50px var(--col1);
+}
+
+#logo img{
+    width:2em;
+    margin-bottom: 1vh;
+    vertical-align: middle;
 }
 
 

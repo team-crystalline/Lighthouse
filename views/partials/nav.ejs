@@ -30,9 +30,8 @@
     <a class="navel" href="/about">Information</a>
     <!-- <a class="navel" href="/changelog">Changelog</a> -->
   <button class="navel" onclick="history.back()">Go Back</button>
-  <!-- <button onclick="toggleMode()"><span name="mode" class="material-symbols-outlined" style="vertical-align:middle;">
-    light_mode
-    </span></button> -->
+  <button class="navel" onclick="toggleMode()"><span name="mode" class="material-symbols-outlined" style="vertical-align:middle;color: var(--col1);">light_mode
+    </span></button>
 </nav>
 <div class="navmobile">
   <div id="logo" style="display: inline-block; float: left;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="48px" alt="Lighthouse logo"><br/></a></div>
@@ -60,10 +59,22 @@
           <li><a class="navel" href="/profile">Settings</a></li>
           <% } %>
           <li><a class="navel" href="/about">Information</a></li>
+          <li><button class="navel" onclick="toggleMode()"><span name="mode" class="material-symbols-outlined" style="vertical-align:middle;color: var(--col1);">light_mode
+          </span></button></li>
           <!-- <li><a class="navel" href="/changelog">Changelog</a></li> -->
   </ul>
 </div>
 <script>
+  if (localStorage.lighthouse_mode){
+      if (localStorage.lighthouse_mode == "dark") {
+        $('[name="mode"]').text(`dark_mode`);
+      } else {
+        $('[name="mode"]').text(`light_mode`);
+      }
+
+    } else {
+      localStorage.lighthouse_mode= "light";
+    }
   $( "#hamburger" ).on( "click", function() {
    $("#mobilenav").toggle("fast");
 } );
@@ -75,26 +86,24 @@ function toggleMode(){
 
   event.preventDefault();
   var $darkCss = $("link[href='/stylesheets/dark.css']");
-  if ($darkCss.length) {
-    $darkCss.remove();
+  if (localStorage.lighthouse_mode){
+    // Toggle.
+    if (localStorage.lighthouse_mode == "dark") {
+      $darkCss.remove();
+      $('[name="mode"]').text(`light_mode`);
+      localStorage.lighthouse_mode="light";
+    } else {
+      localStorage.lighthouse_mode="dark";
+      $('[name="mode"]').text(`dark_mode`);
+      $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/dark.css">');
+    }
   } else {
-    $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/dark.css">');
-    $('body').find('*').each(function(){
-    var color = window.getComputedStyle($(this).get(0), null).color;
-    if ((color.toLowerCase() == "black") ||
-        (color.toLowerCase() == "#000000") ||
-        (color.toLowerCase() == "rgb(5,5,5)") ||
-        (color.toLowerCase() == "rgb(0,0,0)")) {
-            $(this).css("color", "ghostwhite");
-    }    
-});
+    // Define and then darken.
+    localStorage.lighthouse_mode="dark";
+      $('[name="mode"]').text(`dark_mode`);
+      $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/dark.css">');
   }
-  // if ($('[name="mode"]').text() == "light_mode"){
-  //   $('[name="mode"]').text(`dark_mode`);
-  //   $('head').append('<link rel="stylesheet" href="/stylesheets/dark.css" type="text/css" />');
 
-  // } else {
-  //   $('[name="mode"]').text(`light_mode`);
-  // }
+
 }
 </script>

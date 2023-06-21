@@ -3,13 +3,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
 
-<% if (cookies.skin) { %>
-    <!-- No skin -->
-    <link rel="stylesheet" type="text/css" href="/stylesheets/<%- cookies.skin %>.css" />
-<% } else { %>
-    <!-- No skin -->
-    <link rel="stylesheet" type="text/css" href="/stylesheets/lighthouse.css" />
-<% } %>
+
 
 
 <link rel="icon" type="image/x-icon" href="/img/logo.png">
@@ -32,3 +26,20 @@
 <meta property="og:image" content="/img/logo.png">
 <meta property="og:description" content="Lighthouse is a compartmentalised journalling app for people who are plural (have Dissociative Identity Disorder/DID, Otherwise Specified Dissociative Disorder/OSDD, or other situations). Keep track of day-to-day life, alters' feelings, and start building internal communication.">
 <meta property="og:title" content="Lighthouse">
+
+<script>
+    console.log(localStorage.lighthouse_mode)
+    if (localStorage.lighthouse_mode){
+        if (localStorage.lighthouse_mode== "dark"){
+            $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/dark.css">');
+        }
+    }
+
+    <% if (cookies.skin) { %>
+    <!-- No skin -->
+     $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/<%- cookies.skin %>.css">');
+    <% } else { %>
+        <!-- No skin -->
+        <link rel="stylesheet" type="text/css" href="/stylesheets/lighthouse.css" />
+    <% } %>
+</script>

@@ -188,14 +188,14 @@ app.locals.moods=[
     {name: "Interested", positive: true, emoji: "😮"}, //4
     {name: "Amused", positive: true, emoji: "😆"}, // 5
     {name: "Happy", positive: true, emoji: "😀"}, // 6
-    {name: "Serene", positive: true, emoji: "☺"}, // 7
+    {name: "Serene", positive: true, emoji: "😊"}, // 7
     {name: "Awestruck", positive: true, emoji: "🤩"}, // 8
     {name: "Sleepy", positive: true, emoji: "😴"}, // 9
     {name: "Afraid", positive: false, emoji: "😨"}, // 10
     {name: "Frustrated", positive: false, emoji: "😖"}, // 11
     {name: "Overwhelmed", positive: false, emoji: "😖"}, // 12
     {name: "Dazed", positive: false, emoji: "😵"}, // 13
-    {name: "Confused", positive: false, emoji: "😵"}, // 14
+    {name: "Confused", positive: false, emoji: "🤨"}, // 14
     {name: "Angry", positive: false, emoji: "😡"}, // 15
     {name: "Enraged", positive: false, emoji: "🤬"}, // 16
     {name: "Disgusted", positive: false, emoji: "🤢"}, // 17
@@ -206,6 +206,14 @@ app.locals.moods=[
     {name: "Annoyed", positive: false, emoji: "😒"}, // 22
     {name: "Tired", positive: false, emoji: "🥱"}, // 23
     {name: "Stressed", positive: false, emoji: "😖"}, // 24
+	{name: "Dissociated", positive: false, emoji: `😵`},
+	{name: "Blank", positive: false, emoji: "😐"},
+	{name: "Unsure", positive: false, emoji: "❓"},
+	{name: "Unwell", positive: false, emoji: "😷"},
+	{name: "Hurt", postive: false, emoji: "😢"},
+	{name: "Affectionate", positive: true, emoji: "💖"},
+	{name: "Unreal", positive: false, emoji: "😶‍🌫️"},
+	{name: "Distressed", positive: false, emoji: "😫"}
 ]
 app.locals.randomise= function (arr){
 	return arr[Math.floor(Math.random()*arr.length)];

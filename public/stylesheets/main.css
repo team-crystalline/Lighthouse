@@ -32,6 +32,9 @@ body{
     top: 6em;
     padding-top:1em;
 }
+td {
+    vertical-align: baseline;
+  }
 a{
     color: var(--col1);
     transition: 0.7s;

@@ -157,128 +157,168 @@ td{
             <% } %>
             <table>
                 <tbody>
-                  <tr>
+                  
                     <% if (session.chosenAlter.agetext) { %>
                          <% if (distill(session.chosenAlter.agetext)) { %>
-                            <td>Perceived Age:</td>
-                            <td><%= Buffer.from(session.chosenAlter.agetext, 'base64').toString() %></td>
+                            <tr><td>Perceived Age:</td>
+                            <td><%= Buffer.from(session.chosenAlter.agetext, 'base64').toString() %></td></tr>
                         <% } %>
                         <% } %>
                    
-                  </tr>
-                  <tr>
+                  
+                  
                     <% if (session.chosenAlter.birthday) { %>
                     <% if (distill(session.chosenAlter.birthday)) { %>
-                                                <td>Perceived Birthday:</td>
-                                                <td><%= Buffer.from(session.chosenAlter.birthday, 'base64').toString() %></td>
+                                                <tr><td>Perceived Birthday:</td>
+                                                <td><%= Buffer.from(session.chosenAlter.birthday, 'base64').toString() %></td></tr>
                                             <% } %>
                         <% } %>
                     
-                  </tr>
-                  <tr>
+                  
+                  
+                    <% if (session.chosenAlter.gender) { %>
+                    <% if (distill(session.chosenAlter.gender)) { %>
+                                                <tr><td>Gender:</td>
+                                                <td name="gender"><%= Buffer.from(session.chosenAlter.gender, 'base64').toString() %></td></tr>
+                                            <% } %>
+                        <% } %>
+                    
+                  
+                  
+                    <% if (session.chosenAlter.sexuality) { %>
+                    <% if (distill(session.chosenAlter.sexuality)) { %>
+                                                <tr><td>Sexuality:</td>
+                                                <td name="sexuality"><%= Buffer.from(session.chosenAlter.sexuality, 'base64').toString() %></td></tr>
+                                            <% } %>
+                        <% } %>
+                    
+                  
+                  
                     <% if (session.chosenAlter.first_noted) { %>
                         <% if (distill(session.chosenAlter.first_noted)) { %>
-                                                    <td>First Noted:</td>
-                                                    <td><%= Buffer.from(session.chosenAlter.first_noted, 'base64').toString() %></td>
+                                                    <tr><td>First Noted:</td>
+                                                    <td><%= Buffer.from(session.chosenAlter.first_noted, 'base64').toString() %></td></tr>
                                                 <% } %>
                         <% } %>
                     
-                  </tr>
-                  <tr>
+                  
+                  
                     
                     <% if (session.chosenAlter.type) { %>
                     <% if (distill(session.chosenAlter.type)) { %>
-                        <td>Type:</td>
-                        <td><%= session.chosenAlter.type %></td>
+                       <tr> <td>Type:</td>
+                        <td><%= session.chosenAlter.type %></td></tr>
                     <% } %>
                         <% } %>
                     
-                  </tr>
-                  <tr>
+                  
+                  
+                    
+                    <% if (session.chosenAlter.source) { %>
+                    <% if (distill(session.chosenAlter.source)) { %>
+                        <tr><td>Source:</td>
+                        <td><%= Buffer.from(session.chosenAlter.source, 'base64').toString() %></td></tr>
+                    <% } %>
+                        <% } %>
+                    
+                  
+                  
                     
                     <% if (session.chosenAlter.triggers_pos) { %>
                     <% if (distill(session.chosenAlter.triggers_pos)) { %>
-                        <td>Positive Triggers:</td>
-                        <td><%= Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %></td>
+                        <tr><td>Positive Triggers:</td>
+                        <td><%= Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     <% if (session.chosenAlter.triggers_neg) { %>
                     <% if (distill(session.chosenAlter.triggers_neg)) { %>
-                        <td>Negative Triggers:</td>
-                        <td><%= Buffer.from(session.chosenAlter.triggers_neg, 'base64').toString() %></td>
+                        <tr><td>Negative Triggers:</td>
+                        <td><%= Buffer.from(session.chosenAlter.triggers_neg, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     <% if (session.chosenAlter.likes) { %>
                     <% if (distill(session.chosenAlter.likes)) { %>
-                        <td>Likes:</td>
-                        <td><%= Buffer.from(session.chosenAlter.likes, 'base64').toString() %></td>
+                        <tr><td>Likes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.likes, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     <% if (session.chosenAlter.dislikes) { %>
                     <% if (distill(session.chosenAlter.dislikes)) { %>
-                        <td>Dislikes:</td>
-                        <td><%= Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %></td>
+                        <tr><td>Dislikes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.dislikes, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     
                     <% if (session.chosenAlter.job) { %>
                     <% if (distill(session.chosenAlter.job)) { %>
-                        <td>Internal Job:</td>
-                        <td><%= Buffer.from(session.chosenAlter.job, 'base64').toString() %></td>
+                        <tr><td>Internal Job:</td>
+                        <td><%= Buffer.from(session.chosenAlter.job, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     
                     <% if (session.chosenAlter.safe_place) { %>
                     <% if (distill(session.chosenAlter.safe_place)) { %>
-                        <td>Feels safest when:</td>
-                        <td><%= Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %></td>
+                        <tr><td>Feels safest when:</td>
+                        <td><%= Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     
                     <% if (session.chosenAlter.wants) { %>
                     <% if (distill(session.chosenAlter.wants)) { %>
-                        <td>Wants/Wishes:</td>
-                        <td><%= Buffer.from(session.chosenAlter.wants, 'base64').toString() %></td>
+                        <tr><td>Wants/Wishes:</td>
+                        <td><%= Buffer.from(session.chosenAlter.wants, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>
+                  
+                  
                     <% if (session.chosenAlter.acc) { %>
                     <% if (distill(session.chosenAlter.acc)) { %>
-                        <td>Needs accommodated for:</td>
-                        <td><%= Buffer.from(session.chosenAlter.acc, 'base64').toString() %></td>
+                        <tr><td>Needs accommodated for:</td>
+                        <td><%= Buffer.from(session.chosenAlter.acc, 'base64').toString() %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
-                  <tr>                    
+                  
+                                      
                     <% if (session.chosenAlter.notes) { %>
                     <% if (distill(session.chosenAlter.notes)) { %>
-                        <td>Other Notes:</td>
-                        <td><%= Buffer.from(session.chosenAlter.notes, 'base64').toString() %></td>
+                        <tr><td>Other Notes:</td>
+                        <td><%- (Buffer.from(session.chosenAlter.notes, 'base64').toString()).replace(/\n/g, "<br>") %></td></tr>
+                    <% } %>
+                        <% } %>
+                    <% if (session.chosenAlter.fronttells) { %>
+                    <% if (distill(session.chosenAlter.fronttells)) { %>
+                        <tr><td>Might be fronting if:</td>
+                        <td><%- (Buffer.from(session.chosenAlter.fronttells, 'base64').toString()).replace(/\n/g, "<br>") %></td></tr>
+                    <% } %>
+                        <% } %>
+                    <% if (session.chosenAlter.relationships) { %>
+                    <% if (distill(session.chosenAlter.relationships)) { %>
+                        <tr><td>Relationships with other <%- pluralize(session.alter_term) %>:</td>
+                        <td><%- (Buffer.from(session.chosenAlter.relationships, 'base64').toString()).replace(/\n/g, "<br>") %></td></tr>
                     <% } %>
                         <% } %>
 
-                  </tr>
+                  
                 </tbody>
                 </table>
                 <a title="Edit <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>" href="/edit-alter/<%= session.chosenAlter.alt_id %>" class="editbtn">Edit <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %></a>
@@ -332,6 +372,9 @@ td{
         $("#moodButton").click(function(){
             $( "#moodForm" ).show("fast");
         });
+
+
+
 
     </script>
 </body>

@@ -39,17 +39,25 @@
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <h2>Edit <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %></h2>
+            <p>The only required response is <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s name. Feel free to leave any other questions blank.</p>
             <form method="post">
                 <div class="column">
                 <label for="name" >Name</label>
                 <input type="text" name="name" required <% if (session.chosenAlter.name){ %> value="<%= Buffer.from(session.chosenAlter.name, "base64").toString() %>" <% } %>>
                 <label for="pronouns" >Pronouns</label>
                 <input type="text" name="pronouns" <% if (session.chosenAlter.pronouns){ %> value="<%= Buffer.from(session.chosenAlter.pronouns, "base64").toString() %>" <% } %>>
+                <label for="gender" >Gender</label>
+                <input type="text" name="gender" <% if (session.chosenAlter.gender){ %> value="<%= Buffer.from(session.chosenAlter.gender, "base64").toString() %>" <% } %>>
+                <label for="sexuality" >Sexuality</label>
+                <input type="text" name="sexuality" <% if (session.chosenAlter.sexuality){ %> value="<%= Buffer.from(session.chosenAlter.sexuality, "base64").toString() %>" <% } %>>
                 <label for="age" >Perceived Age</label>
                 <input type="text" name="age" <% if (session.chosenAlter.agetext){ %> value="<%= Buffer.from(session.chosenAlter.agetext, "base64").toString() %>" <% } %>>
                 <label for="type" id="typeinfo"><%= capitalise(session.alter_term) %> Type</label>
                 <input type="text" name="type" value="<%= session.chosenAlter.type %>">
-                <span style="display:block; margin-bottom:.5em">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
+                <span style="display:block; margin-bottom:2em; margin-top:-1.5em;">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
+                <label for="source">If introject, source:</label>
+                <input type="text" name="source" <% if (session.chosenAlter.source){ %> value="<%= Buffer.from(session.chosenAlter.source, "base64").toString() %>" <% } %>>
+                
                 <label for="postr">Positive Triggers</label>       
                 <textarea name="postr"><% if (session.chosenAlter.triggers_pos !== null) { %><%- Buffer.from(session.chosenAlter.triggers_pos, 'base64').toString() %><% } %></textarea>    
                 <label for="negtr">Negative Triggers</label>       
@@ -64,14 +72,18 @@
                 <input type="text" name="birthday" value="<% if (session.chosenAlter.birthday !== null) { %><%- Buffer.from(session.chosenAlter.birthday, 'base64').toString() %><% } %>">
                 <label for="firstnoted">General date of when <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> might've come about:</label>
                 <input type="text" name="firstnoted" value="<% if (session.chosenAlter.first_noted !== null) { %><%- Buffer.from(session.chosenAlter.first_noted, 'base64').toString() %><% } %>">
-                <label for="internalJob">A brief summary of what <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> does for the <%= session.system_term %>:</label>
+                <label for="internalJob">Job: (e.g.: Hosting, Self Care, etc)</label>
                 <input type="text" name="internalJob" value="<% if (session.chosenAlter.job !== null) { %><%- Buffer.from(session.chosenAlter.job, 'base64').toString() %><% } %>">
+                <label for="fronttells">What helps to figure out when <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> is fronting or conscious?</label>       
+                <textarea name="fronttells"><% if (session.chosenAlter.fronttells !== null) { %><%- Buffer.from(session.chosenAlter.fronttells, 'base64').toString() %><% } %></textarea>
                 <label for="safety"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> feels safest when...</label>       
                 <textarea name="safety"><% if (session.chosenAlter.safe_place !== null) { %><%- Buffer.from(session.chosenAlter.safe_place, 'base64').toString() %><% } %></textarea>
                 <label for="acc"><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> would like accommodation from the <%= session.system_term %> for... (e.g.: Emotional regulation, memory loss)</label>       
                 <textarea name="acc"><% if (session.chosenAlter.acc !== null) { %><%- Buffer.from(session.chosenAlter.acc, 'base64').toString() %><% } %></textarea>
                 <label for="wish">A few things <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> wishes for (e.g. "to feel safer internally", "to communicate with other parts")</label>       
                 <textarea name="wish"><% if (session.chosenAlter.wants !== null) { %><%- Buffer.from(session.chosenAlter.wants, 'base64').toString() %><% } %></textarea>
+                <label for="relationships">What are <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s relationships to other <%- pluralize(session.alter_term) %>?</label>       
+                <textarea name="relationships"><% if (session.chosenAlter.relationships !== null) { %><%- Buffer.from(session.chosenAlter.relationships, 'base64').toString() %><% } %></textarea>
                 <label for="notes">Other notes</label>       
                 <textarea name="notes"><% if (session.chosenAlter.notes !== null) { %><%- Buffer.from(session.chosenAlter.notes, 'base64').toString() %><% } %></textarea>
                 <label for="imgurl">Image URL (Image upload coming eventually...)</label>

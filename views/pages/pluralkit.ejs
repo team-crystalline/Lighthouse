@@ -17,7 +17,8 @@
             <h2>Import from Pluralkit</h2>
             <p>Use Pluralkit? We can fetch your <%- pluralize(session.alter_term) %> and add them to your account. Importing will create a new <%- session.system_term %> that can be renamed on the <a href="/system">My <%- capitalise(session.system_term) %></a> page</a>.</p>
             <p><em>Don't know your system ID?</em> Direct message "pk;s" to Pluralkit, or type "pk;s" in a channel that Pluralkit can view.</p>
-            <p>Adding your Pluralkit token is completely optional. Adding your token allows Lighthouse to fetch your private alters as well. We do not store this token. <strong>Do not share your token with anyone you do not trust.</strong></p>
+            <p>Adding your Pluralkit token is completely optional. Adding your token allows Lighthouse to fetch your private <%- pluralize(session.alter_term) %> as well. We do not store this token. <strong>Do not share your token with anyone you do not trust.</strong></p>
+            <p>For technical reasons, you can import a maximum of <strong>100 <%- pluralize(session.alter_term) %></strong> at a time. After that, Lighthouse seems to run into errors. We're investigating a fix to this currently.</p>
             <form>
                 <label for="pid">Pluralkit system ID</label>
                 
@@ -32,6 +33,7 @@
 
                 </ul>
                 <span class="linkbutton" id="checkall">Select All</span><br>
+                <p><small>If there are more than 100 <%- pluralize(session.alter_term) %> in this list, the first 100 will be selected. <%- capitalise(pluralize(session.alter_term))%> selected: <strong><span id="checkCount">0</span></strong></small></p>
                 <label for="sysLoc">These <%- pluralize(session.alter_term) %> will be imported into: </label>
                 <select name="sysLoc">
                     <option value="new" selected>Create New <%- capitalise(session.system_term) %></option>
@@ -40,7 +42,7 @@
                     <%}%>
                 </select>
                 
-                <input type="submit" name="fetch" value="Import" id="import">
+                <input type="submit" name="fetch" value="Import System" id="import">
                 <p class="splash">"Create New <%- capitalise(session.system_term) %>" will create a new <%- session.system_term %> called "Imported from Pluralkit". If you already have a <%- session.system_term %> named that, 3 random numbers will be appended to the end to prevent confusion. Press "rename" next to these <%- pluralize(session.system_term) %>' names on the "My <%- capitalise(session.system_term) %>" page to rename them to whatever you like.</p>
             </form>
         </section>
@@ -48,13 +50,24 @@
     <%- include ("../partials/footer.ejs") %>
     </body>
     <script>
+        // var checkedCount= $('input:checkbox:checked').length;
         $(document).ready(function(){
             $("#checkall").click(function() {
                     var cblist = $("input[name=alterChoice]");
                     // cblist.attr("checked", !cblist.attr("checked"));\
                     cblist.click()
                 }); 
+                
             });
+        
+        function boxCount(){
+            $("#checkCount").html($('input[name=alterChoice]:checked').length);
+            $('input[name=alterChoice]').on('change', function (e) {
+            if ($('input[name=alterChoice]:checked').length > 100) {
+                $(this).prop('checked', false);
+            }
+        });
+        }
 
         async function getPK(){
             event.preventDefault();
@@ -101,7 +114,7 @@
                     birthday: sysInfo[i].birthday
                 });
                     $('#roster')
-                    .append($(`<li> <input type="checkbox" name="alterChoice" value=${alterInfo.replace(/,(?!["{}[\]])/g, "")}><label for="alterChoice"><img src="${sysInfo[i].avatar_url}" class="vtinyimg"> ${sysInfo[i].display_name || sysInfo[i].name}</label></li>`)
+                    .append($(`<li> <input type="checkbox" name="alterChoice" value=${alterInfo.replace(/,(?!["{}[\]])/g, "")} onchange="boxCount()"><label for="alterChoice"><img src="${sysInfo[i].avatar_url}" class="vtinyimg"> ${sysInfo[i].display_name || sysInfo[i].name}</label></li>`)
                         .hide()
                         .fadeIn(500)
                     );

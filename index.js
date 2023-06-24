@@ -138,6 +138,13 @@ app.use(flash());
 app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 
   app.use(cookieParser());
+  app.use(function (req, res, next) {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	next();
+	});
 app.locals.editorColours=[
 	{color: 'red',label: 'Red'},
 	{color: '#ff691f',label: 'Orange'},
@@ -405,6 +412,7 @@ app.locals.pluralize= pluralize;
 		res.render(`pages/pluralkit`, { session: req.session, splash:splash, cookies:req.cookies, lang:req.acceptsLanguages()[0] });
 	}
   });
+
 
   app.get('/changelog', (req, res) => {
 	
@@ -771,7 +779,7 @@ var sysArr;
   app.get("/edit-alter/:id", (req, res, next)=>{
 
 	if (isLoggedIn(req)){
-		client.query({text: "SELECT alters.pronouns, alters.name, alters.alt_id, alters.sys_id, systems.sys_alias,alters.triggers_pos, alters.triggers_neg,alters.likes,alters.dislikes,alters.job,alters.safe_place,alters.wants,alters.acc,alters.notes,alters.type,alters.img_url,alters.agetext, alters.birthday,alters.first_noted FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+		client.query({text: "SELECT alters.* FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1530,7 +1538,7 @@ var sysArr;
 		// Make sure to base64 all information!
 
 		if (isLoggedIn(req)){
-			client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17 WHERE alt_id=$1",values: [
+			client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22 WHERE alt_id=$1",values: [
 				`${req.params.id}`,
 				`'${Buffer.from(req.body.name).toString('base64')}'`,
 				`'${Buffer.from(req.body.postr).toString('base64')}'`,
@@ -1545,10 +1553,14 @@ var sysArr;
 				`'${Buffer.from(req.body.notes).toString('base64')}'`,
 				`'${Buffer.from(req.body.imgurl).toString('base64')}'`,
 				req.body.type,
-				// `'${Buffer.from(req.body.type).toString('base64')}'`,
 				`'${Buffer.from(req.body.pronouns).toString('base64')}'`,
 				`'${Buffer.from(req.body.birthday).toString('base64')}'`,
-				`'${Buffer.from(req.body.firstnoted).toString('base64')}'`
+				`'${Buffer.from(req.body.firstnoted).toString('base64')}'`,
+				`'${Buffer.from(req.body.gender).toString('base64')}'`,
+				`'${Buffer.from(req.body.sexuality).toString('base64')}'`,
+				`'${Buffer.from(req.body.source).toString('base64')}'`,
+				`'${Buffer.from(req.body.fronttells).toString('base64')}'`,
+				`'${Buffer.from(req.body.relationships).toString('base64')}'`,
 			]}, (err, result) => {
 				if (err) {
 				  console.log(err.stack);

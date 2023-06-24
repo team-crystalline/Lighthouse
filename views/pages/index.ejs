@@ -57,7 +57,10 @@
             <img src="/img/svg/ptsd-support.svg" class="vtinyimg"  style="display:inline-block; margin:0 auto; float: left;"><p>June is PTSD awareness month. <a href="/glossary#Post-Traumatic Stress Disorder (PTSD)">Read here.</a></p>
             <% } %>
             <% if (((new Date().getMonth()+1)== 3) && (new Date().getDate()) == 5) { %>
-                <img src="/img/svg/ptsd-support.svg" class="vtinyimg"  style="display:inline-block; margin:0 auto; float: left;"><p>Today is DID awareness day.<a href="/glossary#Dissociative Identity Disorder (DID)">Read here.</a></p>
+                <img src="/img/svg/ptsd-support.svg" class="vtinyimg"  style="display:inline-block; margin:0 auto; float: left;"><p>Today is DID Awareness Day.<a href="/glossary#Dissociative Identity Disorder (DID)">Read here.</a></p>
+                <% } %>
+            <% if (((new Date().getMonth()+1)== 7) && (new Date().getDate()) == 15) { %>
+                <p>👥 Today is Plural Pride Day!<a href="/glossary#Plurality">Read here.</a></p>
                 <% } %>
                 <% if (locals.messages.flash) { %>
                     <div class="splash"><%- locals.messages.flash %></div>

@@ -471,7 +471,7 @@ app.locals.pluralize= pluralize;
 		}
 		
 		
-	}
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	
 });
 app.get('/safety-plan/edit', (req, res) => {
@@ -534,11 +534,15 @@ app.get('/safety-plan/edit', (req, res) => {
 		  }
 		});
 		
-	}
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	
 });
   app.get('/DES', (req, res) => {
-	res.render(`pages/des`, { session: req.session, splash:splash, cookies:req.cookies});
+	if (isLoggedIn(req)){
+		res.render(`pages/des`, { session: req.session, splash:splash, cookies:req.cookies});
+	splash=null;
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	
 });
 
   app.get('/worksheets', (req, res) => {
@@ -1235,7 +1239,7 @@ var sysArr;
 			  }
 			});
 			
-		}
+		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 		
 	});
 

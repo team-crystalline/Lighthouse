@@ -1,21 +1,29 @@
 :root{
-    --col1: #b1dbff;
-    --col2: #5d92d6;
+    --col1: #aad1f1;
+    --col2: #3178d6;
     --col3: #f09b1d;
     --col4: #D93425;
     --col5: #271e2e;
 	--col6: #000f25;
     --col7: #2d283a;
-    --col8: #04aac4;
+    --col8: #33c8df;
     color-scheme: dark;
+    --ck-color-base-border: #383386;
+    --ck-color-toolbar-background: #383386;
+    --ck-color-base-background: #33273d;
+    --ck-color-tooltip-background: var(--col3);
+    --ck-color-split-button-hover-background: var(--col2);
+    --ck-color-button-default-hover-background: var(--col2);
+    --ck-color-button-default-active-background: var(--col2);
+    --ck-color-button-on-hover-background: var(--col2);
 }
 
 #wrapper{
 
     background: rgba(0, 0, 0, 0.5);
 }
-*{
-    color: ghostwhite;
+* :not(.systembutton > span){
+    color: rgb(222, 222, 247);
 }
 html{
     background-image: url("../img/night-lighthouse.png");
@@ -34,13 +42,19 @@ html{
 h1, h2, h3, h4{
     color: var(--col4);
 }
-a:visited{
+a{
+    color:var(--col1);
+}
+a:visited :not(.editbtn){
     color: var(--col1);
 }
-a:hover{
-    color: var(--col3);
+a:hover :not(.grid-sm > a, .systembutton >span){
+    color: var(--col4);
 }
-
+.grid-sm > a:hover, .systembutton >span:hover {
+    color: var(--col6);
+    transition: .5s;
+}
 .splash{
     width: 30vw;
     /* background: var(--col2); */
@@ -78,6 +92,40 @@ a:hover{
 button, button > *{
     color: var(--col2);
 }
-#wrapper a, #wrapper button {
-    color: var(--col6);
+#wrapper button{
+    color: var(--col1)
 }
+
+/* .ck.ck-icon.ck-icon_inherit-color :not([fill]){
+    fill: black;
+}
+.ck.ck-dropdown .ck-button.ck-dropdown__button .ck-button__label{
+    color: black;
+} */
+.ck.ck-toolbar > .ck-toolbar__items{
+    background: var(--col7);
+}
+.ck.ck-editor__main > .ck-editor__editable:not(.ck-focused){
+background: var(--col7);
+}
+.editbtn{
+    color: rgb(92, 172, 112) !important; 
+    background: rgb(41, 82, 48);
+}
+.editbtn:hover{
+    color: rgb(123, 216, 47) !important;
+}
+.deletebtn{
+    color: rgb(199, 124, 124);
+    background: rgb(94, 32, 32)
+}
+#myTopnav> *:hover, .dropbtn:hover, .dropdown-content a:hover, .ck .ck-button .ck-off:hover{
+    color: var(--col6) !important;
+}
+
+dt{
+    color: var(--col2) !important; 
+}
+.importantterm{
+    color: var(--col3) !important;
+ }

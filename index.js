@@ -1495,7 +1495,6 @@ var sysArr;
 					}
 				});
 			}
-			// res.status(200).redirect(req.get('referer'));
 		  }
 		});
 	});

@@ -564,3 +564,6 @@ img.emoji {
     top:0;
     left:0;
  }
+ .importantterm{
+    color: var(--col5);
+ }

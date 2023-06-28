@@ -8,6 +8,7 @@
             @import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Lexend:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Slab:wght@500&display=swap');
             html{
                 background: transparent;
+                zoom: 0.55;
             }
             *{
                 font-family: "verdana",sans-serif;
@@ -87,7 +88,7 @@ function getOrdinal(n) {
     <body>
         <section id="wrapper">
             
-          <h1><img src="https://www.writelighthouse.com/img/logo.png" style="width: 2em;float:left;">Safety Plan for <%- user.name %></h1>
+          <h1><img src="https://www.writelighthouse.com/img/logo.png" style="width: 2em;float:left;">Safety Plan for <%- (user.name).replace(/%20/g, " ") %></h1>
           <p>Below is your safety plan as of <strong><%- dayNames[new Date().getDay()] %>, <%- monthNames[new Date().getMonth()] %> <%- new Date().getDate() %><%- getOrdinal(new Date().getDate()) %> <%- new Date().getFullYear() %></strong>. Generated on Lighthouse.<br><a href="https://www.writelighthouse.com/" target="_blank"><sup>www.writelighthouse.com</sup></a></p>
           <hr>
           <h2>Warning signs of a crisis</h2>
@@ -99,7 +100,7 @@ function getOrdinal(n) {
           <p><%- (user.distractions).replace(/\n/g, "<br>") %></p>
           <h2>Keeping yourself safe</h2>
           <p>Here's how you can keep yourself safe, and prevent yourself from acting on any self-destructive behaviours.</p>
-          <p><%- (user.safepeople).replace(/\n/g, "<br>") %></p>
+          <p><%- (user.keepsafe).replace(/\n/g, "<br>") %></p>
           <h2>Grounding</h2>
           <p>Here's how you can keep yourself grounded in the present.</p>
           <div class="lhprovided">

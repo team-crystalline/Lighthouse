@@ -110,17 +110,17 @@
   const controller = new AbortController();
   const { signal } = controller;
 
-//     function deleteWarn(title){
-//       if (confirm(`You're about to delete ${title}. Is this ok?`)){
-//         console.log("Delete Rule.");
-//       } else {
-//         event.preventDefault();
-//       }
-//     }
+    function deleteWarn(title){
+      if (confirm(`You're about to delete ${title}. Is this ok?`)){
+        console.log("Delete Rule.");
+      } else {
+        event.preventDefault();
+      }
+    }
 
-//     signal.addEventListener("abort", () => {
-//   console.log(signal.aborted);
-// });
+    signal.addEventListener("abort", () => {
+  console.log(signal.aborted);
+});
 
 async function fetchPosts(){
   $("#sysList").empty();
@@ -150,8 +150,11 @@ async function fetchPosts(){
             for (i in sysInfo.isPinned){
                           var bodyArr= (sysInfo.isPinned[i].body).replace(/\r/gi, '').split("\n").filter(function() { return true; });
                           var postStr= new String();
+                          console.log(sysInfo.isPinned[i]);
                           if (sysInfo.isPinned[i].title){ 
-                            postStr += `<h2><i style="color:var(--col4)" class="fa fa-thumb-tack" aria-hidden="true" title="Pinned Post"></i> ${sysInfo.isPinned[i].title}</h2> <a title="Edit ${sysInfo.isPinned[i].title}" href="/comm/${sysInfo.isPinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${sysInfo.isPinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${sysInfo.isPinned[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" title="Unpin this post from the top of your journal" class="fa fa-thumb-tack" aria-hidden="true"onclick="pinPosts('${sysInfo.isPinned[i].id}')"></i><p><sub>Posted ${(sysInfo.isPinned[i].created_on).substr(0,10)}</sub></p>`
+                            postStr += `<h2><i style="color:var(--col4)" class="fa fa-thumb-tack" aria-hidden="true" title="Pinned Post"></i> ${sysInfo.isPinned[i].title}</h2> <a title="Edit ${sysInfo.isPinned[i].title}" href="/comm/${sysInfo.isPinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${sysInfo.isPinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${sysInfo.isPinned[i].title ? sysInfo.isPinned[i].title : "this untitled post"}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" title="Unpin this post from the top of your journal" class="fa fa-thumb-tack" aria-hidden="true"onclick="pinPosts('${sysInfo.isPinned[i].id}')"></i><p><sub>Posted ${(sysInfo.isPinned[i].created_on).substr(0,10)}</sub></p>`
+                          } else {
+                            postStr += `<h2><i style="color:var(--col4)" class="fa fa-thumb-tack" aria-hidden="true" title="Pinned Post"></i></h2> <a title="Edit ${sysInfo.isPinned[i].title}" href="/comm/${sysInfo.isPinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${sysInfo.isPinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${sysInfo.isPinned[i].title ? sysInfo.isPinned[i].title : "this untitled post"}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" title="Unpin this post from the top of your journal" class="fa fa-thumb-tack" aria-hidden="true"onclick="pinPosts('${sysInfo.isPinned[i].id}')"></i><p><sub>Posted ${(sysInfo.isPinned[i].created_on).substr(0,10)}</sub></p>`
                           }
                           for (i in bodyArr){
                             postStr += `<p>${bodyArr[i]}</p>`;
@@ -166,6 +169,8 @@ async function fetchPosts(){
                 var postStr= new String();
                 if (sysInfo.nonPinned[i].title){ 
                   postStr += `<h2>${sysInfo.nonPinned[i].title}</h2> <a title="Edit ${sysInfo.nonPinned[i].title}" href="/comm/${sysInfo.nonPinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <form method="post" style="display: inline;"><button type="submit" name="${sysInfo.nonPinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${sysInfo.nonPinned[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" class="fa fa-thumb-tack" title="Pin this post to the top of your journal" aria-hidden="true" onclick="pinPosts('${sysInfo.nonPinned[i].id}')"></i><p><sub>Posted ${(sysInfo.nonPinned[i].created_on).substr(0,10)}</sub></p>`
+                } else {
+                  postStr += `<a title="Edit ${sysInfo.nonPinned[i].title}" href="/comm/${sysInfo.nonPinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a> <form method="post" style="display: inline;"><button type="submit" name="${sysInfo.nonPinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${sysInfo.nonPinned[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" class="fa fa-thumb-tack" title="Pin this post to the top of your journal" aria-hidden="true" onclick="pinPosts('${sysInfo.nonPinned[i].id}')"></i><p><sub>Posted ${(sysInfo.nonPinned[i].created_on).substr(0,10)}</sub></p>`
                 }
                 for (i in bodyArr){
                   postStr += `<p>${bodyArr[i]}</p>`;

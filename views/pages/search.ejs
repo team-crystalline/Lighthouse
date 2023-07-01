@@ -11,7 +11,7 @@
             <% } %>
             <section>
                 <h2><%= capitalise(session.alter_term) %> Search</h2>
-                <form>
+                <form autocomplete="off" autocapitalize="off">
                     <label for="options">Search for <%= pluralize(session.alter_term) %> by...</label>
                     <select name="options" id="options">
                         <option value="name">Name</option>

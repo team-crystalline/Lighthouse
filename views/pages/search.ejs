@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                <h2><%= capitalise(session.alter_term) %> Search</h2>
+                <form>
+                    <label for="options">Search for <%= pluralize(session.alter_term) %> by...</label>
+                    <select name="options" id="options">
+                        <option value="name">Name</option>
+                        <option value="sys_alias">System Alias</option>
+                        <option value="pronouns">Pronouns</option>
+                        <option value="type">Type</option>
+                        <option value="source">Source (if introject)</option>
+                        <option value="any">Any fields</option>
+                    </select>
+                    <label for="query">Query</label>
+                    <input type="text" name="query" id="query">
+                    <input type="submit" value="Search" id="search" autocomplete="off" autocapitalize="off">
+                </form>
+
+            </section>
+            <hr>
+            
+            <section>
+                <span id="resNum"></span>
+                <table style="width: 90%;">
+                    <thead style="text-align: left;">
+                      <tr id="headerRes">
+                      </tr>
+                    </thead>
+                    <tbody id="searchRes">
+                    </tbody>
+                    </table>
+                    <div id="wait" style="margin: 0 auto; text-align: center;"></div>
+            </section>
+
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    <script>
+        $(document).ready(function(){
+            $("#search").click(async function(){
+                event.preventDefault();
+                $("#headerRes").empty();
+                $("#searchRes").empty();
+                $("#resNum").empty();
+                if ($("#query").val().length == 0 ) return;
+                let query= ($("#query").val()).toLowerCase();
+                let options= $('#options').find(":selected").val();
+
+                $("#wait").html(`<img src="/img/svg/bubbles.svg" class="tinyimg">`);
+                let results= await fetchData().then(res=>{
+                    $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th>`);
+                    var searchCount = 0;
+                    if (options == "any"){
+
+                        // Look in all keys.
+                        for (i in res.search){
+                            for (n in res.search[i]){
+                                if (res.search[i][n] !== null){
+                                   if (res.search[i][n].toLowerCase().includes(query)){
+                                    searchCount++;
+                                $("#searchRes").append(`<tr>
+                                    <td><a href="/alter/${res.search[i].alt_id}" target="_blank">${res.search[i].name}</a></td>
+                                    <td><a href="/system/${res.search[i].sys_id}" target="_blank">${res.search[i].sys_alias}</a></td>
+                                    <td>${res.search[i].pronouns || "N/A"}</td>
+                                    <td>${res.search[i].type || "N/A"}</td>
+                                    </tr>`);
+                                    break;
+                                } 
+                                }
+                                
+                            }
+                        }
+
+                    } else {
+                        // Just look in options.
+                        for (i in res.search){
+                        if (res.search[i][options]){
+                            if ((res.search[i][options]).toLowerCase().includes(query)){
+                                searchCount++;
+                                $("#searchRes").append(`<tr>
+                                    <td><a href="/alter/${res.search[i].alt_id}" target="_blank">${res.search[i].name}</a></td>
+                                    <td><a href="/system/${res.search[i].sys_id}" target="_blank">${res.search[i].sys_alias}</a></td>
+                                    <td>${res.search[i].pronouns || "N/A"}</td>
+                                    <td>${res.search[i].type || "N/A"}</td>
+                                    </tr>`);
+                            }                           
+                        }
+
+                    }
+                    }
+
+                    
+                    if (searchCount < 1){
+                        // No results.
+                        
+                        $("#searchRes").append(`<tr><td colspan="4" style="text-align: center;"><img src="/img/svg/noresults.svg" class="vtinyimg">Hmmm... Nothing found under "${query}".</td></tr>`);
+                    } else {
+                        $("#resNum").text(`${searchCount} ${searchCount == 1? 'result': 'results'} found`);
+                    }
+                });
+                $("#wait").empty();
+
+            });
+        });
+// i = 0;
+// $(document).ready(function(){
+//   $("input").keypress(function(){
+//     $("span").text(i += 1);
+//   });
+// });
+        async function fetchData(){
+            let response = await fetch(`/system-data`, { 
+            method: "GET",
+                headers: { 
+                  "api-lh-call": "api-lh-call",
+                  'Content-Type': 'application/json',
+                  "grab": "alters"
+                } 
+            });
+            let body = await response.text();
+            let resInfo = JSON.parse(body);
+            return resInfo;
+        }
+    </script>
+    </body>
+</html>

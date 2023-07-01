@@ -25,6 +25,7 @@
         <% } %>
             <h2>Your <%= capitalise(session.system_term) %></h2>
             <div class="grid-sm padLinks" style="margin: auto;text-align:center;line-height: 1;">
+              <a title= "<%= capitalise(session.alter_term) %>Search" href="/search"><%= capitalise(session.alter_term) %> Search</a>
               <a title= "<%= capitalise(session.system_term) %> Rules" href="/rules"><%= capitalise(session.system_term) %> Rules</a>
               <a title="Your Inner World" href="/inner-world">Inner World</a>
               <a title="Your <%= capitalise(session.system_term) %>'s wants, needs, and wishes" href="/wish">Wants & Wishes</a>
@@ -112,7 +113,6 @@
 
     function deleteWarn(title){
       if (confirm(`You're about to delete ${title}. Is this ok?`)){
-        console.log("Delete Rule.");
       } else {
         event.preventDefault();
       }
@@ -131,12 +131,12 @@ async function fetchPosts(){
     method: "GET",
                 headers: { 
                   "api-lh-call": "api-lh-call",
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  "grab": "comm-posts"
                 } 
             });
             let body = await response.text();
             let sysInfo = JSON.parse(body);
-            console.log(sysInfo)
             // sysArr, nonPinned, isPinned
             $("#Wait").empty();
             $("#WaitSys").empty();
@@ -150,7 +150,6 @@ async function fetchPosts(){
             for (i in sysInfo.isPinned){
                           var bodyArr= (sysInfo.isPinned[i].body).replace(/\r/gi, '').split("\n").filter(function() { return true; });
                           var postStr= new String();
-                          console.log(sysInfo.isPinned[i]);
                           if (sysInfo.isPinned[i].title){ 
                             postStr += `<h2><i style="color:var(--col4)" class="fa fa-thumb-tack" aria-hidden="true" title="Pinned Post"></i> ${sysInfo.isPinned[i].title}</h2> <a title="Edit ${sysInfo.isPinned[i].title}" href="/comm/${sysInfo.isPinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${sysInfo.isPinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${sysInfo.isPinned[i].title ? sysInfo.isPinned[i].title : "this untitled post"}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" title="Unpin this post from the top of your journal" class="fa fa-thumb-tack" aria-hidden="true"onclick="pinPosts('${sysInfo.isPinned[i].id}')"></i><p><sub>Posted ${(sysInfo.isPinned[i].created_on).substr(0,10)}</sub></p>`
                           } else {
@@ -187,7 +186,8 @@ async function pinPosts(pID){
                 method: "PUT",
                 headers: { 
                   "api-lh-call": "api-lh-call",
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  "grab": "comm-posts"
                 }, 
                 body: JSON.stringify({
                   "edit": "pin",

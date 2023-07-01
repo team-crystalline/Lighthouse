@@ -565,6 +565,15 @@ app.get('/safety-plan/edit', (req, res) => {
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	
   });
+
+  app.get('/search', (req, res) => {
+	if (isLoggedIn(req)){
+		res.render(`pages/search`, { session: req.session, splash:splash, cookies:req.cookies });
+	splash=null;
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	
+  });
+
   app.get('/mod', (req, res) => {
 	if (isLoggedIn(req)){
 		if (req.session.is_dev){
@@ -668,8 +677,9 @@ app.get('/thank-you', (req, res, next) => {
 
   app.get('/about', (req, res, next) => {
       res.render(`pages/about`, { session: req.session, splash:splash, cookies:req.cookies });
-      splash=null;
   });
+
+
   app.get('/todos', (req, res, next) => {
       res.render(`pages/todos`, { session: req.session, splash:splash,cookies:req.cookies });
       splash=null;
@@ -876,43 +886,89 @@ app.get('/wish-d/:id', (req, res) => {
   app.get('/system-data', (req, res, next) => {
 	if (isLoggedIn(req)){
 		if (apiEyesOnly(req)){
-			client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
-	            if (err) {
-	              console.log(err.stack);
-				  req.flash("Our database hit an error.");
-	              res.status(400).json({code: 400});
-	          } else {
-				var sysArr = new Array();
-				for (i in result.rows){
-					sysArr.push({ sys_id: result.rows[i].sys_id, alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), icon:result.rows[i].icon})
-				}
-				client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=false ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
+			if (req.headers.grab== "comm-posts"){
+				// Communal Journal Posts.
+				client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
 					if (err) {
 					  console.log(err.stack);
 					  req.flash("Our database hit an error.");
 					  res.status(400).json({code: 400});
 				  } else {
-					var nonPinned= new Array();
-					for (i in cresult.rows){
-						nonPinned.push({ title: decryptWithAES(cresult.rows[i].title), body: decryptWithAES(cresult.rows[i].body),  created_on: cresult.rows[i].created_on, id: cresult.rows[i].id})
+					var sysArr = new Array();
+					for (i in result.rows){
+						sysArr.push({ sys_id: result.rows[i].sys_id, alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), icon:result.rows[i].icon})
 					}
-					client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=true ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, dresult) => {
+					client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=false ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
 						if (err) {
 						  console.log(err.stack);
 						  req.flash("Our database hit an error.");
 						  res.status(400).json({code: 400});
 					  } else {
-						var isPinned= new Array();
-					for (i in dresult.rows){
-						isPinned.push({ title: decryptWithAES(dresult.rows[i].title), body: decryptWithAES(dresult.rows[i].body),  created_on: dresult.rows[i].created_on, id: dresult.rows[i].id})
-					}
-						res.json({code: 200, sysArr: sysArr, nonPinned: nonPinned, isPinned: isPinned});
+						var nonPinned= new Array();
+						for (i in cresult.rows){
+							nonPinned.push({ title: decryptWithAES(cresult.rows[i].title), body: decryptWithAES(cresult.rows[i].body),  created_on: cresult.rows[i].created_on, id: cresult.rows[i].id})
+						}
+						client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=true ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, dresult) => {
+							if (err) {
+							  console.log(err.stack);
+							  req.flash("Our database hit an error.");
+							  res.status(400).json({code: 400});
+						  } else {
+							var isPinned= new Array();
+						for (i in dresult.rows){
+							isPinned.push({ title: decryptWithAES(dresult.rows[i].title), body: decryptWithAES(dresult.rows[i].body),  created_on: dresult.rows[i].created_on, id: dresult.rows[i].id})
+						}
+							res.json({code: 200, sysArr: sysArr, nonPinned: nonPinned, isPinned: isPinned});
+						  }
+						});
 					  }
 					});
 				  }
 				});
-			  }
-			});
+			} else if (req.headers.grab == "alters"){
+				// Fetch alters
+				client.query({text: "SELECT * FROM alters INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE systems.user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
+					if (err) {
+					  console.log(err.stack);
+					  req.flash("Our database hit an error.");
+					  res.status(400).json({code: 400});
+				  } else {
+					var resArr= new Array();
+					for (i in result.rows){
+						//        alt_id: "b439e292-e7a4-4faf-a337-359f1cf619d4", sys_id: "ae81f836-a17c-484b-a664-65a6557c9ad9", name: "'QWx0ZXIgMg=='", acc: null,age: "0",agetext: null,alt_id: "b439e292-e7a4-4faf-a337-359f1cf619d4",birthday: null,dislikes: null,first_noted: null,fronttells: null,gender: null,icon: null,img_url: "aHR0cHM6Ly93d3cud3JpdGVsaWdodGhvdXNlLmNvbS9pbWcvYXZhdGFyLWRlZmF1bHQuanBn",job: null,likes: null,name: "'QWx0ZXIgMg=='",notes: null,pronouns: null,relationships: null,safe_place: null,sexuality: null,source: null,sys_alias: "'TmV3IFN5cw=='",sys_id: "ae81f836-a17c-484b-a664-65a6557c9ad9",triggers_neg: null,triggers_pos: null,type: null,"type-OLD": null,user_id: "233f526a-bec6-44e9-9da5-3c6f60601a47",wants: null
+
+						resArr.push({
+							alt_id: result.rows[i].alt_id, 
+							sys_id: result.rows[i].sys_id, 
+							name: (result.rows[i].name != null ? Buffer.from(result.rows[i].name, "base64").toString() : null), 
+							acc: (result.rows[i].acc != null ? Buffer.from(result.rows[i].acc, "base64").toString() : null), 
+							agetext: (result.rows[i].agetext != null ? Buffer.from(result.rows[i].agetext, "base64").toString() : null), 
+							birthday: (result.rows[i].birthday != null ? Buffer.from(result.rows[i].birthday, "base64").toString() : null), 
+							dislikes: (result.rows[i].dislikes != null ? Buffer.from(result.rows[i].dislikes, "base64").toString() : null), 
+							first_noted: (result.rows[i].first_noted != null ? Buffer.from(result.rows[i].first_noted, "base64").toString() : null), 
+							fronttells: (result.rows[i].fronttells != null ? Buffer.from(result.rows[i].fronttells, "base64").toString() : null), 
+							gender:(result.rows[i].gender != null ? Buffer.from(result.rows[i].gender, "base64").toString() : null), 
+							img_url: (result.rows[i].img_url != null ? Buffer.from(result.rows[i].img_url, "base64").toString() : null), 
+							job: (result.rows[i].job != null ? Buffer.from(result.rows[i].job, "base64").toString() : null), 
+							likes: (result.rows[i].likes != null ? Buffer.from(result.rows[i].likes, "base64").toString() : null), 
+							sexuality:(result.rows[i].sexuality != null ? Buffer.from(result.rows[i].sexuality, "base64").toString() : null), 
+							source: (result.rows[i].source != null ? Buffer.from(result.rows[i].source, "base64").toString() : null), 
+							sys_alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), 
+							triggers_neg: (result.rows[i].triggers_neg != null ? Buffer.from(result.rows[i].triggers_neg, "base64").toString() : null), 
+							triggers_pos: (result.rows[i].triggers_pos != null ? Buffer.from(result.rows[i].triggers_pos, "base64").toString() : null), 
+							type: result.rows[i].type, 
+							wants: (result.rows[i].wants != null ? Buffer.from(result.rows[i].wants, "base64").toString() : null), 
+							pronouns: (result.rows[i].pronouns != null ? Buffer.from(result.rows[i].pronouns,"base64").toString() : null),
+							relationships: (result.rows[i].relationships != null ? Buffer.from(result.rows[i].relationships,"base64").toString() : null),
+							notes: (result.rows[i].notes != null ? Buffer.from(result.rows[i].notes,"base64").toString() : null),
+							safe_place: (result.rows[i].safe_place != null ? Buffer.from(result.rows[i].safe_place,"base64").toString() : null),
+						});
+					}
+					res.status(200).json({code: 200, search: resArr});
+				  }
+				});
+			}
+			
 		} else return res.status(403);
 	} else return res.status(403);
   

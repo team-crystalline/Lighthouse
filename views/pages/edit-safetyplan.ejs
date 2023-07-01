@@ -5,6 +5,7 @@
         <style>
             label{
                 display: block;
+                margin-top:2em;
             }
             textarea{
                 width: 90%;
@@ -17,7 +18,7 @@
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
-
+                <% console.log(safetyplan.grounding) %>
             <section>
                 <h2>Edit Your Safety Plan</h2>
                 <p>Each user has one safety plan. This is for when you or your <%- session.system_term %> are experiencing a mental health crisis.</p>
@@ -30,7 +31,7 @@
                 <label for="distract">What are a few distractions you can think of that will pull you away from a crisis?</label>
                 <textarea name="distract"><%= safetyplan.distractions %></textarea>
                 <label for="keepsafe">What are some things you can do to keep yourself safe? (e.g.: Remove sharps or weapons from immediate area, go to a quiet room, etc.)</label>
-                <textarea name="keepsafe"<%= safetyplan.keepsafe %>></textarea>
+                <textarea name="keepsafe"><%= safetyplan.keepsafe %></textarea>
                 <label for="ground">How can you stay grounded during a crisis? We already have "5-4-3-2-1", "Re-Orientation", "Sensory", "Movement", and "Then and Now" grounding methods listed on your plan.</label>
                 <textarea name="ground"><%= safetyplan.grounding %></textarea>
                 <label for="help">What are some lifelines, doctors, therapists etc you could put here to call or text if none of the above works?<br><small>We do not reccomend calling 911 unless if social services are dispatched instead of the police.</small></label>

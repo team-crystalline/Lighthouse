@@ -140,6 +140,7 @@ async function fetchPosts(){
             // sysArr, nonPinned, isPinned
             $("#Wait").empty();
             $("#WaitSys").empty();
+            (sysInfo.sysArr).sort((a, b) => a.alias.localeCompare(b.alias))
             for (i in sysInfo.sysArr){
               $("#sysList").append(`<div class="systemdiv">
               <a class="systembutton" title="${sysInfo.sysArr[i].alias}" href="/system/${sysInfo.sysArr[i].sys_id}">${sysInfo.sysArr[i].alias} <a class="editbtn" href="/editsys/${sysInfo.sysArr[i].sys_id}">Rename</a></a><a href="/deletesys/${sysInfo.sysArr[i].sys_id}" name="${sysInfo.sysArr[i].sys_id}" class="deletebtn">Delete</a>

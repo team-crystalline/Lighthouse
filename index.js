@@ -115,15 +115,28 @@ function apiEyesOnly(req) {
 	  return false;     
 	}
   }
+if (process.env['environment']== "dev"){
+	console.log("Starting Lighthouse in SANDBOX mode.");
+	var client = new Client({
+		user: "postgres",
+		host: "localhost",
+		database: "Sandbox",
+		password: "",
+		port: 5432
+	  });
+} else {
+	console.log("Starting Lighthouse in PRODUCTION mode.");
+	var client = new Client({
+		user: process.env.DB_USER,
+		host: process.env.DB_HOST,
+		database: process.env.DB_NAME,
+		password: process.env.DB_PASS,
+		port: process.env.DB_PORT,
+		ssl: { rejectUnauthorized: false }
+	  });
+	
+}
 
-const client = new Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASS,
-  port: process.env.DB_PORT,
-  ssl: { rejectUnauthorized: false }
-});
 
 client.connect();
 
@@ -967,6 +980,20 @@ app.get('/wish-d/:id', (req, res) => {
 					res.status(200).json({code: 200, search: resArr});
 				  }
 				});
+			} else if (req.headers.grab== "journals"){
+				client.query({text: "SELECT systems.sys_id, alters.name, journals.j_id FROM alters INNER JOIN systems ON systems.sys_id= alters.sys_id INNER JOIN journals ON journals.alt_id = alters.alt_id WHERE systems.user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, aresult) => {
+					if (err) {
+					  console.log(err.stack);
+					  req.flash("Our database hit an error.");
+					  res.status(400).json({code: 400});
+				  } else {
+					let journalArr= new Array();
+					for (i in aresult.rows){
+						journalArr.push({j_id: aresult.rows[i].j_id, sys_id: aresult.rows[i].sys_id, name: Buffer.from(aresult.rows[i].name, "base64").toString()})
+					}
+					res.status(200).json({code: 200, search: journalArr});
+				  }
+				});
 			}
 			
 		} else return res.status(403);
@@ -1172,8 +1199,8 @@ app.get('/wish-d/:id', (req, res) => {
 				req.session.jPost= result.rows[0];
 				req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 				req.session.jPost.title= decryptWithAES(req.session.jPost.title);
-				// console.log(req.session.jPost);
-				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies });
+				req.session.jPost.is_comm= false;
+				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies});
 			}
 		});
 	  } else {
@@ -1194,6 +1221,7 @@ app.get('/wish-d/:id', (req, res) => {
 			  req.session.jPost= result.rows[0];
 			  req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 			  req.session.jPost.title= decryptWithAES(req.session.jPost.title);
+			  req.session.jPost.is_comm= true;
 			  // console.log(req.session.jPost);
 			  res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies });
 		  }
@@ -1750,6 +1778,23 @@ app.get('/wish-d/:id', (req, res) => {
  				  console.log(err.stack);
  				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
  			  } else {
+				if (req.body.author && req.body.author !== "skip"){
+					// New author specified.
+					if(req.body.author=="move-to-comm"){
+						// Turn it into a communal journal post. WIP.
+					} else {
+						// Make it an alter's post.
+						client.query({text: "UPDATE posts SET j_id =$2 WHERE p_id=$1;",values: [`${req.params.id}`, `${req.body.author}`]}, (err, result) => {
+							if (err) {
+							   console.log(err.stack);
+							   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						   }
+						});
+					}
+					req.session.jPost= null;
+					req.flash("flash", strings.posts.moved);
+					return res.redirect(`/system`);
+				}
 				  req.session.jPost= null;
 				  res.redirect(`/journal/${req.session.chosenAlter.alt_id}`);
  			  }

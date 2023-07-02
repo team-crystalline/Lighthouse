@@ -13,13 +13,19 @@
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <h2>Edit <%- session.jPost.title %></h2>
+            <div id="Wait"></div>
             <form method="post">
+                <% if (session.jPost.is_comm == false){ %> 
+                    <label for="author">Change author to...</label>
+                    <select name="author" id="author">
+                        <option selected value="skip">Leave as is</option>
+                    </select><br>
+                <% } %>
                 <label for="jTitle">Post title</label><br/>
                 <input type="text" name="jTitle" value="<%- session.jPost.title %>"><br/>
                 <label for="jBody">Post Body</label><br/>
                 <textarea name="jBody" autocomplete="off" cols="60" rows="15" id="editor" required ><%- session.jPost.body %></textarea><br/>
                 <input type="submit" value="Edit Post"> <input type="reset" value="Revert changes">
-                <script src="../build/ckeditor.js"></script>
                 <script>ClassicEditor
                     .create( document.querySelector( '#editor' ), {
                         fontColor: {
@@ -41,6 +47,29 @@
         </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
+    <script>
+            async function fetchData(){
+            let response = await fetch(`/system-data`, { 
+            method: "GET",
+                headers: { 
+                  "api-lh-call": "api-lh-call",
+                  'Content-Type': 'application/json',
+                  "grab": "journals"
+                } 
+            });
+            let body = await response.text();
+            let resInfo = JSON.parse(body);
+            let chosenJournal= '<%- session.altJournal[0].j_id %>';
+            for (i in resInfo.search){
+                $("#author").append(`<option value="${resInfo.search[i].j_id}">${resInfo.search[i].name}</option>`);
+                
+            }
+        }
+        $(document).ready(function(){
+            fetchData();
+        });
+
+    </script>
 </body>
 
 </html>

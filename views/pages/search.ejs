@@ -15,15 +15,17 @@
                     <label for="options">Search for <%= pluralize(session.alter_term) %> by...</label>
                     <select name="options" id="options">
                         <option value="name">Name</option>
-                        <option value="sys_alias">System Alias</option>
+                        <option value="sys_alias"><%= capitalise(session.system_term) %></option> <!-- Only show up if the user has multiple systems?-->
                         <option value="pronouns">Pronouns</option>
                         <option value="type">Type</option>
                         <option value="source">Source (if introject)</option>
+                        <option value="job">Job/Role</option>
                         <option value="any">Any fields</option>
                     </select>
-                    <label for="query">Query</label>
+                    <label for="query">Query </label>
                     <input type="text" name="query" id="query">
                     <input type="submit" value="Search" id="search" autocomplete="off" autocapitalize="off">
+                    <button id="showall">Show all</button>
                 </form>
 
             </section>
@@ -39,7 +41,7 @@
                     <tbody id="searchRes">
                     </tbody>
                     </table>
-                    <div id="wait" style="margin: 0 auto; text-align: center;"></div>
+                    <div id="wait" style="margin: 0 auto; text-align: center; display:none;"><lottie-player src="https://assets4.lottiefiles.com/packages/lf20_l3qbbu7w.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" autoplay loop></lottie-player></div>
             </section>
 
             </section>
@@ -47,6 +49,29 @@
     <%- include ("../partials/footer.ejs") %>
     <script>
         $(document).ready(function(){
+            $("#showall").click (async function(){
+                // (req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
+                event.preventDefault();
+                $("#headerRes").empty();
+                $("#searchRes").empty();
+                $("#resNum").empty();
+                $("#wait").show();
+                let results= await fetchData().then(res=>{
+                    $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th><th>Role/Job</th><th>Source</th>`);
+                    (res.search).sort((a, b) => a.name.localeCompare(b.name))
+                    for (i in res.search){
+                        $("#searchRes").append(`<tr>
+                                    <td><a href="/alter/${res.search[i].alt_id}">${res.search[i].name}</a></td>
+                                    <td><a href="/system/${res.search[i].sys_id}">${res.search[i].sys_alias}</a></td>
+                                    <td>${res.search[i].pronouns || "N/A"}</td>
+                                    <td>${res.search[i].type || "N/A"}</td>
+                                    <td>${res.search[i].job || "N/A"}</td>
+                                    <td>${res.search[i].source || "N/A"}</td>
+                                    </tr>`);
+                    }
+                    $("#wait").hide();
+                });
+            });
             $("#search").click(async function(){
                 event.preventDefault();
                 $("#headerRes").empty();
@@ -56,9 +81,9 @@
                 let query= ($("#query").val()).toLowerCase();
                 let options= $('#options').find(":selected").val();
 
-                $("#wait").html(`<img src="/img/svg/bubbles.svg" class="tinyimg">`);
+                $("#wait").show();
                 let results= await fetchData().then(res=>{
-                    $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th>`);
+                    $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th><th>Role/Job</th><th>Source</th>`);
                     var searchCount = 0;
                     if (options == "any"){
 
@@ -69,10 +94,12 @@
                                    if (res.search[i][n].toLowerCase().includes(query)){
                                     searchCount++;
                                 $("#searchRes").append(`<tr>
-                                    <td><a href="/alter/${res.search[i].alt_id}" target="_blank">${res.search[i].name}</a></td>
-                                    <td><a href="/system/${res.search[i].sys_id}" target="_blank">${res.search[i].sys_alias}</a></td>
+                                    <td><a href="/alter/${res.search[i].alt_id}">${res.search[i].name}</a></td>
+                                    <td><a href="/system/${res.search[i].sys_id}">${res.search[i].sys_alias}</a></td>
                                     <td>${res.search[i].pronouns || "N/A"}</td>
                                     <td>${res.search[i].type || "N/A"}</td>
+                                    <td>${res.search[i].job || "N/A"}</td>
+                                    <td>${res.search[i].source || "N/A"}</td>
                                     </tr>`);
                                     break;
                                 } 
@@ -92,6 +119,8 @@
                                     <td><a href="/system/${res.search[i].sys_id}" target="_blank">${res.search[i].sys_alias}</a></td>
                                     <td>${res.search[i].pronouns || "N/A"}</td>
                                     <td>${res.search[i].type || "N/A"}</td>
+                                    <td>${res.search[i].job || "N/A"}</td>
+                                    <td>${res.search[i].source || "N/A"}</td>
                                     </tr>`);
                             }                           
                         }
@@ -108,16 +137,11 @@
                         $("#resNum").text(`${searchCount} ${searchCount == 1? 'result': 'results'} found`);
                     }
                 });
-                $("#wait").empty();
+                $("#wait").hide();
 
             });
         });
-// i = 0;
-// $(document).ready(function(){
-//   $("input").keypress(function(){
-//     $("span").text(i += 1);
-//   });
-// });
+
         async function fetchData(){
             let response = await fetch(`/system-data`, { 
             method: "GET",

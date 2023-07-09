@@ -355,7 +355,7 @@ app.locals.pluralize= pluralize;
 						  console.log(err.stack);
 						  req.session.subsystem_term="subsystem";
 					  }
-					  if (result.rows.length==0){
+					  if (result.rows.length==0 || typeof result.rows[0].subsystem_term == undefined){
 						// No match.
 						req.session.subsystem_term= "subsystem";
 					  } else {

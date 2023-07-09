@@ -8,6 +8,7 @@
 	--col6: #1d2c42;
     --col7: #3e7ea3;
     --col8: #1f2b5f;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/water.png");

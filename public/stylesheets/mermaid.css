@@ -8,6 +8,7 @@
 	--col6: #265d64;
     --col7: #b1f1ee;
     --col8: #161f50;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/fish.png");

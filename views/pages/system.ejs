@@ -19,7 +19,9 @@
     </head>
     <body>
         <%- include ("../partials/nav.ejs") %>
+
         <div id="wrapper">
+          
           <% if (locals.messages.flash) { %>
             <div class="splash"><%- locals.messages.flash %></div>
         <% } %>
@@ -28,19 +30,38 @@
               <a title= "<%= capitalise(session.alter_term) %>Search" href="/search"><%= capitalise(session.alter_term) %> Search</a>
               <a title= "<%= capitalise(session.system_term) %> Rules" href="/rules"><%= capitalise(session.system_term) %> Rules</a>
               <a title="Your Inner World" href="/inner-world">Inner World</a>
-              <a title="Your <%= capitalise(session.system_term) %>'s wants, needs, and wishes" href="/wish">Wants & Wishes</a>
+              <a title="Your <%= capitalise(session.system_term) %>'s wants, needs, and wishes" href="/wish">Wishlist</a>
               <a title="Worksheets for trauma (WIP)" href="/worksheets">Worksheets</a>
             </div>
             <div id="WaitSys"></div>
             <div id="sysList">
             </div>
-            <!-- Block for system list. Like system1, system 2, etc. -->
-            <button onclick="toggleForm()" id="tbutton">Add a <%= capitalise(session.system_term) %></button>
-            <form method="post" class="toggle" style="display: none;" aria-hidden="true" id="toggle">
-                <label for="sysname"><%= capitalise(session.system_term) %> Alias</label>
-                <input name="sysname" type="text" autocomplete="off" placeholder="Alias" minlength="3" required>
-                <input type="submit" name="create" value="Create <%= capitalise(session.system_term) %>">
-            </form>
+            <button id="tbutton">Add a <%= capitalise(session.system_term) %></button>
+              <!-- The Modal -->
+              <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content" id="modalContent">
+                  <span class="material-symbols-outlined close">
+                    cancel
+                    </span>
+                    <h2>Add a New <%= capitalise(session.system_term) %></h2>
+                  <form method="post">
+                    <label for="sysname"><%= capitalise(session.system_term) %> Name: </label>
+                    <input type="text" name="sysname" required><br>
+                    <div id="subsys">
+                      <label for="subsys">Nest this <%= session.system_term %> under: </label>
+                      <select name="subsys" id="subdrop">
+                        <option checked>None</option>
+                      </select>
+                      <br><small>Nesting a <%= session.system_term %> creates a <%= session.subsystem_term %>.</small>
+                    </div>
+                    <input type="submit" value="Create <%= capitalise(session.system_term) %>">
+                  </form>
+                </div>
+
+              </div>
+              
             <p><small>Or, import from another source:</small></p>
             <a href="/pluralkit" class="linkbutton"><img src="https://pluralkit.me/favicon.png" class="vvtinyimg">Pluralkit</a>
             <!-- <a href="/simply-plural" class="linkbutton"><img src="https://play-lh.googleusercontent.com/47Ws0pbM_oQar187y2fddejuUmdNIEwuYz-fomXmhom5AJ75jfm0kZ6-Qq7_7I0SBA" class="vvtinyimg">Simply Plural</a> -->
@@ -84,7 +105,6 @@
                         console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
                         console.error( error );
                       } );
-                      console.log(ClassicEditor.builtinPlugins.map( plugin => plugin.pluginName ));
                   </script>
                 </form>
                 <div id="Wait"></div>
@@ -93,21 +113,30 @@
                 </div>
             </section>
         </div>
+
         <%- include ("../partials/footer.ejs") %>
-        <script type="text/javascript">
-            function toggleForm(){
-                var togg = document.getElementById('toggle');
-                var tbutton = document.getElementById('tbutton');
-                if (togg.style.display=="none"){
-                    $("#toggle").show("fast");
-                    $("#tbutton").text("Hide the form");
-                } else {
-                    $("#toggle").hide("fast");
-                    $("#tbutton").text("Add a System");
-                }
-            }
-        </script>
         <script>
+          var modal = document.getElementById("myModal");
+          var btn = document.getElementById("tbutton");
+          var span = document.getElementsByClassName("close")[0];
+          btn.onclick = function() {
+            // modal.style.display = "block";
+            $("#myModal").fadeIn("fast");
+          }
+          span.onclick = function() {
+            // modal.style.display = "none";
+            $("#myModal").fadeOut("fast");
+          }
+          // When the user clicks anywhere outside of the modal, close it
+          window.onclick = function(event) {
+            if (event.target == modal) {
+              // modal.style.display = "none";
+              $("#myModal").fadeOut("fast");
+            }
+          }
+          </script>
+        <script>
+
   const controller = new AbortController();
   const { signal } = controller;
 
@@ -140,11 +169,40 @@ async function fetchPosts(){
             // sysArr, nonPinned, isPinned
             $("#Wait").empty();
             $("#WaitSys").empty();
-            (sysInfo.sysArr).sort((a, b) => a.alias.localeCompare(b.alias))
+            (sysInfo.sysArr).sort((a, b) => a.alias.localeCompare(b.alias));
+            if (sysInfo.sysArr.length > 0){
+              $("#sysList").append("For sanity's sake and neatness, <%- pluralize(session.subsystem_term) %> are only shown 1 level deep. <%- capitalise(pluralize(session.subsystem_term)) %> within <%- pluralize(session.subsystem_term) %> are nested in their parent's page.");
+            }
             for (i in sysInfo.sysArr){
-              $("#sysList").append(`<div class="systemdiv">
+              // We need to do some logic. 
+              $("#subdrop").append(`<option value="${sysInfo.sysArr[i].sys_id}">${sysInfo.sysArr[i].alias}</option>`);
+              if (sysInfo.sysArr[i].subsys){
+                // Is there a subsystem under this one? Check.
+                continue;
+              } else {
+              $("#sysList").append(`<div class="systemdiv" id="${sysInfo.sysArr[i].sys_id}">
               <a class="systembutton" title="${sysInfo.sysArr[i].alias}" href="/system/${sysInfo.sysArr[i].sys_id}">${sysInfo.sysArr[i].alias} <a class="editbtn" href="/editsys/${sysInfo.sysArr[i].sys_id}">Rename</a></a><a href="/deletesys/${sysInfo.sysArr[i].sys_id}" name="${sysInfo.sysArr[i].sys_id}" class="deletebtn">Delete</a>
-              </div>`)
+              </div>`);
+                            // Grab one system.
+                for (n in sysInfo.sysArr){
+                // Loop through the other systems. If the one you're looping through is the same, skip. 
+                
+                if (sysInfo.sysArr[i].sys_id== sysInfo.sysArr[n].sys_id){
+                  // It's the same system.
+                  continue;
+                } else {
+                  if (sysInfo.sysArr[i].sys_id== sysInfo.sysArr[n].subsys){
+                    // We have a subsystem to list.
+                    $("#sysList").append(`<div class="systemdiv subsystem" id="${sysInfo.sysArr[n].subsys}">
+              <a class="systembutton" title="${sysInfo.sysArr[n].alias}" href="/system/${sysInfo.sysArr[n].sys_id}">${sysInfo.sysArr[n].alias} <a class="editbtn" href="/editsys/${sysInfo.sysArr[n].sys_id}">Rename</a></a><a href="/deletesys/${sysInfo.sysArr[n].sys_id}" name="${sysInfo.sysArr[n].sys_id}" class="deletebtn">Delete</a>
+              </div>`);
+                  } else continue;
+                }
+              }                
+              }
+
+
+
             }
             var language = window.navigator.userLanguage || window.navigator.language;
             if (sysInfo.isPinned.length > 0){

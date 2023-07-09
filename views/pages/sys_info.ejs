@@ -51,10 +51,12 @@ var journSkin=[
     %>
     <div id="wrapper">
         <section>
+            <div id="Wait"></div>
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
-            <h2><% if (session.chosenSys.icon) { %> <img src="/img/svg/<%- session.chosenSys.icon %>.svg" class="vtinyimg"> <% } %>About <%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
+            <h2><% if (session.chosenSys.icon) { %> <img src="/img/svg/<%- session.chosenSys.icon %>.svg" class="vtinyimg"> <% } %><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
+            <div id="parent"></div>
             <p>This <%= session.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= session.alter_term %><% } else { %><%= pluralize(session.alter_term)%><% } %>.</p>
             <% if (alterArr.length > 0){ %>
             <div class="grid">
@@ -69,7 +71,18 @@ var journSkin=[
                 <input type="text" name="altname" placeholder="New <%= capitalise(session.alter_term) %> Name Here" autofocus="autofocus">
                 <input type="submit" name="submit" value="Add">
             </form>
-            
+            <button onclick="$('#subsysForm').toggle('fast')"><%- capitalise(session.subsystem_term) %> settings</button>
+            <form id="subsysForm" style="display:none;" method="post">
+                <label for="sysid">Nest this system under:</label>
+                <select name="sysid" id="sysid">
+                    <option value="none">None (This <%- session.system_term %> is not a <%- session.subsystem_term %>)</option>
+                </select>
+                <input type="submit" value="Save <%- session.subsystem_term %> settings">
+            </form>
+        </section>
+        <section id="subsystems" style="display:none;">
+            <h2><%- capitalise(pluralize(session.subsystem_term)) %></h2>
+            <ul id="subList"></ul>
         </section>
         <section>
             <h3>Set an icon for this <%= capitalise(session.system_term) %></h3>
@@ -87,7 +100,70 @@ var journSkin=[
                 
         </section>
     </div>
+    
     <%- include ("../partials/footer.ejs") %>
+    <script>
+        // Go fetch subsystems
+        async function fetchSubSystems(){
+  $("#Wait").html(`<img src="/img/svg/bubbles.svg" class="tinyimg">`);
+  let response = await fetch(`/system-data`, { 
+    method: "GET",
+                headers: { 
+                  "api-lh-call": "api-lh-call",
+                  'Content-Type': 'application/json',
+                  "grab": "subsystems",
+                  "sysid": '<%- sys_id %>'
+                } 
+            });
+            let body = await response.text();
+            let sysInfo = JSON.parse(body);
+            $("#Wait").empty();
+            (sysInfo.systems).sort((a, b) => a.name.localeCompare(b.name));
+            if (sysInfo.systems.length > 0){
+                // There is a subsystem!
+                $("#subsystems").show();
+                $("#parent").show();
+                
+                for (i in sysInfo.systems){
+                    // $("#subList").append(`<li>${sysInfo.systems[i].name}</li>`);
+                    $("#subList").append(`<div class="systemdiv">
+                    <a class="systembutton" title="${sysInfo.systems[i].name}" href="/system/${sysInfo.systems[i].sys_id}">${sysInfo.systems[i].name} <a class="editbtn" href="/editsys/${sysInfo.systems[i].sys_id}">Rename</a></a><a href="/deletesys/${sysInfo.systems[i].sys_id}" name="${sysInfo.systems[i].sys_id}" class="deletebtn">Delete</a>
+                    </div>`)
+                }
+            }
+        }
+        async function fetchSystems(){
+        $("#Wait").html(`<img src="/img/svg/bubbles.svg" class="tinyimg">`);
+        let response = await fetch(`/system-data`, { 
+        method: "GET",
+                headers: { 
+                  "api-lh-call": "api-lh-call",
+                  'Content-Type': 'application/json',
+                  "grab": "systems",
+                } 
+            });
+            let body = await response.text();
+            let sysInfo = JSON.parse(body);
+            $("#Wait").empty();
+            (sysInfo.systems).sort((a, b) => a.alias.localeCompare(b.alias));
+            // Look for this system's parent 
+            for (i in sysInfo.systems){
+                if (sysInfo.systems[i].sys_id== '<%- session.chosenSys.subsys_id %>'){
+                    $("#sysid").append(`<option value="${sysInfo.systems[i].sys_id}" selected>${sysInfo.systems[i].alias}</option>`);
+                    $("#parent").html(`<a class="linkbutton" href="/system/${sysInfo.systems[i].sys_id}">Parent <%- session.system_term %>: ${sysInfo.systems[i].alias}</a>`);
+                } else if(sysInfo.systems[i].sys_id== '<%- session.chosenSys.sys_id %>'){
+                    continue;
+                } else {
+                    $("#sysid").append(`<option value="${sysInfo.systems[i].sys_id}">${sysInfo.systems[i].alias}</option>`);
+                }
+                
+            }
+        }
+        $(document).ready(function(){
+        fetchSubSystems();
+        fetchSystems();
+        });
+    </script>
 </body>
 
 </html>

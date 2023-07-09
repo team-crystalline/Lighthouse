@@ -16,6 +16,7 @@
 	--col6: #a1537e;
     --col7: #f3f2ed;
     --col8: #500921;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/sorbet.png");

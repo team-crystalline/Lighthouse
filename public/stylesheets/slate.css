@@ -8,6 +8,7 @@
 	--col6: #292929;
     --col7: #dbdbdb;
     --col8: #131313;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/slate.png");

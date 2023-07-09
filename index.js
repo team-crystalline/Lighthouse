@@ -344,6 +344,26 @@ app.locals.pluralize= pluralize;
 					});
 			}
 		}
+		if (!req.session.subsystem_term){
+			// Is it in their cookies?
+			if (getCookies(req)['subsystem_term']){
+				req.session.subsystem_term=getCookies(req)['subsystem_term'];
+			} else {
+				// Can We grab it?
+					client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  req.session.subsystem_term="subsystem";
+					  }
+					  if (result.rows.length==0){
+						// No match.
+						req.session.subsystem_term= "subsystem";
+					  } else {
+						req.session.subsystem_term= result.rows[0].subsystem_term;
+					  }
+					});
+			}
+		}
 		if (!req.session.alter_term){
 			// Is it in their cookies?
 			if (getCookies(req)['alter_term']){
@@ -729,6 +749,7 @@ app.get('/thank-you', (req, res, next) => {
 	 res.clearCookie('cookie1');
 	 res.clearCookie('cookie2');
 	 res.clearCookie('system_term');
+	 res.clearCookie('subsystem_term');
 	 res.clearCookie('alter_term');
 	 res.clearCookie('is_legacy');
 	 res.clearCookie('skin');
@@ -901,7 +922,8 @@ app.get('/wish-d/:id', (req, res) => {
 		if (apiEyesOnly(req)){
 			if (req.headers.grab== "comm-posts"){
 				// Communal Journal Posts.
-				client.query({text: "SELECT * FROM systems WHERE user_id=$1",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
+				// In case: "AND subsys_id IS NULL"
+				client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
 					if (err) {
 					  console.log(err.stack);
 					  req.flash("Our database hit an error.");
@@ -909,7 +931,7 @@ app.get('/wish-d/:id', (req, res) => {
 				  } else {
 					var sysArr = new Array();
 					for (i in result.rows){
-						sysArr.push({ sys_id: result.rows[i].sys_id, alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), icon:result.rows[i].icon})
+						sysArr.push({ sys_id: result.rows[i].sys_id, alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), icon:result.rows[i].icon, subsys: result.rows[i].subsys_id});
 					}
 					client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=false ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
 						if (err) {
@@ -1016,6 +1038,36 @@ app.get('/wish-d/:id', (req, res) => {
 	
 				   }
 			  });
+			} else if (req.headers.grab=="subsystems"){
+				client.query({text: "SELECT * FROM systems WHERE user_id=$1 AND subsys_id= $2;",values: [`${getCookies(req)['u_id']}`, `${req.headers.sysid}` ]}, (err, result) => {
+					if (err) {
+					   console.log(err.stack);
+					   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+				   } else {
+					let subArr = new Array();
+					for (i in result.rows){
+						subArr.push({name: (Buffer.from(result.rows[i].sys_alias, "base64").toString()), icon: result.rows[i].icon, sys_id: result.rows[i].sys_id})
+					}
+					res.status(200).json({code: 200, systems: subArr});
+				   }
+				});
+
+			} else if (req.headers.grab=="systems"){
+				client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
+					if (err) {
+					  console.log(err.stack);
+					  req.flash("Our database hit an error.");
+					  res.status(400).json({code: 400});
+				  } else {
+					var sysArr = new Array();
+						for (i in result.rows){
+							sysArr.push({ sys_id: result.rows[i].sys_id, alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), icon:result.rows[i].icon, subsys: result.rows[i].subsys_id});
+						}
+						res.status(200).json({code: 200, systems: sysArr});
+					}
+				})
+			} else {
+				res.status(406).json({code: 406, msg: "Not Acceptable. (Check grab headers on front and back ends.)"});
 			}
 			
 		} else return res.status(403);
@@ -1033,7 +1085,7 @@ app.get('/wish-d/:id', (req, res) => {
 	var alterArr;
   app.get('/system/:id', (req, res, next) => {
     if (isLoggedIn(req)){
-		client.query({text: "SELECT systems.sys_id, systems.user_id, systems.sys_alias, alters.alt_id, systems.icon FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1 ORDER BY alters.name ASC;",values: [`${req.params.id}`]}, (err, result) => {
+		client.query({text: "SELECT systems.sys_id, systems.subsys_id, systems.user_id, systems.sys_alias, alters.alt_id, systems.icon FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1 ORDER BY alters.name ASC;",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1056,7 +1108,7 @@ app.get('/wish-d/:id', (req, res) => {
 	          }
 			  // console.table(req.session.sys);
 			  (req.session.alters).sort((a, b) => a.distance - b.distance)
-	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies});
+	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies, sys_id: req.params.id});
 	        });
 
     } else {
@@ -1972,6 +2024,20 @@ app.get('/wish-d/:id', (req, res) => {
 
 	app.post("/system/:alt", function(req, res){
 			if (isLoggedIn(req)){
+				console.log(req.body)
+				if (req.body.sysid){
+					console.log("Saving new subsystem data.")
+					let sysId= req.body.sysid == "none" ? null : req.body.sysid;
+					// Setting this in case they want to release a subsystem into a normal system.
+					client.query({text: "UPDATE systems SET subsys_id=$2 WHERE sys_id=$1",values: [`${req.session.chosenSys.sys_id}`, sysId]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					  }
+					  
+				  });
+				  req.flash("flash",strings.system.updated);
+				}
 				if (req.body.journ){
 					client.query({text: "UPDATE systems SET icon=$2 WHERE sys_id=$1",values: [`${req.session.chosenSys.sys_id}`, `${req.body.journ}`]}, (err, result) => {
 						if (err) {
@@ -2027,6 +2093,7 @@ app.get('/wish-d/:id', (req, res) => {
 
   app.post('/system', function (req, res){
 	  if (req.body.sysname){
+		let subsysID= req.body.subsys == "None" ? null : req.body.subsys;
 		  client.query({text: "SELECT * FROM systems WHERE sys_alias=$1 AND user_id=$2",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${req.cookies.u_id}`]}, (err, result) => {
 			  if (err) {
 				console.log(err.stack);
@@ -2034,7 +2101,7 @@ app.get('/wish-d/:id', (req, res) => {
 			  } else {
 				  // console.table(result.rows);
 				  if ((result.rows).length == 0){
-					  client.query({text: "INSERT INTO systems (sys_alias, user_id) VALUES ($1, $2)",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
+					  client.query({text: "INSERT INTO systems (sys_alias, user_id, subsys_id) VALUES ($1, $2, $3)",values: [`'${Buffer.from(req.body.sysname).toString('base64')}'`, `${getCookies(req)['u_id']}`, subsysID]}, (err, result) => {
 					      if (err) {
 					        console.log(err.stack);
 					        res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -2472,6 +2539,7 @@ app.get('/wish-d/:id', (req, res) => {
 		   } else {
 				req.session.alter_term= result.rows[0].alter_term;
 				req.session.system_term= result.rows[0].system_term;
+				req.session.subsystem_term= result.rows[0].subsystem_term;
 			   req.session.loggedin = true;
 			   req.session.u_id= result.rows[0].id;
 			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
@@ -2480,10 +2548,10 @@ app.get('/wish-d/:id', (req, res) => {
          // getCookies(req)['u_id']= result.rows[0].id;
 				 // Add to cookies
          if (req.body.remember){
-           res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+           res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('subsystem_term', result.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
          } else {
            // console.log("Let cookies expire at end of session.");
-           res.cookie('loggedin', true, {httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{httpOnly: true }).cookie('u_id', result.rows[0].id,{httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{httpOnly: true }).cookie('system_term', result.rows[0].system_term,{httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{httpOnly: true }).cookie('skin', result.rows[0].skin,{httpOnly: true });
+           res.cookie('loggedin', true, {httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{httpOnly: true }).cookie('u_id', result.rows[0].id,{httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{httpOnly: true }).cookie('system_term', result.rows[0].system_term,{httpOnly: true }).cookie('subsystem_term', result.rows[0].subsystem_term,{httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{httpOnly: true }).cookie('skin', result.rows[0].skin,{httpOnly: true });
          }
 					res.redirect(302, '/');
 		   }

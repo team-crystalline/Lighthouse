@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" style="visibility: hidden;">
     <head>
         <%- include ("../partials/header.ejs") %>
 		<style>
@@ -37,6 +37,8 @@
 					<input type="text" name="altTerm" placeholder="<%- session.alter_term %>"><br>
 					<label for="sysTerm">Term preferred for "system": </label>
 					<input type="text" name="sysTerm" placeholder="<%- session.system_term %>"><br>
+					<label for="subTerm">Term preferred for "subsystem": </label>
+					<input type="text" name="subTerm" placeholder="<%- session.subsystem_term %>"><br>
 					<input type="submit" value="Set Terms">
 				</form>
 			<section>
@@ -74,7 +76,7 @@
 			<section>
 				<h2><span class="material-symbols-outlined">dangerous</span> Danger Zone <span class="material-symbols-outlined">dangerous</span></h2>
 			<h3>Delete Your Account</h3>
-			<p>This is an <strong>irreversible action</strong>. All alters, journals, inner world entries and rules will be deleted with this account.</p>
+			<p>This is an <strong>irreversible action</strong>. All <%- pluralize(session.alter_term) %>, journals, inner world entries and rules will be deleted with this account.</p>
 			<div id="popup" style="box-shadow: 0px 0px 50px var(--col5);">
 				<h2>Are you sure you want to delete your account?</h2>
 				<p>This cannot be undone, not even by the developer. Everything will be permanently deleted. Are you <em>sure</em> this is what you want to do?</p>

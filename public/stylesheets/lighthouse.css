@@ -1,5 +1,6 @@
 /* Default colours */
 :root{
+    color-scheme: light;
     --col1: #123859;
     --col2: #9CD9D3;
     --col3: #D9B23D;
@@ -9,7 +10,10 @@
     --col7: #def1f0;
     --col8: #065966;
 }
-
+html{
+    background: var(--col7);
+    background-image: url("../img/lighthouse-photo-bw.png");
+}
 #menubg{
     background: url("/img/day-beach.jpg");
     background-size: cover;

@@ -25,12 +25,13 @@
 * :not(.systembutton > span){
     color: rgb(222, 222, 247);
 }
-html{
+/* html{
     background-image: url("../img/night-lighthouse.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-}
+} */
+
 
 #logoname{
     color: var(--col3);

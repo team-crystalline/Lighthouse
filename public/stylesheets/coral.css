@@ -8,6 +8,7 @@
 	--col6: #ca3e5c;
     --col7: #ffceb2;
     --col8: #501638;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/coral.png");

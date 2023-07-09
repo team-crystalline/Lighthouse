@@ -8,6 +8,7 @@
 	--col6: #421d3a;
     --col7: #f3d6e3;
     --col8: #501638;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/shells.png");

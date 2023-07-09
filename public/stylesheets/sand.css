@@ -8,6 +8,7 @@
 	--col6: #614d43;
     --col7: #cfc1ae;
     --col8: #504116;
+    color-scheme: light;
 }
 html{
     background-image: url("../img/sand.png");

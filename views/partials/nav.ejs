@@ -197,16 +197,23 @@ function toggleMode(){
       $darkCss.remove();
       $('[name="mode"]').text(`light_mode`);
       localStorage.lighthouse_mode="light";
+      $("html").addClass("light-mode");
+      $("html").removeClass("dark-mode");
+      $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- cookies.skin %>.css">`);  
     } else {
       localStorage.lighthouse_mode="dark";
       $('[name="mode"]').text(`dark_mode`);
       $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/dark.css">');
+      $("html").removeClass("light-mode");
+      $("html").addClass("dark-mode");
+      
     }
   } else {
     // Define and then darken.
     localStorage.lighthouse_mode="dark";
       $('[name="mode"]').text(`dark_mode`);
       $('head').append('<link type="text/css" rel="stylesheet" media="all" href="/stylesheets/dark.css">');
+
   }
 }
 </script>

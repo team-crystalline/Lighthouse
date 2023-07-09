@@ -355,11 +355,11 @@ app.locals.pluralize= pluralize;
 						  console.log(err.stack);
 						  req.session.subsystem_term="subsystem";
 					  }
-					  if (result.rows.length==0 || typeof result.rows[0].subsystem_term == undefined){
-						// No match.
-						req.session.subsystem_term= "subsystem";
-					  } else {
+					  if (result.rows.length > 0){
 						req.session.subsystem_term= result.rows[0].subsystem_term;
+					  } else {
+						// No match.
+						req.session.subsystem_term= "subsystem";						
 					  }
 					});
 			}
@@ -2427,6 +2427,7 @@ app.get('/wish-d/:id', (req, res) => {
 				} else {
 					 req.session.alter_term= result.rows[0].alter_term;
 					 req.session.system_term= result.rows[0].system_term;
+					 req.session.subsystem_term= result.rows[0].subsystem_term;
 					req.session.loggedin = true;
 					req.session.u_id= result.rows[0].id;
 					req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
@@ -2434,10 +2435,10 @@ app.get('/wish-d/:id', (req, res) => {
 			  // getCookies(req)['u_id']= result.rows[0].id;
 					  // Add to cookies
 			  if (req.body.remember){
-				res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+				res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('subsystem_term', result.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
 			  } else {
 				// console.log("Let cookies expire at end of session.");
-				res.cookie('loggedin', true, {httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{httpOnly: true }).cookie('u_id', result.rows[0].id,{httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{httpOnly: true }).cookie('system_term', result.rows[0].system_term,{httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{httpOnly: true }).cookie('skin', result.rows[0].skin,{httpOnly: true });
+				res.cookie('loggedin', true, {httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{httpOnly: true }).cookie('u_id', result.rows[0].id,{httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{httpOnly: true }).cookie('system_term', result.rows[0].system_term,{httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{httpOnly: true }).cookie('skin', result.rows[0].skin,{httpOnly: true }).cookie('subsystem_term', result.rows[0].subsystem_term,{httpOnly: true });
 			  }
 			  	req.flash("flash", strings.account.loggedin);
 				 res.redirect(302, '/');

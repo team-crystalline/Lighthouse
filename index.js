@@ -159,6 +159,9 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	next();
 	});
+
+	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/css")));
+	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/js")));
 app.locals.editorColours=[
 	{color: 'red',label: 'Red'},
 	{color: '#ff691f',label: 'Orange'},
@@ -402,6 +405,11 @@ app.locals.pluralize= pluralize;
 	
  }
   // PAGES- GET REQUEST
+  app.get("/alter-test", (req, res)=> {
+	if (isLoggedIn(req)){
+		res.render(`pages/alter-test`, { session: req.session, splash:splash, cookies:req.cookies, lang:req.acceptsLanguages()[0] });
+	}
+  });
   app.get('/', (req, res) => {
 	  client.query({text: "SELECT COUNT(id) FROM users;",values: []}, (err, result) => {
 		  if (err) {

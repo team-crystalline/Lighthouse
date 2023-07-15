@@ -405,11 +405,7 @@ app.locals.pluralize= pluralize;
 	
  }
   // PAGES- GET REQUEST
-  app.get("/alter-test", (req, res)=> {
-	if (isLoggedIn(req)){
-		res.render(`pages/alter-test`, { session: req.session, splash:splash, cookies:req.cookies, lang:req.acceptsLanguages()[0] });
-	}
-  });
+
   app.get('/', (req, res) => {
 	  client.query({text: "SELECT COUNT(id) FROM users;",values: []}, (err, result) => {
 		  if (err) {

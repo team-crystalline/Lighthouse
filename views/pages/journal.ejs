@@ -23,9 +23,12 @@
           <% if (locals.messages.flash) { %>
             <div class="splash"><%- locals.messages.flash %></div>
         <% } %>
-            <p><a href="/clearalter">Go back to the System page</a></p>
+        <div class="grid-sm padLinks">
+          <a class="linkbutton" href="/system/<%- session.chosenAlter.sys_id %>">Back to <%- Buffer.from(session.chosenAlter.sys_alias, "base64").toString() %></a>
+          <a class="linkbutton" href="/alter/<%- session.chosenAlter.alt_id %>">Close Journal</a>
+        </div>
             <h2><%- Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal</h2>
-            <sub>System: <%- Buffer.from(session.chosenAlter.sys_alias, 'base64').toString() %></sub>
+
             <form method="post">
                 <h3>Create Journal Entry</h3>
                 <label for="j_title">Journal title</label><br/>

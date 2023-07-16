@@ -112,6 +112,7 @@ td{
                 </select> 
                 <input type="submit" name="newjournalSkin" value="Update Journal Skin">
                 </form>
+
         </section>
             <% } else { %>
                 <h2>Uh oh!</h2> <p><%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> has no journal. Make one down below. (You can change this journal's skin later)</p>

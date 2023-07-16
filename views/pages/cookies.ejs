@@ -10,13 +10,18 @@
             <div class="splash"><%- locals.messages.flash %></div>
         <% } %>
           <h1>Lighthouse's Cookie and Session Usage</h1>
-          <p>Lighthouse now uses cookies to keep your place in the website. It does not collect data on how you use the website, or anything except what is strictly necessary.</p>
+          <p>Lighthouse uses cookies to keep your place in the website. It does not collect data on how you use the website, or anything except what is strictly necessary.</p>
           <h2>What's a cookie, and what are you storing?</h2>
-          <p>Cookies are little bits of information that get stored on your device that lets websites remember you. They can also be used to make more targeted, personalised ads on large websites such as Facebook and Twitter. Cookies are awesome when they're used to keep you logged in, but they can potentially get accessed by an outside source. This is why Lighthouse would like to keep as little data in cookies as possible.</p>
-          <p>Due to their potentially vulnerable nature, GDPR laws require websites to let users know if there are cookies being stored. Though Lighthouse is based in the United States, we are aiming to comply with GDPR as closely as possible. Most websites ask if you want to opt-out of all cookies except strictly necessary ones. Lighthouse has no advertising and will never have advertising, so the only cookies stored are strictly necessary (which will still be able to be opted out of soon). The information we put into cookies and put on your device are these as follows:<ul>
+          <p>Cookies are little bits of information that get stored on your device that lets websites remember you. They can also be used to make more targeted, personalised ads on large websites such as Facebook and Twitter.</p>
+          <p>GDPR laws require websites to let users know if there are cookies being stored. Though Lighthouse is based in the United States, we are aiming to comply with GDPR as closely as possible. Most websites ask if you want to opt-out of all cookies except strictly necessary ones. Lighthouse has no advertising and will never have advertising, so the only cookies stored are strictly necessary. The information we put into cookies are as follows:<ul>
             <li>An ID number automatically assigned to your account (to make sure we show you ONLY your information, and not someone else's). This also lets us keep you logged in even when an update is pushed, or if the hosting service has to restart the website.</li>
             <li>Your username (just to double-check information belongs to you, and make you aware that you're logged in by displaying it at the top)</li>
-          </ul></p>
+            <li>Whether or not you're considered a "legacy" user (among the first 100 users on the site)-- This loads the legacy skin if so.</li>
+            <li>What website skin you're using.</li>
+          <li>The terms you use for "alter", "system", and "subsystem". This is to keep these terms even after closing the window.</li>          
+          </ul>
+
+        </p>
           <p>These cookies last for 1 week. You'll stay logged in for a week before being asked to log in again.</p>
           <h2>What's a session, and what are you storing?</h2>
           <p>Sessions are a means of storing information for the user between HTTP requests, such as pressing the "log in" button, "write post" button, or navigating to new pages. Lighthouse stores as little in sessions as possible, but these variables are accessible only to you. We store which system is currently selected, which alter is currently selected, and a collection of journal posts by specific alters or the communal journal to show you. These variables are stored only on your end.</p>

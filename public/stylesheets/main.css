@@ -643,55 +643,7 @@ img.emoji {
     width: 0;
     height: 0;
   }
-  
-  /* The slider */
-  .slider {
-    /* position: absolute; */
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--col1);
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 1em;
-    width: 1em;
-    left: 4px;
-    bottom: 4px;
-    background-color: var(--col2);
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  input:checked + .slider {
-    background-color: var(--col3);
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px var(--col3);
-  }
-  
-  input:checked + .slider:before {
-    -webkit-transform: translateX(1.5em);
-    -ms-transform: translateX(1.5em);
-    transform: translateX(1.5em);
-    background-color: var(--col4);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 1em;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  } 
+
 
   select, select > *{
     background: var(--col2);

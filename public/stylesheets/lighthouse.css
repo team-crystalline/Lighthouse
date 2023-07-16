@@ -11,7 +11,7 @@
     --col8: #065966;
 }
 html{
-    background: var(--col7);
+    /* background: var(--col7); */
     background-image: url("../img/lighthouse-photo-bw.png");
 }
 #menubg{

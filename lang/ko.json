@@ -1,0 +1,46 @@
+{
+    "test": "안녕 세상",
+    "alter": {
+        "created": "Alter added successfully!",
+        "updated": "Alter updated successfully!",
+        "deleted": "Alter removed successfully."
+    },
+    "mood":{
+        "updated": "Updated mood!",
+        "deleted": "Cleared mood."
+    },
+    "system": {
+        "created": "System created!",
+        "updated": "System updated!",
+        "deleted": "Deleted system.",
+        "imported": "Imported from Pluralkit successfully."
+    },
+    "account":{
+        "created": "Thank you for signing up to Lighthouse! You are now logged in.",
+        "updated": "Settings updated!",
+        "deleted": "So sorry to see you go. You can sign up again at any time.",
+        "alreadyExists": "<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>",
+        "incorrect": "Your email or password is incorrect. <a href='/forgot-password'>Do you need to reset your password?</a>",
+        "loggedout": "You're now logged out.",
+        "loggedin": "You're now logged in!",
+        "sessionExpired": "Your session might have expired. Please log in again.",
+        "skin": "Website skin changed successfully!"
+    },
+    "wish":{
+        "created": "Wish created!",
+        "granted": "Wish granted!",
+        "deleted": "Wish deleted."
+    },
+    "import":{
+        "PK":{
+          "success": "Import from Pluralkit successful!",
+          "failure":{
+            "noCheck": "No alters were selected to import."
+          }
+        }
+        
+    },
+    "posts":{
+        "moved": "Journal entry moved successfully."
+    }
+}

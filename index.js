@@ -309,7 +309,6 @@ app.locals.pluralize= pluralize;
   app.all('*', (req, res) => {
 	// Loads before all other routes.
 	if (isLoggedIn(req)){
-		if (!req.session.u_id){
 			// Grab their IDs real quick.
 		client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
 			if (err) {
@@ -321,14 +320,14 @@ app.locals.pluralize= pluralize;
 				try{
 					req.session.u_id= result.rows[0].id;
 					req.session.is_legacy= result.rows[0].is_legacy;
-				} catch (e){
-
-				}
-
-			}
-		});
-		}
-		// Is this a developer account?
+					req.session.username= result.rows[0].username;
+					req.session.email= result.rows[0].email;
+					req.session.skin= result.rows[0].skin;
+					req.session.is_legacy= result.rows[0].is_legacy;
+					req.session.system_term= result.rows[0].system_term;
+					req.session.alter_term= result.rows[0].alter_term;
+					req.session.subsystem_term= result.rows[0].subsystem_term;
+							// Is this a developer account?
 		if (req.session.u_id == process.env.dev1 || req.session.u_id == process.env.dev2){
 			req.session.is_dev=true;
 		}
@@ -365,7 +364,6 @@ app.locals.pluralize= pluralize;
 						  req.session.subsystem_term="subsystem";
 					  }
 					  if (result.rows.length > 0){
-						console.log(result.rows);
 						req.session.subsystem_term= result.rows[0].subsystem_term;
 					  } else {
 						// No match.
@@ -398,12 +396,19 @@ app.locals.pluralize= pluralize;
 					});
 			}
 		}
+				} catch (e){
+					// They logged out!
+				}
+
+			}
+		});
+		
+
 	} else {
 		req.session.alter_term= "alter";
 		req.session.system_term= "system";
 		req.session.subsystem_term="subsystem";
 	}
-
 	req.next();
   });
 
@@ -1302,7 +1307,6 @@ app.get('/wish-d/:id', (req, res) => {
 				req.session.jPost= result.rows[0];
 				req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 				req.session.jPost.title= decryptWithAES(req.session.jPost.title);
-				// console.log(req.session.jPost);
 				res.render(`pages/delete_post`, { session: req.session, splash:splash,cookies:req.cookies });
 			}
 		});
@@ -1319,10 +1323,6 @@ app.get('/wish-d/:id', (req, res) => {
 				console.log(err.stack);
 				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
-				// req.session.jPost= result.rows[0];
-				// req.session.jPost.body= decryptWithAES(req.session.jPost.body);
-				// req.session.jPost.title= decryptWithAES(req.session.jPost.title);
-				// req.session.jPost.is_comm= false;
 				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies, cJourn: {id: result.rows[0].p_id, body: decryptWithAES(result.rows[0].body), title: decryptWithAES(result.rows[0].title), is_comm: false}});
 			}
 		});
@@ -1340,8 +1340,6 @@ app.get('/wish-d/:id', (req, res) => {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
-			  // console.log(result.rows[0]);
-			  // console.log(req.session.jPost);
 			  res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies, cJourn: {id: result.rows[0].id, body: decryptWithAES(result.rows[0].body), title: decryptWithAES(result.rows[0].title), is_comm: true} });
 		  }
 	  });
@@ -1363,7 +1361,6 @@ app.get('/wish-d/:id', (req, res) => {
 			  req.session.jPost= result.rows[0];
 			  req.session.jPost.body= decryptWithAES(req.session.jPost.body);
 			  req.session.jPost.title= decryptWithAES(req.session.jPost.title);
-			  // console.log(req.session.jPost);
 			  res.render(`pages/delete_post`, { session: req.session, splash:splash, cookies:req.cookies });
 		  }
 	  });
@@ -1584,9 +1581,7 @@ app.get('/wish-d/:id', (req, res) => {
 		  	if (req.body.deleteAcc){
 				if (getCookies(req)['u_id'] == result.rows[0].id){
 					// Logged account matches searched account.
-					console.log("Found a match.");
 					if (req.body.deleteAcc){
-					   console.log("User is deleting."); 
 					   ejs.renderFile(__dirname + '/views/pages/email-goodbye.ejs', { alias: Buffer.from(result.rows[0].username, 'base64').toString() || randomise(["Buddy", "Friend", "Pal"]) }, (err, data) => {
 						if (err) {
 						  console.log(err);
@@ -1644,91 +1639,85 @@ app.get('/wish-d/:id', (req, res) => {
 			  } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 
 		  } else {
-			if (req.body.skinSel){
-				// Changing Lighthouse's skin.
-				client.query({text: 'UPDATE users SET skin=$1 WHERE id=$2', values: [req.body.skinSel, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						req.flash("flash", strings.account.skin);
-						res.status(200).cookie('skin',  req.body.skinSel,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).redirect(`/profile`);
-					}
-				});
+				if (req.body.skinSel){
+					// Changing Lighthouse's skin.
+					client.query({text: 'UPDATE users SET skin=$1 WHERE id=$2', values: [req.body.skinSel, getCookies(req)['u_id']]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash", strings.account.skin);
+						}
+					});
+				}
+				if (req.body.altTerm){
+					// Updating alter term
+					client.query({text: 'UPDATE users SET alter_term=$1 WHERE id=$2', values: [req.body.altTerm, getCookies(req)['u_id']]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash", strings.account.updated);
+							req.session.alter_term= req.body.altTerm;
+						}
+					});
+				}
+				if (req.body.sysTerm){
+					// Updating alter term
+					client.query({text: 'UPDATE users SET system_term=$1 WHERE id=$2', values: [req.body.sysTerm, getCookies(req)['u_id']]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash", strings.account.updated);
+							req.session.system_term= req.body.sysTerm;
+						}
+					});
+				}
+				if (req.body.subTerm){
+					// Updating alter term
+					 client.query({text: 'UPDATE users SET subsystem_term=$1 WHERE id=$2', values: [req.body.subTerm, getCookies(req)['u_id']]}, (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash", strings.account.updated);
+							req.session.subsystem_term= req.body.subTerm;
+						}
+					});
+				}
+				if (req.body.newEmail){
+					// Updating email
+					client.query({text: 'UPDATE users SET email=$1 WHERE id=$2', values: [`'${Buffer.from(req.body.newEmail).toString('base64')}'`, getCookies(req)['u_id']]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash", strings.account.updated);
+							req.session.email= req.body.newEmail;
+						}
+					});
+				}
+				if (req.body.newName){
+					// Updating username
+					client.query({text: 'UPDATE users SET username=$1 WHERE id=$2', values: [`'${Buffer.from(req.body.newName).toString('base64')}'`, getCookies(req)['u_id']]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash", strings.account.updated);
+							req.session.username= req.body.newName;
+						}
+					});
+				}
+				if (req.body.changePass){
+					client.query({text: 'UPDATE users SET pass=$1 WHERE id=$2', values: [`'${CryptoJS.SHA3(req.body.newPass1)}'`, getCookies(req)['u_id']]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.flash("flash","Password Updated!");
+						}
+					});
+				}
+
+				// After all those changes.
+				// res.cookie('subsystem_term', req.body.subTerm,{httpOnly: true });
+				res.cookie('username', req.body.newName || Buffer.from(req.session.username, "base64").toString() ,{httpOnly: true }).cookie('email', req.body.newEmail || req.session.email ,{httpOnly: true }).cookie('alter_term', req.body.altTerm || req.session.alter_term ,{httpOnly: true }).cookie('system_term', req.body.sysTerm || req.session.system_term ,{httpOnly: true }).cookie('subsystem_term', req.body.subTerm || req.session.subsystem_term ,{httpOnly: true }).redirect(302, "/profile");
 			}
-			if (req.body.altTerm){
-				// Updating alter term
-				client.query({text: 'UPDATE users SET alter_term=$1 WHERE id=$2', values: [req.body.altTerm, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						req.flash("flash", strings.account.updated);
-						req.session.alter_term= req.body.altTerm;
-						res.status(200).cookie('alter_term',  req.body.altTerm,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.body.newEmail, theirName: req.session.username });
-					}
-				});
-			}
-			if (req.body.sysTerm){
-				// Updating alter term
-				client.query({text: 'UPDATE users SET system_term=$1 WHERE id=$2', values: [req.body.sysTerm, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						req.flash("flash", strings.account.updated);
-						req.session.system_term= req.body.sysTerm;
-						res.status(200).cookie('system_term',  req.body.sysTerm,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.body.newEmail, theirName: req.session.username });
-					}
-				});
-			}
-			if (req.body.subTerm){
-				// Updating alter term
-				client.query({text: 'UPDATE users SET subsystem_term=$1 WHERE id=$2', values: [req.body.subTerm, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						req.flash("flash", strings.account.updated);
-						req.session.subsystem_term= req.body.subTerm;
-						res.status(200).cookie('subsystem_term',  req.body.subTerm,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.body.newEmail, theirName: req.session.username });
-					}
-				});
-			}
-			if (req.body.newEmail){
-				// Updating email
-				client.query({text: 'UPDATE users SET email=$1 WHERE id=$2', values: [`'${Buffer.from(req.body.newEmail).toString('base64')}'`, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						// req.session.email= req.body.newEmail;
-						req.flash("flash", strings.account.updated);
-						req.session.email= req.body.newEmail;
-						res.status(200).cookie('email',  req.body.newEmail,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.body.newEmail, theirName: req.session.username });
-					}
-				});
-			}
-			if (req.body.newName){
-				// Updating username
-				client.query({text: 'UPDATE users SET username=$1 WHERE id=$2', values: [`'${Buffer.from(req.body.newName).toString('base64')}'`, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						req.flash("flash", strings.account.updated);
-						req.session.username= req.body.newName;
-						res.status(200).cookie('username',  req.body.newName,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.session.email, theirName: req.body.newName });
-					}
-				});
-			}
-			if (req.body.changePass){
-				// Updating password
-				// client.query({text: 'UPDATE users SET pass=$1 WHERE email_link=$2', values: [`'${CryptoJS.SHA3(req.body.newpass)}'`,`'${req.params.id}'`]}, (err, result)=>{
-				client.query({text: 'UPDATE users SET pass=$1 WHERE id=$2', values: [`'${CryptoJS.SHA3(req.body.newPass1)}'`, getCookies(req)['u_id']]}, (err, result)=>{
-					if (err) {
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					} else {
-						splash=req.flash("flash","Password Updated!");
-						res.status(200).render(`pages/profile`, { session: req.session, splash:splash,cookies:req.cookies, theirEmail: req.session.email, theirName: req.session.username });
-					}
-				});
-			}
-		  }
 		});
 	});
 	
@@ -1746,7 +1735,7 @@ app.get('/wish-d/:id', (req, res) => {
 					     res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					   } else {
 					      // Code here
-								splash= req.flash("flash","Updated your password. You can now log in!");
+								req.flash("flash","Updated your password. You can now log in!");
 								res.redirect("/login");
 					   }
 					 });
@@ -1771,7 +1760,6 @@ app.get('/wish-d/:id', (req, res) => {
 				} else {
 					req.session.user= result.rows[0];
 					req.session.user.email_pin= getRandomInt(1111,9999);
-					// console.log(req.session.user.email_pin);
 					client.query({text: 'UPDATE users set email_pin=$1 WHERE email=$2 ', values:[`${req.session.user.email_pin}`,`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result)=>{
 						res.render(`pages/forgot_pass2`, { session: req.session, splash:splash,cookies:req.cookies});
 						ejs.renderFile(__dirname + '/views/pages/email-forgotpass.ejs', { alias: Buffer.from(req.session.user.username, 'base64').toString() || randomise(["Buddy", "Friend", "Pal"]), userPin: req.session.user.email_pin, resetLink:(req.session.user.email_link).replace(/'/gi, '') }, (err, data) => {
@@ -2105,9 +2093,7 @@ app.get('/wish-d/:id', (req, res) => {
 
 	app.post("/system/:alt", function(req, res){
 			if (isLoggedIn(req)){
-				console.log(req.body)
 				if (req.body.sysid){
-					console.log("Saving new subsystem data.")
 					let sysId= req.body.sysid == "none" ? null : req.body.sysid;
 					// Setting this in case they want to release a subsystem into a normal system.
 					client.query({text: "UPDATE systems SET subsys_id=$2 WHERE sys_id=$1",values: [`${req.session.chosenSys.sys_id}`, sysId]}, (err, result) => {
@@ -2213,7 +2199,6 @@ app.get('/wish-d/:id', (req, res) => {
 		});
 	  } else {
 		// Deleting.
-		console.log("Deleting.")
 		client.query({text: "DELETE FROM comm_posts WHERE id=$1; ",values: [getKeyByValue(req.body,"Remove")]}, (err, result) => {
 			if (err) {
 			   console.log(err.stack);

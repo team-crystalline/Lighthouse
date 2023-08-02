@@ -34,11 +34,11 @@
 			<h1>Edit Your Account</h1>
 				<form method="post" style="margin-top:calc(.5em);">
 					<label for="altTerm">Term preferred for "alter": </label>
-					<input type="text" name="altTerm" placeholder="<%- session.alter_term %>"><br>
+					<input type="text" name="altTerm" placeholder="<%- cookies.alter_term %>" minlength="3"><br>
 					<label for="sysTerm">Term preferred for "system": </label>
-					<input type="text" name="sysTerm" placeholder="<%- session.system_term %>"><br>
+					<input type="text" name="sysTerm" placeholder="<%- cookies.system_term %>"minlength="3"><br>
 					<label for="subTerm">Term preferred for "subsystem": </label>
-					<input type="text" name="subTerm" placeholder="<%- session.subsystem_term %>"><br>
+					<input type="text" name="subTerm" placeholder="<%- cookies.subsystem_term %>"minlength="3"><br>
 					<input type="submit" value="Set Terms">
 				</form>
 			<section>

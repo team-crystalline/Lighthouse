@@ -1,9 +1,9 @@
 {
     "test": "Hello Mundo",
     "alter": {
-        "created": "-jhfgsd- matagumpay na naidagdag!",
-        "updated": "-jhfgsd- matagumpay na na-update!",
-        "deleted": "-jhfgsd- matagumpay na natanggal."
+        "created": "-Alter- matagumpay na naidagdag!",
+        "updated": "-Alter- matagumpay na na-update!",
+        "deleted": "-Alter- matagumpay na natanggal."
     },
     "mood":{
         "updated": "Updated mood!",

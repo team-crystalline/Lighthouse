@@ -1,0 +1,46 @@
+{
+    "test": "Hallo Welt",
+    "alter": {
+        "created": "[ALTER] erfolgreich hinzugefügt!",
+        "updated": "[ALTER] erfolgreich aktualisiert!",
+        "deleted": "[ALTER] erfolgreich entfernt."
+    },
+    "mood":{
+        "updated": "Aktualisierte Stimmung!",
+        "deleted": "Klare Stimmung!"
+    },
+    "system": {
+        "created": "[System] wurde erstellt!",
+        "updated": "[System] wurde aktualisiert!",
+        "deleted": "[System] gelöscht.",
+        "imported": "Erfolgreich aus Pluralkit importiert."
+    },
+    "account":{
+        "created": "Vielen Dank, dass Sie sich Lighthouse angeschlossen haben! Sie sind jetzt eingeloggt.",
+        "updated": "Einstellungen aktualisiert!",
+        "deleted": "Bis später. Sie können sich jederzeit erneut anmelden.",
+        "alreadyExists": "<strong>Oh nein!</strong> Dieser Benutzername oder diese E-Mail-Adresse wird bereits verwendet. <a href='/login'>Müssen Sie sich stattdessen anmelden?</a>",
+        "incorrect": "Deine E-Mail oder dein Passwort ist falsch. <a href='/forgot-password'>Müssen Sie Ihr Passwort zurücksetzen?</a>",
+        "loggedout": "Sie sind jetzt ausgeloggt.",
+        "loggedin": "Sie sind jetzt eingeloggt!",
+        "sessionExpired": "Deine Sitzung ist abgelaufen. Bitte neu anmelden.",
+        "skin": "Website-Theme erfolgreich geändert!"
+    },
+    "wish":{
+        "created": "Wunsch gemacht!",
+        "granted": "Wunsch erfüllt!",
+        "deleted": "Wunsch gelöscht."
+    },
+    "import":{
+        "PK":{
+          "success": "Import aus Pluralkit erfolgreich!",
+          "failure":{
+            "noCheck": "Es wurde kein [Alters] zum Importieren ausgewählt."
+          }
+        }
+        
+    },
+    "posts":{
+        "moved": "Der Journaleintrag wurde erfolgreich verschoben."
+    }
+}

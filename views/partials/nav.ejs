@@ -131,10 +131,9 @@
       <% if (session.system_term) { %> 
         <a href="/system">My <%= capitalise(session.system_term) %></a>
       <% } else { %>
-        <a href="/system">My <%= session.system_term %></a>
+        <a href="/system">My System</a>
         <% } %>
-        
-    <% } %><% if (cookies.loggedin){ %>
+        <!-- <a href="/forum">Internal Forum</a> -->
       <a href="/profile">Settings</a>
       <% } %>
     

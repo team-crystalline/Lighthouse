@@ -347,7 +347,7 @@ td{
                         <% } %>
                     <% if (session.chosenAlter.relationships) { %>
                     <% if (distill(session.chosenAlter.relationships)) { %>
-                        <tr><td>Relationships with other <%- pluralize(session.alter_term) %>:</td>
+                        <tr><td>Relationships with other <%- pluralize(cookies.alter_term) %>:</td>
                         <td><%- (Buffer.from(session.chosenAlter.relationships, 'base64').toString()).replace(/\n/g, "<br>") %></td></tr>
                     <% } %>
                         <% } %>

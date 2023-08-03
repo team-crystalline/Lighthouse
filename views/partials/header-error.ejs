@@ -3,8 +3,30 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
 <link rel="icon" type="image/x-icon" href="/img/logo.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
+<script defer>
+    let domReady = (cb) => {
+      document.readyState === 'interactive' || document.readyState === 'complete'
+        ? cb()
+        : document.addEventListener('DOMContentLoaded', cb);
+    };
+    
+    domReady(() => {
+      // Display body when DOM is loaded
+      if (localStorage.getItem("lighthouse_mode") == "light"){
+        $("html").addClass("light-mode");
+      $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- cookies.skin || "lighthouse" %>.css">`);        
+      } else {
+        $("html").addClass("dark-mode");
+        $("head").append(`<link rel="stylesheet" href="/stylesheets/dark.css">`);         
+      }
 
+      document.body.style.visibility = 'visible';
+    });
+    
+    
+    </script>
 
 <!-- Meta data -->
 <meta charset="UTF-8">

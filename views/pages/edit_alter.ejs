@@ -52,7 +52,7 @@
                 <input type="text" name="sexuality" <% if (session.chosenAlter.sexuality){ %> value="<%= Buffer.from(session.chosenAlter.sexuality, "base64").toString() %>" <% } %>>
                 <label for="age" >Perceived Age</label>
                 <input type="text" name="age" <% if (session.chosenAlter.agetext){ %> value="<%= Buffer.from(session.chosenAlter.agetext, "base64").toString() %>" <% } %>>
-                <label for="type" id="typeinfo"><%= capitalise(session.alter_term) %> Type</label>
+                <label for="type" id="typeinfo"><%= capitalise(cookies.alter_term) %> Type</label>
                 <input type="text" name="type" value="<%= session.chosenAlter.type %>">
                 <span style="display:block; margin-bottom:2em; margin-top:-1.5em;">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
                 <label for="source">If introject, source:</label>
@@ -82,7 +82,7 @@
                 <textarea name="acc"><% if (session.chosenAlter.acc !== null) { %><%- Buffer.from(session.chosenAlter.acc, 'base64').toString() %><% } %></textarea>
                 <label for="wish">A few things <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %> wishes for (e.g. "to feel safer internally", "to communicate with other parts")</label>       
                 <textarea name="wish"><% if (session.chosenAlter.wants !== null) { %><%- Buffer.from(session.chosenAlter.wants, 'base64').toString() %><% } %></textarea>
-                <label for="relationships">What are <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s relationships to other <%- pluralize(session.alter_term) %>?</label>       
+                <label for="relationships">What are <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s relationships to other <%- pluralize(cookies.alter_term) %>?</label>       
                 <textarea name="relationships"><% if (session.chosenAlter.relationships !== null) { %><%- Buffer.from(session.chosenAlter.relationships, 'base64').toString() %><% } %></textarea>
                 <label for="notes">Other notes</label>       
                 <textarea name="notes"><% if (session.chosenAlter.notes !== null) { %><%- Buffer.from(session.chosenAlter.notes, 'base64').toString() %><% } %></textarea>
@@ -96,8 +96,8 @@
     <%- include ("../partials/footer.ejs") %>
     <script>
         	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
-            let alterTermCap= "<%= capitalise(session.alter_term) %>";
-            let alterTermLow= "<%= session.alter_term %>";
+            let alterTermCap= "<%= capitalise(cookies.alter_term) %>";
+            let alterTermLow= "<%= cookies.alter_term %>";
             $(document).ready(function(){
             $("#typeSel").change(function(){
                 var selectedAlt = $(this).children("option:selected").val();

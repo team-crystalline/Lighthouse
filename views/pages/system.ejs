@@ -28,10 +28,10 @@
             
             <h2 id="sysHeader"></h2>
             <div class="grid-sm padLinks" style="margin: auto;text-align:center;line-height: 1;">
-              <a title= "<%= capitalise(session.alter_term) %>Search" href="/search"><%= capitalise(session.alter_term) %> Search</a>
-              <a title= "<%= capitalise(session.system_term) %> Rules" href="/rules"><%= capitalise(session.system_term) %> Rules</a>
-              <a title="Your Inner World" href="/inner-world">Inner World</a>
-              <a title="Your <%= capitalise(session.system_term) %>'s wants, needs, and wishes" href="/wish">Wishlist</a>
+              <a title= "<%= capitalise(cookies.alter_term) %>Search" href="/search"><%= capitalise(cookies.alter_term) %> Search</a>
+              <a title= "<%= capitalise(cookies.system_term) %> Rules" href="/rules"><%= capitalise(cookies.system_term) %> Rules</a>
+              <% if (session.inner_worlds == true) { %> <a title="Your Inner World" href="/inner-world">Inner World</a> <%}%>
+              <a title="Your <%= capitalise(cookies.system_term) %>'s wants, needs, and wishes" href="/wish">Wishlist</a>
               <a title="Worksheets for trauma (WIP)" href="/worksheets">Worksheets</a>
               <a title="Crash course on using Lighthouse" href="/tutorial">Tutorial</a>
             </div>
@@ -39,7 +39,7 @@
             <div id="WaitSys"></div>
             <div id="sysList">
             </div>
-            <button id="tbutton">Add a <%= capitalise(session.system_term) %></button>
+            <button id="tbutton">Add a <%= capitalise(cookies.system_term) %></button>
               <!-- The Modal -->
               <div id="myModal" class="modal">
 
@@ -48,18 +48,18 @@
                   <span class="material-symbols-outlined close">
                     cancel
                     </span>
-                    <h2>Add a New <%= capitalise(session.system_term) %></h2>
+                    <h2>Add a New <%= capitalise(cookies.system_term) %></h2>
                   <form method="post">
-                    <label for="sysname"><%= capitalise(session.system_term) %> Name: </label>
+                    <label for="sysname"><%= capitalise(cookies.system_term) %> Name: </label>
                     <input type="text" name="sysname" required><br>
                     <div id="subsys">
-                      <label for="subsys">Nest this <%= session.system_term %> under: </label>
+                      <label for="subsys">Nest this <%= cookies.system_term %> under: </label>
                       <select name="subsys" id="subdrop">
                         <option checked>None</option>
                       </select>
-                      <br><small>Nesting a <%= session.system_term %> creates a <%= session.subsystem_term %>.</small>
+                      <br><small>Nesting a <%= cookies.system_term %> creates a <%= cookies.subsystem_term %>.</small>
                     </div>
-                    <input type="submit" value="Create <%= capitalise(session.system_term) %>">
+                    <input type="submit" value="Create <%= capitalise(cookies.system_term) %>">
                   </form>
                 </div>
 
@@ -176,7 +176,7 @@ async function fetchPosts(){
             var sysCount = 0;
             var subSysCount = 0;
             if (sysInfo.sysArr.length > 0){
-              $("#sysList").append("For sanity's sake and neatness, <%- pluralize(session.subsystem_term) %> are only shown 1 level deep. <%- capitalise(pluralize(session.subsystem_term)) %> within <%- pluralize(session.subsystem_term) %> are nested in their parent's page.");
+              $("#sysList").append("For sanity's sake and neatness, <%- pluralize(cookies.subsystem_term) %> are only shown 1 level deep. <%- capitalise(pluralize(cookies.subsystem_term)) %> within <%- pluralize(cookies.subsystem_term) %> are nested in their parent's page.");
             }
             for (i in sysInfo.sysArr){
               // We need to do some logic. 
@@ -209,8 +209,8 @@ async function fetchPosts(){
               }                
               }
             }
-            $("#sysCount").text(`You have ${sysCount} ${sysCount == 1 ? '<%- session.system_term %>' : '<%- pluralize(session.system_term) %>'} and ${subSysCount} ${subSysCount == 1 ? '<%- session.subsystem_term %>' : 'visible <%- pluralize(session.subsystem_term) %>'}.`);
-            $("#sysHeader").text(`Your ${sysCount == 1 ? '<%- capitalise(session.system_term) %>' : '<%- capitalise(pluralize(session.system_term)) %>'}`);
+            $("#sysCount").text(`You have ${sysCount} ${sysCount == 1 ? '<%- cookies.system_term %>' : '<%- pluralize(cookies.system_term) %>'} and ${subSysCount} ${subSysCount == 1 ? '<%- cookies.subsystem_term %>' : 'visible <%- pluralize(cookies.subsystem_term) %>'}.`);
+            $("#sysHeader").text(`Your ${sysCount == 1 ? '<%- capitalise(cookies.system_term) %>' : '<%- capitalise(pluralize(cookies.system_term)) %>'}`);
             var language = window.navigator.userLanguage || window.navigator.language;
             if (sysInfo.isPinned.length > 0){
             for (i in sysInfo.isPinned){

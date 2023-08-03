@@ -32,6 +32,7 @@
 				<div class="splash"><%- locals.messages.flash %></div>
 			<% } %>
 			<h1>Edit Your Account</h1>
+				<h2>Custom Terms</h2>
 				<form method="post" style="margin-top:calc(.5em);">
 					<label for="altTerm">Term preferred for "alter": </label>
 					<input type="text" name="altTerm" placeholder="<%- cookies.alter_term %>" minlength="3"><br>
@@ -39,8 +40,17 @@
 					<input type="text" name="sysTerm" placeholder="<%- cookies.system_term %>"minlength="3"><br>
 					<label for="subTerm">Term preferred for "subsystem": </label>
 					<input type="text" name="subTerm" placeholder="<%- cookies.subsystem_term %>"minlength="3"><br>
-					<input type="submit" value="Set Terms">
-				</form>
+					<label for="subTerm">Term preferred for "inner world": </label>
+					<input type="text" name="subTerm" placeholder="<%- cookies.subsystem_term %>"minlength="3"><br>
+
+					<h2>Global <%- capitalise(cookies.system_term) %> Settings</h2>
+					<label for="innerworld">Enable/Disable <%- capitalise(session.innerworld_term) %></label>
+					<select name="innerworld" id="innerworld">
+						<option value="true" <% if (session.inner_worlds == true) { %> selected <%}%>>Enabled</option>
+						<option value="false" <% if (session.inner_worlds == false) { %> selected <%}%>>Disabled</option>
+					</select>
+					<input type="submit" value="Update Settings" style="display:block;">
+					</form>
 			<section>
 				<!-- Change email, username, password. Fetch from our DB as they type -->
 				<form method="post" style="margin-top:1em">
@@ -76,7 +86,7 @@
 			<section>
 				<h2><span class="material-symbols-outlined">dangerous</span> Danger Zone <span class="material-symbols-outlined">dangerous</span></h2>
 			<h3>Delete Your Account</h3>
-			<p>This is an <strong>irreversible action</strong>. All <%- pluralize(session.alter_term) %>, journals, inner world entries and rules will be deleted with this account.</p>
+			<p>This is an <strong>irreversible action</strong>. All <%- pluralize(cookies.alter_term) %>, journals, inner world entries and rules will be deleted with this account.</p>
 			<div id="popup" style="box-shadow: 0px 0px 50px var(--col5);">
 				<h2>Are you sure you want to delete your account?</h2>
 				<p>This cannot be undone, not even by the developer. Everything will be permanently deleted. Are you <em>sure</em> this is what you want to do?</p>
@@ -93,18 +103,11 @@
 			
 <%- include ("../partials/footer.ejs") %>
 	<script>
+		$('#innerworld').change(function() {
+			$('#intoggle').submit();
+		});
 		function warningPopUp(){
-			// if (document.querySelector("#popup").style.display == "none"){
-			// 	// Show the popup and background.
-			// 	document.querySelector("#popup").style.display = "block";
-			// 	// document.querySelector("#pseudofade").style.zIndex = "9999998";
-			// 	// document.querySelector("#pseudofade").style.opacity = 1;
-			// } else {
-			// 	// Hide the popup and background.
-			// 	document.querySelector("#popup").style.display = "none";
-			// 	// document.querySelector("#pseudofade").style.zIndex = "-9999998";
-			// 	// document.querySelector("#pseudofade").style.opacity = 0;
-			// }
+
 			$("#popup").fadeToggle("fast");
 			$('#fadein').fadeToggle(200);
 		}
@@ -143,6 +146,12 @@
 		$("#checkEmail").click(async function(){
 			event.preventDefault();
 			// We need to fetch from our database to see if the email they're asking for already exists.
+			if ($("#newEmail").val().length == 0){
+				$("#checkEmail").html(`No email was entered.`);
+				return setTimeout(function(){
+					$("#checkEmail").html(`Check Availability`);
+				},2000);
+			}
 			$("#checkEmail").html(`Checking...`);
 			let response = await fetch(`/users`, {
 				headers: {
@@ -165,6 +174,12 @@
 		$("#checkUser").click(async function(){
 			event.preventDefault();
 			// We need to fetch from our database to see if the email they're asking for already exists.
+			if ($("#newUser").val().length == 0){
+				$("#checkUser").html(`No username was entered.`);
+				return setTimeout(function(){
+					$("#checkUser").html(`Check Availability`);
+				},2000);
+			}
 			$("#checkUser").html(`Checking...`);
 			let response = await fetch(`/users`, {
 				headers: {

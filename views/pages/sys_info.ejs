@@ -57,7 +57,7 @@ var journSkin=[
             <% } %>
             <h2><% if (session.chosenSys.icon) { %> <img src="/img/svg/<%- session.chosenSys.icon %>.svg" class="vtinyimg"> <% } %><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
             <div id="parent"></div>
-            <p>This <%= session.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= session.alter_term %><% } else { %><%= pluralize(session.alter_term)%><% } %>.</p>
+            <p>This <%= session.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= cookies.alter_term %><% } else { %><%= pluralize(cookies.alter_term)%><% } %>.</p>
             <% if (alterArr.length > 0){ %>
             <div class="grid">
                 <% for ( i in alterArr) {  %>
@@ -67,8 +67,8 @@ var journSkin=[
             <% } %>
             <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="deletebtn">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="editbtn">Edit</a>
             <form method="post" style="margin-top: calc(2vh);">
-                <label for="altname">Add a New <%= capitalise(session.alter_term) %></label>
-                <input type="text" name="altname" placeholder="New <%= capitalise(session.alter_term) %> Name Here" autofocus="autofocus">
+                <label for="altname">Add a New <%= capitalise(cookies.alter_term) %></label>
+                <input type="text" name="altname" placeholder="New <%= capitalise(cookies.alter_term) %> Name Here" autofocus="autofocus">
                 <input type="submit" name="submit" value="Add">
             </form>
             <button onclick="$('#subsysForm').toggle('fast')"><%- capitalise(session.subsystem_term) %> settings</button>

@@ -12,37 +12,37 @@
             <h1>How to Use Lighthouse</h1>
             <section>
                 <img src="/img/svg/lighthouse.svg" alt="Lighthouse Logo" class="medimg" style="float: left; margin:calc(.5em)">
-                <p>Welcome to Lighthouse, a website for compartmentalised journalling! Specifically, keeping journals for <span id="alter" class="hoverhint" title="<%- pluralize(capitalise(session.alter_term)) %> are dissociated parts of a person. They are seen in Dissociative Identity Disorder, Partial Dissociative Identity Disorder (ICD), and Otherwise Specified Dissociative Disorder (DSM-V)."><%- pluralize(session.alter_term) %></span> to process memories, feelings, or whatever is needed. What you use Lighthouse for is up to you.</p>
-                <p>We don't dictate who can and cannot use Lighthouse. Even if you don't have <%- pluralize(session.alter_term) %>, you may still find a benefit to using it. One example might be someone using the <a href="/glossary#Internal Family Systems Model (IFS)" target="_blank">IFS model</a> in therapy.</p>
+                <p>Welcome to Lighthouse, a website for compartmentalised journalling! Specifically, keeping journals for <span id="alter" class="hoverhint" title="Alters are dissociated parts of a person. They are seen in Dissociative Identity Disorder, Partial Dissociative Identity Disorder (ICD), and Otherwise Specified Dissociative Disorder (DSM-V).">alters</span> to process memories, feelings, or whatever is needed. What you use Lighthouse for is up to you.</p>
+                <p>We don't dictate who can and cannot use Lighthouse. Even if you don't have alters, you may still find a benefit to using it. One example might be someone using the <a href="/glossary#Internal Family Systems Model (IFS)" target="_blank">IFS model</a> in therapy.</p>
                 <p>It's important to remember that <strong>data deletion on Lighthouse is irreversible</strong>. This includes accounts. In the future, Lighthouse will email you to verify that you want your account deleted.</p>
-                <p>A perk that we personally believe is important is that everything is for you, and you only. You cannot share pages publicly. There's no way for other users to contact you or see your <%- session.system_term %>(s), giving you a space to focus on <em>just</em> yourself.</p>
+                <p>A perk that we personally believe is important is that everything is for you, and you only. You cannot share pages publicly. There's no way for other users to contact you or see your system(s), giving you a space to focus on <em>just</em> yourself.</p>
             </section>
             <section>
                 <h2>Communal Journal</h2>
-                <p>The communal journal serves almost like a bulletin board for every <%- session.alter_term %> to read. If there's information you would want to share across your entire <%- session.system_term %>, you can do so here. The post creator has a basic "What you see is what you get" editor to customise text colour, bold text, or even add images (with an existing URL-- We don't have the resources for image uploading yet).</p>
+                <p>The communal journal serves almost like a bulletin board for every alter to read. If there's information you would want to share across your entire system, you can do so here. The post creator has a basic "What you see is what you get" editor to customise text colour, bold text, or even add images (with an existing URL-- We don't have the resources for image uploading yet).</p>
                 <p>If a specific communal journal entry is especially important, you can pin the post by clicking the thumbtack next to the post's title. There's no limit to how many posts you can pin. Remember, Lighthouse is ultimately meant to work best for you.</p>
             </section>
             <section>
-                <h2>Creating a <%- capitalise(session.system_term) %></h2>
-                <img src="/img/svg/group.svg" alt="Group of <%- pluralize(session.alter_term) %>, aka <%- capitalise(session.system_term) %>" class="medimg" style="float: right; margin:calc(.5em)">
-                <p>When you navigate to the <a href="/system" target="_blank">My <%- capitalise(session.system_term) %></a> page, you will see a series of buttons, one of those saying "Add a <span id="system" class="hoverhint" title="A <%- session.system_term %> is a group of <%- pluralize(session.alter_term) %>."><%- capitalise(session.system_term) %></span>". Click on "Add a <%- capitalise(session.system_term) %>", and a popup should show up asking for a <%- session.system_term %> name and if you would like to nest it under another <%- session.system_term %>, effectively creating a <span id="subsystem" class="hoverhint" title="A <%- session.subsystem_term %> is pretty much a <%- session.system_term %> within a <%- session.system_term %>."><%- session.subsystem_term %></span>.</p>
-                <p>When you click "Create <%- capitalise(session.system_term) %>" in this popup, it will appear in a list. Next to its name will be a "Rename" and "Delete" button. These rename and delete <%- pluralize(session.system_term) %>. When deleting <%- pluralize(session.system_term) %>, <%- pluralize(session.alter_term) %>, journals, journal posts or other "major" pieces of information, you will be shown a warning screen so you are aware of what you are about to do.</p>
-                <p>If you click on a <%- session.system_term %>, you will be taken to its page. Here, you can see all the <%- pluralize(session.alter_term) %> listed under it, as well as any <%- pluralize(session.subsystem_term) %> nested under this <%- session.system_term %>. You can also set an icon for the <%- session.system_term %> and even nest it under a different <%- session.system_term %>.</p>
+                <h2>Creating a System</h2>
+                <img src="/img/svg/group.svg" alt="Group of alters, aka a system" class="medimg" style="float: right; margin:calc(.5em)">
+                <p>When you navigate to the <a href="/system" target="_blank">My System</a> page, you will see a series of buttons, one of those saying "Add a <span id="system" class="hoverhint" title="A system is a group of alters.">System</span>". Click on "Add a System", and a popup should show up asking for a system name and if you would like to nest it under another system, effectively creating a <span id="subsystem" class="hoverhint" title="A subsystem is pretty much a system within a system.">subsystem</span>.</p>
+                <p>When you click "Create System" in this popup, it will appear in a list. Next to its name will be a "Rename" and "Delete" button. These rename and delete systems. When deleting systems, alters, journals, journal posts or other "major" pieces of information, you will be shown a warning screen so you are aware of what you are about to do.</p>
+                <p>If you click on a system, you will be taken to its page. Here, you can see all the alters listed under it, as well as any subsystems nested under this system. You can also set an icon for the system and even nest it under a different system.</p>
             </section>
             <section>
-                <h2>Creating <%- capitalise(pluralize(session.alter_term)) %></h2>
-                <img src="/img/svg/bust.svg" alt="A(n) <%- session.alter_term %>" class="medimg" style="float: left; margin:calc(.5em)">
-                <p>Once as you've created a <%- session.system_term %>, you can create <%- pluralize(session.alter_term) %>. Simply click on the <%- session.system_term %>, then type a name in the blank next to "Add a New <%- capitalise(session.alter_term) %>". Once as you click "Add", that <%- session.alter_term %> will then appear on the page.</p>
-                <p>Clicking the <%- session.alter_term %> will bring up their page. Here, you can see what <%- session.system_term %> they're a part of, basic information on them, and a prompt to create a journal if they don't have one. <%- capitalise(pluralize(session.alter_term)) %> can also set a mood, which is visible on this page as well as the <%- session.system_term %> page.</p>
+                <h2>Creating Alters</h2>
+                <img src="/img/svg/bust.svg" alt="A(n) alter" class="medimg" style="float: left; margin:calc(.5em)">
+                <p>Once as you've created a system, you can create alters. Simply click on the system, then type a name in the blank next to "Add a New Alter". Once as you click "Add", that alter will then appear on the page.</p>
+                <p>Clicking the alter will bring up their page. Here, you can see what system they're a part of, basic information on them, and a prompt to create a journal if they don't have one. Alters can also set a mood, which is visible on this page as well as the system page.</p>
                 <p>Alters can be moved across systems by the dropdown towards the top that says their name followed by "Is a part of".</p>
             </section>
             <section>
                 <h2>Creating a Journal</h2>
                 <img src="/img/11.png" alt="A holographic journal" class="medimg" style="float: right; margin:calc(.5em)">
-                <p>Journals are where <%- pluralize(session.alter_term) %> can put their private thoughts and feelings. Each <%- session.alter_term %> gets just one journal. <%- capitalise(pluralize(session.alter_term)) %> can pick from a variety of colours and patterns for their journal, allowing for their own personal touch. This colour can be changed later. Not all patterns are immediately shown when creating a journal to keep it from getting overwhelming.</p>
-                <p>If <%- pluralize(session.alter_term) %> feel the need to, they can add a password to their journal to keep others out. This is purely an honour-based approach, so it's implied that other <%- pluralize(session.alter_term) %> will respect their privacy. If the password is forgotten, it can easily be reset.</p>
+                <p>Journals are where alters can put their private thoughts and feelings. Each alter gets just one journal. Alters can pick from a variety of colours and patterns for their journal, allowing for their own personal touch. This colour can be changed later. Not all patterns are immediately shown when creating a journal to keep it from getting overwhelming.</p>
+                <p>If alters feel the need to, they can add a password to their journal to keep others out. This is purely an honour-based approach, so it's implied that other alters will respect their privacy. If the password is forgotten, it can easily be reset.</p>
                 <p>In the future, journals will be able to have their passwords toggled.</p>
-                <p>When posts are made in a journal, they can also be pinned just like their communal counterparts. However, communal journal posts and <%- session.alter_term %> posts are stored separately, and an ability to move posts between the two is in the works.</p>
+                <p>When posts are made in a journal, they can also be pinned just like their communal counterparts. However, communal journal posts and alter posts are stored separately, and an ability to move posts between the two is in the works.</p>
             </section>
             <section>
                 <h2>User settings</h2>
@@ -52,19 +52,19 @@
             </section>
             <section>
                 <h2>Worksheets</h2>
-                <p>On the "My <%- capitalise(session.system_term) %>" page, you will see a page for worksheets. This is a continual work in progress, with new worksheets being added occasionally. The most important one is at the top, your safety plan. This is a plan for you and your <%- pluralize(session.alter_term) %> to use in case of a mental health crisis. When you've filled out this safety plan, you can download it as a PDF for printing out.</p>
+                <p>On the "My System" page, you will see a page for worksheets. This is a continual work in progress, with new worksheets being added occasionally. The most important one is at the top, your safety plan. This is a plan for you and your alters to use in case of a mental health crisis. When you've filled out this safety plan, you can download it as a PDF for printing out.</p>
             </section>
             <section>
-                <h2><%- capitalise(session.system_term) %> Development</h2>
-                <p>On the "My <%- capitalise(session.system_term) %>" page, you will see buttons for other activities, such as "<%- capitalise(session.alter_term) %> Search", "<%- capitalise(session.system_term) %> Rules", "Inner World" and "Wishlist". These are all geared towards understanding your <%- session.system_term %>.</p>
-                <h3><%- capitalise(session.alter_term) %> Search</h3>
-                <p>Here, you can search your entire account for specific <%- pluralize(session.alter_term)%> based on name, pronouns, role, and more. Here, you can enter their page or even their <%- session.system_term %> page.</p>
-                <h3><%- capitalise(session.system_term) %> Rules</h3>
-                <p>Here, you can set clear boundaries with other <%- pluralize(session.alter_term) %>. This is not a means to attack <%- pluralize(session.alter_term) %>. This is primarily guidelines, like "Please discuss large purchases" or "Don't cut our hair short". Rules can be deleted as needed.</p>
+                <h2>System Development</h2>
+                <p>On the "My System" page, you will see buttons for other activities, such as "Alter Search", "System Rules", "Inner World" and "Wishlist". These are all geared towards understanding your system.</p>
+                <h3>Alter Search</h3>
+                <p>Here, you can search your entire account for specific alters based on name, pronouns, role, and more. Here, you can enter their page or even their system page.</p>
+                <h3>System Rules</h3>
+                <p>Here, you can set clear boundaries with other alters. This is not a means to attack alters. This is primarily guidelines, like "Please discuss large purchases" or "Don't cut our hair short". Rules can be deleted as needed.</p>
                 <h3>Inner World</h3>
-                <p>You and your <%- session.system_term %> can describe what is in your inner world, to help others that may struggle to visualise it as well. It's important to remember that an inner world is a visualisation tool, and is for any <%- session.alter_term %> to use as they see fit.</p>
+                <p>You and your system can describe what is in your inner world, to help others that may struggle to visualise it as well. It's important to remember that an inner world is a visualisation tool, and is for any alter to use as they see fit.</p>
                 <h3>Wishlist</h3>
-                <p>You can set wishes and goals for your <%- session.system_term %>, and then "grant" them. Granted wishes show on a list at the bottom. There is no time limit, to keep pressure low.</p>
+                <p>You can set wishes and goals for your system, and then "grant" them. Granted wishes show on a list at the bottom. There is no time limit, to keep pressure low.</p>
             </section>
             <section>
                 <h2>Conclusion</h2>
@@ -116,15 +116,15 @@
             switch (this.id){
                 case "subsystem":
                     term= "<%- capitalise(session.subsystem_term) %>";
-                    definition= "A <%- session.subsystem_term %> is pretty much a <%- session.system_term %> within a <%- session.system_term %>."
+                    definition= "A subsystem is pretty much a system within a system."
                 break;
                 case "system":
-                term= "<%- capitalise(session.system_term) %>";
-                definition= "A <%- session.system_term %> is a group of <%- pluralize(session.alter_term) %>."
+                term= "System";
+                definition= "A system is a group of alters."
                 break;
                 case "alter":
-                term= "<%- capitalise(session.alter_term) %>";
-                definition= "<%- pluralize(capitalise(session.alter_term)) %> are dissociated parts of a person. They are seen in Dissociative Identity Disorder, Partial Dissociative Identity Disorder (ICD), and Otherwise Specified Dissociative Disorder (DSM-V)."
+                term= "Alter";
+                definition= "Alters are dissociated parts of a person. They are seen in Dissociative Identity Disorder, Partial Dissociative Identity Disorder (ICD), and Otherwise Specified Dissociative Disorder (DSM-V)."
                 break;
             }
             $("#term").text(term);

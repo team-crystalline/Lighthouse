@@ -327,6 +327,9 @@ app.locals.pluralize= pluralize;
 					req.session.system_term= result.rows[0].system_term;
 					req.session.alter_term= result.rows[0].alter_term;
 					req.session.subsystem_term= result.rows[0].subsystem_term;
+					req.session.inner_worlds = result.rows[0].inner_worlds;
+					req.session.innerworld_term= result.rows[0].innerworld_term;
+					req.session.plural_term= result.rows[0].plural_term;
 							// Is this a developer account?
 		if (req.session.u_id == process.env.dev1 || req.session.u_id == process.env.dev2){
 			req.session.is_dev=true;
@@ -631,6 +634,13 @@ app.get('/tutorial', (req, res) => {
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	
   });
+
+//   app.get('/forum', (req, res) => {
+// 	if (isLoggedIn(req)){
+// 		res.render(`pages/forum`, { session: req.session, splash:splash, cookies:req.cookies });
+// 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	
+//   });
 
   app.get('/mod', (req, res) => {
 	if (isLoggedIn(req)){
@@ -1713,7 +1723,17 @@ app.get('/wish-d/:id', (req, res) => {
 						}
 					});
 				}
-
+				if (req.body.innerworld){
+					console.log("??")
+					client.query({text: 'UPDATE users SET inner_worlds= $2 WHERE id=$1', values: [getCookies(req)['u_id'], req.body.innerworld]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.session.inner_worlds = req.session.inner_worlds;
+							req.flash("flash", strings.account.updated);
+						}
+					});
+				}
 				// After all those changes.
 				// res.cookie('subsystem_term', req.body.subTerm,{httpOnly: true });
 				res.cookie('username', req.body.newName || Buffer.from(req.session.username, "base64").toString() ,{httpOnly: true }).cookie('email', req.body.newEmail || req.session.email ,{httpOnly: true }).cookie('alter_term', req.body.altTerm || req.session.alter_term ,{httpOnly: true }).cookie('system_term', req.body.sysTerm || req.session.system_term ,{httpOnly: true }).cookie('subsystem_term', req.body.subTerm || req.session.subsystem_term ,{httpOnly: true }).redirect(302, "/profile");
@@ -2353,6 +2373,7 @@ app.get('/wish-d/:id', (req, res) => {
 								console.log(err.stack);
 								res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 								} else {
+									req.session.sys = new Array();
 									// Add this system to the session.
 									req.session.sys.push({name: Buffer.from(result.rows[0].sys_alias, "base64").toString(), id: result.rows[0].sys_id, icon:null})
 									let newSysID= result.rows[0].sys_id;
@@ -2368,7 +2389,7 @@ app.get('/wish-d/:id', (req, res) => {
 										
 									}
 									req.flash("flash", strings.system.created);
-									
+									delete req.session.sys;
 								}
 							});
 						}
@@ -2767,6 +2788,7 @@ Disallow: /journal
 Disallow: /comm
 Disallow: /profile
 Disallow: /users
+Disallow: /forum
 Allow: /
 Allow: /signup
 Allow: /login

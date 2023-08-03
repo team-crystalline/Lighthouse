@@ -10,9 +10,9 @@
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <section>
-                <h2><%= capitalise(session.alter_term) %> Search</h2>
+                <h2><%= capitalise(cookies.alter_term) %> Search</h2>
                 <form autocomplete="off" autocapitalize="off">
-                    <label for="options">Search for <%= pluralize(session.alter_term) %> by...</label>
+                    <label for="options">Search for <%= pluralize(cookies.alter_term) %> by...</label>
                     <select name="options" id="options">
                         <option value="name">Name</option>
                         <option value="sys_alias"><%= capitalise(session.system_term) %></option> <!-- Only show up if the user has multiple systems?-->

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="visibility: hidden;">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                              <!-- The Modal -->
+              <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content" id="modalContent">
+                  <span class="material-symbols-outlined close">
+                    cancel
+                    </span>
+                    <h2>Add a New Category</h2>
+                  <form method="post">
+                    
+                  </form>
+                </div>
+
+              </div>
+              
+
+                <h2>Internal Forum</h2>
+                <button id="tbutton">Create Category</button>
+                
+            </section>
+    </div>
+    <script>
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("tbutton");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+          // modal.style.display = "block";
+          $("#myModal").fadeIn("fast");
+        }
+        span.onclick = function() {
+          // modal.style.display = "none";
+          $("#myModal").fadeOut("fast");
+        }
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            // modal.style.display = "none";
+            $("#myModal").fadeOut("fast");
+          }
+        }
+        </script>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

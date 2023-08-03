@@ -43,13 +43,13 @@
             <% } %>
             <section>
                 <h2>Before, During, After</h2>
-                <p>A <strong>Before, During, After</strong> plan is specifically for an upcoming event or trauma that you know may be stressful or even traumatic to <%- pluralize(session.alter_term) %> in your <%- session.system_term %>. The goal is to keep splitting/splintering to a minimum during a stressful event</p>
+                <p>A <strong>Before, During, After</strong> plan is specifically for an upcoming event or trauma that you know may be stressful or even traumatic to <%- pluralize(cookies.alter_term) %> in your <%- session.system_term %>. The goal is to keep splitting/splintering to a minimum during a stressful event</p>
                 <form>
                     <label for ="planname">Name This Plan: </label> <input type="text" id="planname" name="planname" minlength="3">
                     <div id="bdapanel">
                       <div class="panel">
                         <h3>Before</h3>
-                        <label for="planbefore">What will you and the other <%- pluralize(session.alter_term) %> do to be ready for this event?</label><br>
+                        <label for="planbefore">What will you and the other <%- pluralize(cookies.alter_term) %> do to be ready for this event?</label><br>
                         <textarea name="planbefore" id="planbefore" rows="10" cols="15" minlength="10"></textarea>
                     </div>
                     <div class="panel">

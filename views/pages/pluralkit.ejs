@@ -15,10 +15,10 @@
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <h2>Import from Pluralkit</h2>
-            <p>Use Pluralkit? We can fetch your <%- pluralize(session.alter_term) %> and add them to your account. Importing will create a new <%- session.system_term %> that can be renamed on the <a href="/system">My <%- capitalise(session.system_term) %></a> page</a>.</p>
+            <p>Use Pluralkit? We can fetch your <%- pluralize(cookies.alter_term) %> and add them to your account. Importing will create a new <%- session.system_term %> that can be renamed on the <a href="/system">My <%- capitalise(session.system_term) %></a> page</a>.</p>
             <p><em>Don't know your system ID?</em> Direct message "pk;s" to Pluralkit, or type "pk;s" in a channel that Pluralkit can view.</p>
-            <p>Adding your Pluralkit token is completely optional. Adding your token allows Lighthouse to fetch your private <%- pluralize(session.alter_term) %> as well. We do not store this token. <strong>Do not share your token with anyone you do not trust.</strong></p>
-            <p>For technical reasons, you can import a maximum of <strong>100 <%- pluralize(session.alter_term) %></strong> at a time. After that, Lighthouse seems to run into errors. We're investigating a fix to this currently.</p>
+            <p>Adding your Pluralkit token is completely optional. Adding your token allows Lighthouse to fetch your private <%- pluralize(cookies.alter_term) %> as well. We do not store this token. <strong>Do not share your token with anyone you do not trust.</strong></p>
+            <p>For technical reasons, you can import a maximum of <strong>100 <%- pluralize(cookies.alter_term) %></strong> at a time. After that, Lighthouse seems to run into errors. We're investigating a fix to this currently.</p>
             <form>
                 <label for="pid">Pluralkit system ID</label>
                 
@@ -33,8 +33,8 @@
 
                 </ul>
                 <span class="linkbutton" id="checkall">Select All</span><br>
-                <p><small>If there are more than 100 <%- pluralize(session.alter_term) %> in this list, the first 100 will be selected. <%- capitalise(pluralize(session.alter_term))%> selected: <strong><span id="checkCount">0</span></strong></small></p>
-                <label for="sysLoc">These <%- pluralize(session.alter_term) %> will be imported into: </label>
+                <p><small>If there are more than 100 <%- pluralize(cookies.alter_term) %> in this list, the first 100 will be selected. <%- capitalise(pluralize(cookies.alter_term))%> selected: <strong><span id="checkCount">0</span></strong></small></p>
+                <label for="sysLoc">These <%- pluralize(cookies.alter_term) %> will be imported into: </label>
                 <select name="sysLoc">
                     <option value="new" selected>Create New <%- capitalise(session.system_term) %></option>
                     <% for (i in session.sys){ %> 

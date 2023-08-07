@@ -638,7 +638,7 @@ app.get('/tutorial', (req, res) => {
 
   app.get('/forum', (req, res) => {
 	if (isLoggedIn(req)){
-		client.query({text: "SELECT * FROM categories WHERE u_id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
+		client.query({text: "SELECT * FROM categories WHERE u_id=$1 ORDER BY created_on ASC;",values: [getCookies(req)['u_id']]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
@@ -1723,7 +1723,7 @@ app.get('/wish-d/:id', (req, res) => {
 				  });
 			} else if (req.body.editcat){
 				// Edit category.
-				client.query({text: "UPDATE categories SET name=$2 icon=$4 WHERE u_id=$1 AND id= $3",values: [getCookies(req)['u_id'], `${encryptWithAES(req.body.newCatName)}`, req.body.catid, req.body.newcaticon]}, (err, result) => {
+				client.query({text: "UPDATE categories SET name=$2, icon=$4 WHERE u_id=$1 AND id= $3",values: [getCookies(req)['u_id'], `${encryptWithAES(req.body.newCatName)}`, req.body.catid, req.body.newcaticon]}, (err, result) => {
 					if (err) {
 					  console.log(err.stack);
 					  res.status(400).json({code: 400, message: err.stack});

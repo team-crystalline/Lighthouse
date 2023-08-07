@@ -115,7 +115,7 @@
   <div id="menubg"></div>
   <div id="logo" style="display: inline-block; margin-left: 30px;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="24px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/>
     <% if (cookies.loggedin) { %>
-      <sup>Hi, <%= truncate(cookies.username,20) %>!</sup>
+      <sup>Hi, <%= cookies.username ? cookies.username : "friend" %>!</sup>
     <% } else { %>
     <sup>Journal Together</sup>
       <% } %>

@@ -1362,8 +1362,10 @@ app.get('/wish-d/:id', (req, res) => {
 			   console.log("Error with alter moods query.");
 			   return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		   } else {
+			req.session.chosenAlter = result.rows[0];
+			var alterInfo= result.rows[0];
 			try{
-				req.session.chosenAlter = result.rows[0];
+				
 			   if (req.session.chosenAlter.reason){
 				req.session.chosenAlter.reason = `${decryptWithAES(result.rows[0].reason)}`;
 			   }
@@ -1389,7 +1391,7 @@ app.get('/wish-d/:id', (req, res) => {
 	 		   } else {
 	 			   req.session.sysList = result.rows;
 	 		   }
-				  res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes });
+				  res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo });
 			 });
 		   });
 		 });
@@ -2271,7 +2273,7 @@ app.get('/wish-d/:id', (req, res) => {
 			if (isLoggedIn(req)){
 				if (req.body.create){
 					// Create
-					client.query({text: "INSERT INTO journals (alt_id, password, is_private, skin, sys_id) VALUES ($1, $2, $3, $4, $5)",values: [`${req.params.id}`, `'${CryptoJS.SHA3(req.body.jPass)}'`, `${req.body.priv}`, `'${req.body.journ}'`, `${req.session.chosenAlter.sys_id}`]}, (err, result) => {
+					client.query({text: "INSERT INTO journals (alt_id, password, is_private, skin, sys_id) VALUES ($1, $2, $3, $4, $5)",values: [`${req.params.id}`, `'${CryptoJS.SHA3(req.body.jPass)}'`, `${req.body.priv}`, `'${req.body.journ}'`, `${req.body.sys_id}`]}, (err, result) => {
 						if (err) {
 						  console.log(err.stack);
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash });

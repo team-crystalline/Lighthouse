@@ -112,7 +112,7 @@ async function pinPosts(pID){
                   "api-lh-call": "api-lh-call",
                   'Content-Type': 'application/json',
                   "grab": "journalPosts",
-                  "uuID": "<%- session.altJournal[0].j_id %>"
+                  "uuID": "<%- journId %>"
                 } 
             });
             let body = await response.text();

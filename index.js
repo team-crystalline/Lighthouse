@@ -1453,7 +1453,6 @@ app.get('/wish-d/:id', (req, res) => {
 
   app.get('/journal/:id', (req, res)=>{
 	 if (isLoggedIn(req)){
-		 if (req.session.chosenAlter.alt_id == req.params.id){
 			// grab their journal ID
 			client.query({text: "SELECT * FROM journals WHERE alt_id=$1;",values: [req.params.id]}, (err, result) => {
  			   if (err) {
@@ -1477,11 +1476,6 @@ app.get('/wish-d/:id', (req, res) => {
 			  });
 			  }
 			});
-
-			
-		} else {
-			res.redirect("/system");
-		}
 
 		splash=null;
 	 } else {

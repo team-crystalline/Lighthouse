@@ -152,7 +152,7 @@ app.use(flash());
   app.use(session({
 	secret: process.env.sec,
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
     }));
 app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 
@@ -1380,7 +1380,7 @@ app.get('/wish-d/:id', (req, res) => {
 				  console.log("Error with alter journals query.");
 				 return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			  } else {
-				  req.session.altJournal = nresult.rows;
+				  var altJournal = nresult.rows;
 			  }
 
 				client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
@@ -1391,7 +1391,7 @@ app.get('/wish-d/:id', (req, res) => {
 	 		   } else {
 	 			   req.session.sysList = result.rows;
 	 		   }
-				  res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo });
+				  res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo, altJournal:altJournal });
 			 });
 		   });
 		 });
@@ -1454,25 +1454,34 @@ app.get('/wish-d/:id', (req, res) => {
   app.get('/journal/:id', (req, res)=>{
 	 if (isLoggedIn(req)){
 		 if (req.session.chosenAlter.alt_id == req.params.id){
-			// grab their journal.
-			client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${req.session.altJournal[0].j_id}`]}, (err, result) => {
+			// grab their journal ID
+			client.query({text: "SELECT * FROM journals WHERE alt_id=$1;",values: [req.params.id]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
  				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
  			  } else {
- 				  req.session.journalPosts = result.rows;
-				  for (i in req.session.journalPosts){
-					  req.session.journalPosts[i].body= decryptWithAES(req.session.journalPosts[i].body);
-					  req.session.journalPosts[i].title= decryptWithAES(req.session.journalPosts[i].title);
-				  }
-				  res.render(`pages/journal`, { session: req.session, splash:splash, lang:req.acceptsLanguages()[0],cookies:req.cookies });
+				let journId= result.rows[0].j_id;
+				client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${journId}`]}, (err, result) => {
+					if (err) {
+					   console.log(err.stack);
+					   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+				   } else {
+					   req.session.journalPosts = result.rows;
+					  for (i in req.session.journalPosts){
+						  req.session.journalPosts[i].body= decryptWithAES(req.session.journalPosts[i].body);
+						  req.session.journalPosts[i].title= decryptWithAES(req.session.journalPosts[i].title);
+					  }
+					  res.render(`pages/journal`, { session: req.session, splash:splash, lang:req.acceptsLanguages()[0],cookies:req.cookies, journId:journId });
+	
+				   }
+			  });
+			  }
+			});
 
- 			  }
-		  });
+			
 		} else {
 			res.redirect("/system");
 		}
-		// res.render(`pages/journal`, { session: req.session, splash:splash });
 
 		splash=null;
 	 } else {
@@ -2241,8 +2250,7 @@ app.get('/wish-d/:id', (req, res) => {
 	app.post("/journal/:id", (req, res)=>{
 		if (isLoggedIn(req)){
 			if (req.body.submit){
-			// session.altJournal[0].j_id
-			client.query({text: "INSERT INTO posts (j_id, created_on, body, title) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4);",values: [`${req.session.altJournal[0].j_id}`, `${Date.now()}`, `${encryptWithAES(req.body.j_body)}`, `${encryptWithAES(req.body.j_title)}`]}, (err, result) => {
+			client.query({text: "INSERT INTO posts (j_id, created_on, body, title) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4);",values: [`${req.body.j_id}`, `${Date.now()}`, `${encryptWithAES(req.body.j_body)}`, `${encryptWithAES(req.body.j_title)}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
  				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies});

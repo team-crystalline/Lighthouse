@@ -96,17 +96,17 @@ td{
               </select>
               <input type="submit" name="modify" value="Update">
             </form>
-            <% if (session.altJournal.length > 0){ %>
+            <% if (altJournal.length > 0){ %>
                 <div class="indented">
-                <p>This journal is <strong><%= session.altJournal[0].is_private == true ? 'password protected' : 'unlocked' %>.</strong>
-                <% if (session.altJournal[0].is_private == true){ %> 
+                <p>This journal is <strong><%= altJournal[0].is_private == true ? 'password protected' : 'unlocked' %>.</strong>
+                <% if (altJournal[0].is_private == true){ %> 
                     <form method="post"><input type="submit" name="unlock" value="Unlock"></form>
                 <% } else { %>
                     <button id="tbutton">Lock</button>
                 <% } %></p>
                 </div>
 
-                <!-- <p><%= session.altJournal[0].is_private %></p> -->
+                <!-- <p><%= altJournal[0].is_private %></p> -->
 				<p>Click on the journal to enter.</p>
                 <div id="blogpopup" style="display:none;">
                     <form method="post" autocomplete="off">
@@ -122,17 +122,17 @@ td{
                         <input type="submit" value="Change <%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Password" name="changePass">
                     </form>
                 </div>
-                <% if (session.altJournal[0].is_private == true){ %>
-                    <img class= "pixelart" src="/img/<%- (session.altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" onclick="blogPopup()" alt="<%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal.">
+                <% if (altJournal[0].is_private == true){ %>
+                    <img class= "pixelart" src="/img/<%- (altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" onclick="blogPopup()" alt="<%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal.">
                 <% } else { %>
-                    <a href="/journal/<%- (session.altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%- (session.altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" alt="<%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal."></a>
+                    <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%- (altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" alt="<%= Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal."></a>
                 <% } %>
                 <section>
             <form method="post" name="changejournal">
                 <label for="skin">Change Journal skin:</label>
                 <select name="skin" id="skin">
                  <% for (i in journalArr) { %>
-                    <% if (parseInt(session.altJournal[0].skin) == parseInt(journalArr[i].val)){ %>
+                    <% if (parseInt(altJournal[0].skin) == parseInt(journalArr[i].val)){ %>
                         <option value="<%- journalArr[i].val %>"><%- journalArr[i].c %></option>
                     <% } else { %>
                         <option value="<%- journalArr[i].val %>"><%- journalArr[i].c %></option>

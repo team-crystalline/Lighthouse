@@ -8,7 +8,6 @@
 <body>
     <%- include ("../partials/nav.ejs") %>
     <div id="wrapper">
-        <% console.log(session.u_id) %>
         <section>
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
@@ -17,6 +16,8 @@
             <div id="Wait"></div>
             <form method="post">
                 <% if (cJourn.is_comm == false){ %> 
+                    <input type="hidden" name="journalid" value="<%= journalID %>">
+                    <input type="hidden" name="alt_id" value="<%= alt_id %>">
                     <label for="author">Change author to...</label>
                     <select name="author" id="author">
                         <option selected value="skip">Leave as is</option>
@@ -66,6 +67,7 @@
                 
             }
         }
+
         $(document).ready(function(){
             fetchData();
         });

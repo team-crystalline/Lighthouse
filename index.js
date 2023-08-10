@@ -27,38 +27,10 @@ function getKeyByValue(object, value) {
 	return Object.keys(object).find(key => object[key] === value);
   }
 
-  /**
- * @param query- What you're fetching info on: Alters, Systems, Groups, etc.
- * @param id- The id of the information you're fetching. Usually a system id or alter id 
- */
-  async function getPK(query, id){
-	// Go grab pluralkit
-	var fetchURL;
-	switch (query){
-		case "alter":
-			fetchURL= `https://api.pluralkit.me/v2/members/${id}`;
-			break;
-		default:
-			// Members in a system is default.
-			fetchURL= `https://api.pluralkit.me/v2/systems/${id}/members`;
-			break;
-	}
-	let response = await fetch(fetchURL, { 
-		headers: {
-			"User-Agent": "Lighthouse/Web App (www.writelighthouse.com, dee_deyes@writelighthouse.com, put here for contact if PK devs need to)" 
-		} 
-	});
-	// return await JSON.parse(response.text());
-	return await response.text();
-}
-
-
-
 const getCookies = (req) => {
  // We extract the raw cookies from the request headers
  if (!req.headers.cookie) return 'undefined';
  const rawCookies = req.headers.cookie.split('; ');
- // rawCookies = ['myapp=secretcookie, 'analytics_cookie=beacon;']
 
  const parsedCookies = {};
  rawCookies.forEach(rawCookie=>{
@@ -150,6 +122,8 @@ var app = express();
 app.use(flash());
   app.use('/', express.static(__dirname + '/public'))
   app.use(session({
+	name: "session",
+	secure: true,
 	secret: process.env.sec,
 	resave: true,
 	saveUninitialized: true,
@@ -299,6 +273,10 @@ app.locals.monthNames= ["January","February","March","April","May","June","July"
 app.locals.dayNames= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
+function truncate (str, n){
+	return (str.length > n) ? str.slice(0, n-1) + '...' : str;
+  };
+
 function encryptWithAES(text){
 	const passphrase = process.env.cryptkey;
 	return CryptoJS.AES.encrypt(text, passphrase).toString();
@@ -336,85 +314,25 @@ app.locals.pluralize= pluralize;
 					req.session.username= result.rows[0].username;
 					req.session.email= result.rows[0].email;
 					req.session.skin= result.rows[0].skin;
-					req.session.is_legacy= result.rows[0].is_legacy;
-					req.session.system_term= result.rows[0].system_term;
-					req.session.alter_term= result.rows[0].alter_term;
-					req.session.subsystem_term= result.rows[0].subsystem_term;
+					req.session.system_term= truncate(result.rows[0].system_term || getCookies(req)['system_term'] || "system",16);
+					req.session.alter_term= truncate(result.rows[0].alter_term || getCookies(req)['alter_term'] || "alter",16);
+					req.session.subsystem_term= truncate(result.rows[0].subsystem_term || getCookies(req)['subsystem_term'] || "subsystem",16);
 					req.session.inner_worlds = result.rows[0].inner_worlds;
 					req.session.innerworld_term= result.rows[0].innerworld_term;
 					req.session.plural_term= result.rows[0].plural_term;
-					res.cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('subsystem_term', result.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
-							// Is this a developer account?
-		if (req.session.u_id == process.env.dev1 || req.session.u_id == process.env.dev2){
-			req.session.is_dev=true;
-		}
-		
-		if (!req.session.system_term){
-			// Is it in their cookies?
-			if (getCookies(req)['system_term']){
-				req.session.system_term=getCookies(req)['system_term'];
-			} else {
-				// Can We grab it?
-					client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  req.session.system_term="system";
-					  }
-					  if (result.rows.length==0){
-						// No match.
-						req.session.system_term= "system";
-					  } else {
-						req.session.system_term= result.rows[0].system_term;
-					  }
-					});
-			}
-		}
-		if (!req.session.subsystem_term){
-			// Is it in their cookies?
-			if (getCookies(req)['subsystem_term']){
-				req.session.subsystem_term=getCookies(req)['subsystem_term'];
-			} else {
-				// Can We grab it?
-					client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  req.session.subsystem_term="subsystem";
-					  }
-					  if (result.rows.length > 0){
-						req.session.subsystem_term= result.rows[0].subsystem_term;
-					  } else {
-						// No match.
-						req.session.subsystem_term= "subsystem";						
-					  }
-					});
-			}
-		}
-		if (!req.session.alter_term){
-			// Is it in their cookies?
-			if (getCookies(req)['alter_term']){
-				req.session.alter_term=getCookies(req)['alter_term'];
-			} else {
-				// Can We grab it?
-					client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  req.session.alter_term="alter";
-					  } else{
-						if (result.rows.length==0){
-							// No match.
-							req.session.alter_term= "alter";
-						} else {
-							req.session.alter_term= result.rows[0].alter_term;
-						}
-						// Let's grab IDs while we're at it.
-						req.session.id= result.rows[0].id;
-					  }
-
-					});
-			}
-		}
+					// res
+					// .cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true, secure: true })
+					// .cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+					// .cookie('alter_term', truncate(result.rows[0].alter_term || "alter", 16),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true, secure: true })
+					// .cookie('system_term', truncate(result.rows[0].system_term|| "system", 16),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+					// .cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+					// .cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+					// .cookie('subsystem_term', truncate(result.rows[0].subsystem_term || "subsystem", 16),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+					// Is this a developer account?
+					req.session.is_dev=([process.env.dev1, process.env.dev2,process.env.dev3].includes(req.session.u_id));
 				} catch (e){
 					// They logged out!
+					console.log(e)
 				}
 
 			}
@@ -426,7 +344,7 @@ app.locals.pluralize= pluralize;
 		req.session.system_term= "system";
 		req.session.subsystem_term="subsystem";
 	}
-	req.next();
+	/* Issue */  req.next();
   });
 
  if (process.env.maintenance== "true"){
@@ -946,7 +864,8 @@ app.get('/thank-you', (req, res, next) => {
      
 	 try{
 		req.flash("flash", strings.account.loggedout);
-		 req.session.destroy();
+		//  req.session.destroy();
+		req.session= null;
 	 } catch(e){
 	 }
 	
@@ -1356,18 +1275,18 @@ app.get('/wish-d/:id', (req, res) => {
 
   app.get("/alter/:id", (req, res, next)=>{
 	 if (isLoggedIn(req)){
+		// Grab alters, moods, and the system alias from this alter's id.
 		 client.query({text: "SELECT alter_moods.*, alters.*, systems.sys_alias FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
 			   console.log(err.stack);
-			   console.log("Error with alter moods query.");
 			   return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		   } else {
-			req.session.chosenAlter = result.rows[0];
+			// This is our selected alter.
 			var alterInfo= result.rows[0];
 			try{
 				
-			   if (req.session.chosenAlter.reason){
-				req.session.chosenAlter.reason = `${decryptWithAES(result.rows[0].reason)}`;
+			   if (alterInfo.reason){
+				alterInfo.reason = `${decryptWithAES(result.rows[0].reason)}`;
 			   }
 			} catch (e){
 				console.log("No mood.")
@@ -1408,8 +1327,8 @@ app.get('/wish-d/:id', (req, res) => {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
-			  req.session.chosenAlter = result.rows[0];
-			  res.render(`pages/edit_alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes });
+			  let chosenAlter = result.rows[0];
+			  res.render(`pages/edit_alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes,chosenAlter:chosenAlter });
 		  }
 		});
 	} else {
@@ -1424,11 +1343,11 @@ app.get('/wish-d/:id', (req, res) => {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
-			  req.session.chosenAlter = result.rows[0];
-			  if (req.session.chosenAlter.reason){
-				req.session.chosenAlter.reason = `${decryptWithAES(result.rows[0].reason)}`;
+			  let chosenAlter = result.rows[0];
+			  if (chosenAlter.reason){
+				chosenAlter.reason = `${decryptWithAES(result.rows[0].reason)}`;
 			  }
-			  res.render(`pages/set_mood`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes });
+			  res.render(`pages/set_mood`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes,chosenAlter:chosenAlter });
 		  }
 		});
 	} else {
@@ -1443,7 +1362,6 @@ app.get('/wish-d/:id', (req, res) => {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
-			  req.session.chosenAlter = result.rows[0];
 			  // Redirect to the alter's page!
 			  res.redirect(`/alter/${req.params.id}`);
 		  }
@@ -1453,31 +1371,22 @@ app.get('/wish-d/:id', (req, res) => {
 
   app.get('/journal/:id', (req, res)=>{
 	 if (isLoggedIn(req)){
-			// grab their journal ID
-			client.query({text: "SELECT * FROM journals WHERE alt_id=$1;",values: [req.params.id]}, (err, result) => {
- 			   if (err) {
- 				  console.log(err.stack);
- 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
- 			  } else {
-				let journId= result.rows[0].j_id;
-				client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${journId}`]}, (err, result) => {
-					if (err) {
-					   console.log(err.stack);
-					   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-				   } else {
-					   req.session.journalPosts = result.rows;
-					  for (i in req.session.journalPosts){
-						  req.session.journalPosts[i].body= decryptWithAES(req.session.journalPosts[i].body);
-						  req.session.journalPosts[i].title= decryptWithAES(req.session.journalPosts[i].title);
-					  }
-					  res.render(`pages/journal`, { session: req.session, splash:splash, lang:req.acceptsLanguages()[0],cookies:req.cookies, journId:journId });
-	
-				   }
-			  });
-			  }
-			});
+		client.query({text: "SELECT journals.*, alters.*, systems.sys_alias FROM journals INNER JOIN alters ON journals.alt_id= alters.alt_id INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
+			if (err) {
+			   console.log(err.stack);
+			   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+		   } else {
+				let alterInfo= {
+					alt_id: result.rows[0].alt_id,
+					name: Buffer.from(result.rows[0].name, "base64").toString(),
+					sys_alias: Buffer.from(result.rows[0].sys_alias, "base64").toString(),
+					sys_id: result.rows[0].sys_id,
+					journId: result.rows[0].j_id
+				}
+				res.render('pages/journal',{ session: req.session, splash:splash,cookies:req.cookies, alterInfo:alterInfo })
+		   }
+		});
 
-		splash=null;
 	 } else {
 		 res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 	 }
@@ -1505,12 +1414,12 @@ app.get('/wish-d/:id', (req, res) => {
 
   app.get('/journal/:id/edit', (req, res)=>{
 	  if (isLoggedIn(req)){
-		  client.query({text: "SELECT * FROM posts WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
+		  client.query({text: "SELECT posts.*, journals.alt_id FROM posts INNER JOIN journals ON posts.j_id= journals.j_id WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
 				console.log(err.stack);
 				res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			} else {
-				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies, cJourn: {id: result.rows[0].p_id, body: decryptWithAES(result.rows[0].body), title: decryptWithAES(result.rows[0].title), is_comm: false}});
+				res.render(`pages/edit_post`, { session: req.session, splash:splash,cookies:req.cookies, cJourn: {id: result.rows[0].p_id, body: decryptWithAES(result.rows[0].body), title: decryptWithAES(result.rows[0].title), is_comm: false}, journalID: result.rows[0].j_id, alt_id:result.rows[0].alt_id});
 			}
 		});
 	  } else {
@@ -1558,17 +1467,16 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
 	app.get('/alter/:id/delete', (req, res)=>{
-		req.session.chosenAlter= null;
 		if (isLoggedIn(req)){
 			client.query({text: "SELECT * FROM alters WHERE alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				 if (err) {
 					console.log(err.stack);
 					res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				} else {
-					req.session.chosenAlter= result.rows[0];
+					let chosenAlter= result.rows[0];
+					res.render(`pages/delete_alter`, { session: req.session, splash:splash, cookies:req.cookies,chosenAlter: chosenAlter});
 				}
-				// console.table(req.session.chosenAlter);
-				res.render(`pages/delete_alter`, { session: req.session, splash:splash, cookies:req.cookies});
+				
 			});
 		} else {
 			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
@@ -1686,7 +1594,6 @@ app.get('/wish-d/:id', (req, res) => {
 	app.post('/forum/:id', (req, res) => {
 		if (isLoggedIn(req)){
 			if (req.body.newtop){
-				// return console.log(req.body)
 				client.query({text: "INSERT INTO threads (u_id, topic_id, title, body, alt_id) VALUES ($1, $2, $3, $4, $5);",values: [getCookies(req)['u_id'], req.params.id, `${encryptWithAES(req.body.fTitle)}`, `${encryptWithAES(req.body.topicBody)}`, req.body.author]}, (err, result) => {
 					if (err) {
 					  console.log(err.stack);
@@ -1851,8 +1758,6 @@ app.get('/wish-d/:id', (req, res) => {
 						console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					}
-					req.session.chosenAlter.mood= req.body.mood;
-					req.session.chosenAlter.reason=req.body.reason;
 						req.flash("flash",(strings.mood.updated));
 						res.redirect(302,`/alter/${req.params.alt}`);
 					});
@@ -1862,9 +1767,6 @@ app.get('/wish-d/:id', (req, res) => {
 						console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 					}
-					// Might as well change session vars here??? idk
-					req.session.chosenAlter.mood= req.body.mood;
-					req.session.chosenAlter.reason=req.body.reason;
 						req.flash("flash",strings.mood.updated);
 						res.redirect(302,`/alter/${req.params.alt}`);
 					});
@@ -2017,7 +1919,6 @@ app.get('/wish-d/:id', (req, res) => {
 					});
 				}
 				if (req.body.innerworld){
-					console.log("??")
 					client.query({text: 'UPDATE users SET inner_worlds= $2 WHERE id=$1', values: [getCookies(req)['u_id'], req.body.innerworld]}, async (err, result)=>{
 						if (err) {
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -2144,8 +2045,7 @@ app.get('/wish-d/:id', (req, res) => {
 									console.log(err.stack);
 									res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 								} else {
-									splash=req.flash("flash",`${Buffer.from(req.session.chosenAlter.name, 'base64').toString()} deleted.`);
-									req.session.chosenAlter= null;
+									splash=req.flash("flash",`${getCookies(req)['alter_term']} deleted.`);
 									res.redirect(`/system`);
 								}
 							});
@@ -2191,21 +2091,33 @@ app.get('/wish-d/:id', (req, res) => {
 		}
 	});
 
-	app.post('/journal/:id/delete', (req, res)=>{
-		if (isLoggedIn(req)){
-			client.query({text: "DELETE FROM posts WHERE p_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
- 			   if (err) {
- 				  console.log(err.stack);
- 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
- 			  } else {
-				  req.session.jPost= null;
-				  res.redirect(`/journal/${req.session.chosenAlter.alt_id}`);
-			  }
-		  });
-		} else {
-			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
-		}
-	});
+	// app.post('/journal/:id/delete', (req, res)=>{
+	// 	console.log("Deleting post!")
+	// 	if (isLoggedIn(req)){
+	// 		client.query({text: "SELECT * FROM posts WHERE p_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
+ 	// 		   if (err) {
+ 	// 			  console.log(err.stack);
+ 	// 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+ 	// 		  } else {
+	// 			var chosenAlter= result.rows[0].j_id
+	// 			  client.query({text: "DELETE FROM posts WHERE p_id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
+	// 					if (err) {
+	// 						console.log(err.stack);
+	// 						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+	// 					} else {
+	// 						req.session.jPost= null;
+	// 						req.flash("flash", "Post deleted.");
+	// 						res.redirect(301, `/journal/${chosenAlter}`);
+	// 					}
+	// 				})
+	// 			}
+	// 	  });
+
+	// 		;
+	// 	} else {
+	// 		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
+	// 	}
+	// });
 
 	app.post('/journal/:id/edit', (req, res)=>{
 		if (isLoggedIn(req)){
@@ -2220,19 +2132,29 @@ app.get('/wish-d/:id', (req, res) => {
 						// Turn it into a communal journal post. WIP.
 					} else {
 						// Make it an alter's post.
-						client.query({text: "UPDATE posts SET j_id =$2 WHERE p_id=$1;",values: [`${req.params.id}`, `${req.body.author}`]}, (err, result) => {
+						client.query({text: "UPDATE posts SET j_id=$2 WHERE p_id=$1;",values: [`${req.params.id}`, `${req.body.author}`]}, (err, result) => {
 							if (err) {
 							   console.log(err.stack);
 							   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 						   }
+						   // No go redirect appropriately.
+							client.query({text: "SELECT alters.alt_id FROM alters INNER JOIN journals ON journals.alt_id = alters.alt_id WHERE journals.j_id=$1;",values: [`${req.body.author}`]}, (err, cresult) => {
+								if (err) {
+								console.log(err.stack);
+								res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+							}
+								req.session.jPost= null;
+								req.flash("flash", strings.posts.moved);
+								// Moving posts, so go to the journal for it
+								return res.redirect(`/journal/${cresult.rows[0].alt_id}`);
+							});
 						});
 					}
-					req.session.jPost= null;
-					req.flash("flash", strings.posts.moved);
-					return res.redirect(`/system`);
+					
+				} else {
+					res.redirect(`/journal/${req.body.alt_id}`);
 				}
-				  req.session.jPost= null;
-				  res.redirect(`/journal/${req.session.chosenAlter.alt_id}`);
+				  
  			  }
 
 		  });
@@ -2260,7 +2182,7 @@ app.get('/wish-d/:id', (req, res) => {
  				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
  			  } else {
 				  req.session.jPost= null;
-				  res.redirect(`/journal/${req.session.chosenAlter.alt_id}`);
+				  res.redirect(`/journal/${req.params.id}`);
 			  }
 		  });
 			}
@@ -2618,11 +2540,11 @@ app.get('/wish-d/:id', (req, res) => {
 			if (typeof req.body.alterChoice == "string"){
 				splitList= [JSON.parse(req.body.alterChoice)];
 				if (splitList[0].img== null) splitList[0].img = 'https://www.writelighthouse.com/img/avatar-default.jpg';
-				if (splitList[0].pronouns== null) splitList[0].pronouns = '';
+				/* Issue */  if (splitList[0].pronouns== null) splitList[0].pronouns = '';
 				if (splitList[0].birthday== null) splitList[0].birthday = '';
 			} else if(typeof req.body.alterChoice == "undefined"){
 				req.flash("flash", strings.import.PK.failure.noCheck);
-				return res.redirect("/pluralkit");
+				/* Issue */  return res.redirect("/pluralkit");
 			} else {
 				for (i in req.body.alterChoice){
 					splitList.push(JSON.parse(req.body.alterChoice[i]));
@@ -2632,17 +2554,7 @@ app.get('/wish-d/:id', (req, res) => {
 				}	
 			}
 			var newSys= "Imported from Pluralkit";
-			/*
-
-			    {
-				name: 'Imported from Pluralkit 194',
-				id: 'c2fcef33-3710-43fc-bc08-20776eb25cf0',
-				icon: null
-				}
-
-
-			*/
-			
+			/* Issue */ 
 			if (req.body.sysLoc== "new"){ 
 				// Check for an existing "Imported from Pluralkit" system
 				client.query({text: "SELECT sys_id FROM systems WHERE sys_alias=$1 AND user_id=$2;",values: [`'${Buffer.from(newSys).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {

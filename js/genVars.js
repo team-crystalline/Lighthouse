@@ -1,6 +1,5 @@
 // See you soon, ...
 var undefinedUser = ['friend.', 'buddy.', "okay?", "now. Don't be a stranger."]
-console.log("General Vars loaded.")
 
 // For mood tracking. Labelling negative & positive bc that can help with negative emotions
 
@@ -34,3 +33,7 @@ var moods=[
     {name: "Tired", positive: false, emoji: "🥱"},
     {name: "Stressed", positive: false, emoji: "😖"},
 ]
+
+var tuning={
+    cookietime: 1000 * 60 * 60 * 24 * 7 * 2 //Milliseconds
+}

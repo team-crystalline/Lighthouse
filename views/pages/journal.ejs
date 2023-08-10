@@ -24,14 +24,15 @@
             <div class="splash"><%- locals.messages.flash %></div>
         <% } %>
         <div class="grid-sm padLinks">
-          <a class="linkbutton" href="/system/<%- session.chosenAlter.sys_id %>">Back to <%- Buffer.from(session.chosenAlter.sys_alias, "base64").toString() %></a>
-          <a class="linkbutton" href="/alter/<%- session.chosenAlter.alt_id %>">Close Journal</a>
+          <a class="linkbutton" href="/system/<%- alterInfo.sys_id %>">Back to <%- alterInfo.sys_alias %></a>
+          <a class="linkbutton" href="/alter/<%- alterInfo.alt_id %>">Close Journal</a>
         </div>
-            <h2><%- Buffer.from(session.chosenAlter.name, 'base64').toString() %>'s Journal</h2>
+            <h2><%- alterInfo.name %>'s Journal</h2>
 
             <form method="post">
                 <h3>Create Journal Entry</h3>
-                <input type="hidden" name="j_id" value="<%= journId %>">
+                <input type="hidden" name="j_id" value="<%= alterInfo.journId %>">
+                <input type="hidden" name="alt_id" value="<%= alterInfo.alt_id %>">
                 <label for="j_title">Journal title</label><br/>
                 <input type="text" name="j_title" autocomplete="off"><br/>
                 <label for="j_body">Journal Body</label><br/>
@@ -98,7 +99,6 @@ async function pinPosts(pID){
             console.log("Sending Req.")
             let body = await response.text();
             let sysInfo = JSON.parse(body);
-            console.log(sysInfo)
             fetchPosts();
           }
 
@@ -112,7 +112,7 @@ async function pinPosts(pID){
                   "api-lh-call": "api-lh-call",
                   'Content-Type': 'application/json',
                   "grab": "journalPosts",
-                  "uuID": "<%- journId %>"
+                  "uuID": "<%- alterInfo.journId %>"
                 } 
             });
             let body = await response.text();
@@ -155,3 +155,7 @@ $(document).ready(function(){
 </script>
 
 </html>
+<% 
+  
+
+%>

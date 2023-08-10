@@ -86,7 +86,6 @@
             });
             let body = await response.text();
             let sysInfo = JSON.parse(body);
-            console.log(sysInfo)
             $("#download").hide();
             $("#pdf").show();
             $("#pdf").attr({
@@ -107,7 +106,6 @@
             });
             let body = await response.text();
             let sysInfo = JSON.parse(body);
-            console.log(sysInfo);
             }, 300000);
         }
     </script>

@@ -25,6 +25,7 @@
 		</style>
     </head>
     <body>
+		<% var maxLimit= 12 %>
         <%- include ("../partials/nav.ejs") %>
 		<!-- <div id="pseudofade" style="z-index:-9999998; background: rgba(0,0,0,.75); position: absolute; top: -30vh; left: -30vw; width: 0; height: 0; opacity: 0; transition:0.7s;"></div> -->
         <div id="wrapper">
@@ -34,12 +35,13 @@
 			<h1>Edit Your Account</h1>
 				<h2>Custom Terms</h2>
 				<form method="post" style="margin-top:calc(.5em);">
+					<p>Custom Terms max character limit: <%= maxLimit %></p>
 					<label for="altTerm">Term preferred for "alter": </label>
-					<input type="text" name="altTerm" placeholder="<%- cookies.alter_term %>" minlength="3"><br>
+					<input type="text" name="altTerm" placeholder="<%- cookies.alter_term %>" minlength="1" maxlength="<%= maxLimit %>"><br>
 					<label for="sysTerm">Term preferred for "system": </label>
-					<input type="text" name="sysTerm" placeholder="<%- cookies.system_term %>"minlength="3"><br>
+					<input type="text" name="sysTerm" placeholder="<%- cookies.system_term %>"minlength="1" maxlength="<%= maxLimit %>"><br>
 					<label for="subTerm">Term preferred for "subsystem": </label>
-					<input type="text" name="subTerm" placeholder="<%- cookies.subsystem_term %>"minlength="3"><br>
+					<input type="text" name="subTerm" placeholder="<%- cookies.subsystem_term %>"minlength="1" maxlength="<%= maxLimit %>"><br>
 					<!-- <label for="subTerm">Term preferred for "inner world": </label>
 					<input type="text" name="subTerm" placeholder="<%- cookies.subsystem_term %>"minlength="3"><br> -->
 

@@ -122,10 +122,10 @@
   </span></a></div>
   <div class="topnav" id="myTopnav">
     <% if (isLoggedIn(cookies)){ %>
-      <a href="/logout">Logout</a>
+      <a href="/logout"><%= siteLanguage[session.language || "en"].signOut %></a>
         <% } else { %>
-          <a href="/signup">Sign Up</a>
-          <a href="/login">Log in</a>
+          <a href="/signup"><%= siteLanguage[session.language || "en"].signUp %></a>
+          <a href="/login"><%= siteLanguage[session.language || "en"].signIn %></a>
         <% } %>
     <% if (isLoggedIn(cookies)){ %>
       <% if (session.system_term) { %> 

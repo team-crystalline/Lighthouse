@@ -329,10 +329,10 @@ app.locals.pluralize= pluralize;
 					// .cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
 					// .cookie('subsystem_term', truncate(result.rows[0].subsystem_term || "subsystem", 16),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
 					// Is this a developer account?
-					req.session.is_dev=([process.env.dev1, process.env.dev2,process.env.dev3].includes(req.session.u_id));
+					req.session.is_dev=([process.env.dev1, process.env.dev2,process.env.dev3].includes(result.rows[0].id));
 				} catch (e){
 					// They logged out!
-					console.log(e)
+					console.log(`Caught error, skipped setting session. User ID might not exist.`)
 				}
 
 			}
@@ -729,11 +729,14 @@ app.get('/tutorial', (req, res) => {
   });
   app.get('/mod', (req, res) => {
 	if (isLoggedIn(req)){
-		if (req.session.is_dev){
+		if ([process.env.dev1, process.env.dev2, process.env.dev3].includes(getCookies(req)['u_id'])){
 			res.render(`pages/mod-panel`, { session: req.session, splash:splash, cookies:req.cookies });
 		}else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	} else {
+		console.log(`An attempt to enter the mod panel was made.\n Attempt made by: ${getCookies(req)['u_id'] || "Guest/Logged Out User"} | Email: ${Buffer.from(getCookies(req)['email'], "base64").toString() || "N/A"}`);
+		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies 
+	});}
 	
   });
   app.get('/bda', (req, res) => {

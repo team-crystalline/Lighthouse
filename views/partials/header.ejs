@@ -1,4 +1,5 @@
-<title>Lighthouse<% if (process.env.environment == "dev"){ %> (SANDBOX) <% } %></title>
+<title><%= siteLanguage[session.language || "en"].title %><% if (process.env.environment == "dev"){ %> (SANDBOX) <% } %></title>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <link rel="stylesheet" href="/stylesheets/main.css">
 <script defer>
@@ -12,7 +13,7 @@
       // Display body when DOM is loaded
       if (localStorage.getItem("lighthouse_mode") == "light"){
         $("html").addClass("light-mode");
-      $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- cookies.skin || "lighthouse" %>.css">`);        
+      $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- cookies.skin ||"lighthouse" %>.css">`);        
       } else {
         $("html").addClass("dark-mode");
         $("head").append(`<link rel="stylesheet" href="/stylesheets/dark.css">`);         

@@ -115,7 +115,7 @@
   <div id="menubg"></div>
   <div id="logo" style="display: inline-block; margin-left: 30px;"><a href="/"><img style="vertical-align:middle; margin-right: 10px;" src="/img/logo.png" width="24px" alt="Lighthouse logo"><br/><span id="logoname">Lighthouse<br/>
     <% if (isLoggedIn(cookies)) { %>
-      <sup>Hi, <%= cookies.username ? cookies.username : "friend" %>!</sup>
+      <sup><%= (siteLanguage[session.language || "en"].greeting).replace("[[USER]]",cookies.username ? cookies.username : "friend") %></sup>
     <% } else { %>
     <sup>Journal Together</sup>
       <% } %>
@@ -129,30 +129,30 @@
         <% } %>
     <% if (isLoggedIn(cookies)){ %>
       <% if (session.system_term) { %> 
-        <a href="/system">My <%= capitalise(session.system_term) %></a>
+        <a href="/system"><%= (siteLanguage[session.language || "en"].mySys).replace("[[SYSTEM]]", capitalise(session.system_term)) %></a>
       <% } else { %>
-        <a href="/system">My System</a>
+        <a href="/system"><%= (siteLanguage[session.language || "en"].mySys).replace("[[SYSTEM]]", siteLanguage[session.language || "en"].system) %></a>
         <% } %>
-      <a href="/profile">Settings</a>
-      <a href="/forum">My Forum</a>
+      <a href="/profile"><%= siteLanguage[session.language || "en"].settings %></a>
+      <a href="/forum"><%= siteLanguage[session.language || "en"].myForum %></a>
       <% } %>
     
       <% if (session.is_dev){ %>
         <a href="/mod">Mod Panel</a>
         <% } %>
       <div class="dropdown">
-      <button  class="dropbtn" onclick='$("#drop").toggle()'>Information ⮛
+      <button  class="dropbtn" onclick='$("#drop").toggle()'><%= siteLanguage[session.language || "en"].info %> ⮛
       </button>
       <div class="dropdown-content" id="drop">
-        <a href="/about">About</a>
-        <a href="/tutorial">Tutorial</a>
-        <a href="/glossary">Glossary</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/crisis">In Crisis?</a>
+        <a href="/about"><%= siteLanguage[session.language || "en"].about %></a>
+        <a href="/tutorial"><%= siteLanguage[session.language || "en"].tutorial %></a>
+        <a href="/glossary"><%= siteLanguage[session.language || "en"].glossary %></a>
+        <a href="/changelog"><%= siteLanguage[session.language || "en"].changelog %></a>
+        <a href="/crisis"><%= siteLanguage[session.language || "en"].crisis %></a>
       </div>
       
     </div> 
-      <a href="javascript:history.back()">Go Back</a>
+      <a href="javascript:history.back()"><%= siteLanguage[session.language || "en"].back %></a>
   <button style="background:transparent; "onclick="toggleMode()"><span name="mode" class="material-symbols-outlined" style="vertical-align:middle;color: var(--col2);">light_mode</span></button>
   <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="toggleMobile()">&#9776;</a>
     <!-- <a href="/system">News</a> -->

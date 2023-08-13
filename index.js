@@ -19,7 +19,8 @@ var flash = require('express-flash');
 console.log( `Lighthouse v${pjson.version}`);
 
 const tuning= require('./js/genVars.js');
-const strings= require("./lang/en.json")
+const strings= require("./lang/en.json");
+const langVar= require("./js/languages.js");
 
 require('dotenv').config();
 
@@ -78,9 +79,6 @@ function idCheck(req){
 
 
 var splash;
-// function randomise(arr){
-//       return arr[Math.floor(Math.random()*arr.length)];
-// }
 
 
 function apiEyesOnly(req) {
@@ -142,6 +140,9 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/css")));
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/js")));
 
+
+// App Local Variables
+app.locals.siteLanguage= langVar.siteLanguage;
 app.locals.editorColours=[
 	{color: 'red',label: 'Red'},
 	{color: '#ff691f',label: 'Orange'},
@@ -272,7 +273,7 @@ app.locals.monthNames= ["January","February","March","April","May","June","July"
 "August","September","October","November","December"];
 app.locals.dayNames= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-
+// Back end Functions
 function truncate (str, n){
 	return (str.length > n) ? str.slice(0, n-1) + '...' : str;
   };
@@ -320,6 +321,7 @@ app.locals.pluralize= pluralize;
 					req.session.inner_worlds = result.rows[0].inner_worlds;
 					req.session.innerworld_term= result.rows[0].innerworld_term;
 					req.session.plural_term= result.rows[0].plural_term;
+					req.session.language= result.rows[0].language;
 					// res
 					// .cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true, secure: true })
 					// .cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
@@ -1870,6 +1872,7 @@ app.get('/wish-d/:id', (req, res) => {
 						if (err) {
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 						} else {
+							
 							req.flash("flash", strings.account.skin);
 						}
 					});
@@ -1948,9 +1951,20 @@ app.get('/wish-d/:id', (req, res) => {
 						}
 					});
 				}
+				if (req.body.userlang){
+					// Update user language
+					client.query({text: 'UPDATE users SET language= $2 WHERE id=$1', values: [getCookies(req)['u_id'], req.body.userlang]}, async (err, result)=>{
+						if (err) {
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							req.session.language = req.body.userlang;
+							req.flash("flash", strings.account.updated);
+						}
+					});
+				}
 				// After all those changes.
 				// res.cookie('subsystem_term', req.body.subTerm,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
-				res.cookie('username', req.body.newName || Buffer.from(req.session.username, "base64").toString() ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('email', req.body.newEmail || req.session.email ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', req.body.altTerm || req.session.alter_term ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', req.body.sysTerm || req.session.system_term ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('subsystem_term', req.body.subTerm || req.session.subsystem_term ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).redirect(302, "/profile");
+				res.cookie('username', req.body.newName || Buffer.from(req.session.username, "base64").toString() ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('email', req.body.newEmail || req.session.email ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', req.body.altTerm || req.session.alter_term ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', req.body.sysTerm || req.session.system_term ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('subsystem_term', req.body.subTerm || req.session.subsystem_term ,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', req.body.skinSel || req.session.skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).redirect(302, "/profile");
 			}
 		});
 	});

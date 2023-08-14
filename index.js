@@ -832,14 +832,17 @@ app.get('/thank-you', (req, res, next) => {
 	res.redirect("/lighthouse-system")
 });
 app.get('/lighthouse-system', (req, res, next) => {
-	client.query({text: "SELECT * FROM users WHERE username=$1;",values: [`${Buffer.from("Lighthouse System").toString("base64")}`]}, (err, result) => {
-		if (err) {
-		  console.log(err.stack);
-		  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-	  } else {
-	  }
-	})
-	res.render(`pages/lighthouse-system`, { session: req.session, splash:splash, cookies:req.cookies });
+	let alterCount= new Number();
+		// Dev environment
+		client.query({text: "SELECT count(alters.alt_id) FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id INNER JOIN users ON users.id= systems.user_id WHERE users.id=$1;",values: [`${process.env.environment== "dev" ? process.env.dev3 : process.env.dev1}`]}, (err, result) => {
+			if (err) {
+			  console.log(err.stack);
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+		  } else {
+			res.render(`pages/lighthouse-system`, { session: req.session, splash:splash, cookies:req.cookies, alterCount: result.rows[0].count });
+		  }
+		});
+	
 });
   app.get('/about', (req, res, next) => {
       res.render(`pages/about`, { session: req.session, splash:splash, cookies:req.cookies });

@@ -43,7 +43,7 @@
             <dl id="important">
                 <% for (i in important) { %> 
                     <div id="<%- important[i].linkalias %>" style="scroll-margin-top: 10em;">
-                    <dt onclick="copyLink('<%- terms[i].linkalias %>')" class="importantterm"><%- important[i].term %> <small><em>(<%- important[i].type %>)</em></small></dt>
+                    <dt onclick="copyLink('<%- important[i].linkalias %>')" class="importantterm"><%- important[i].term %> <small><em>(<%- important[i].type %>)</em></small></dt>
                     <dd><%- important[i].definition %></dd>  
                     </div>
                 <% } %>
@@ -79,9 +79,9 @@
                         if (terms[i].start_letter == abc[n]){ %>
                             <div id="<%- terms[i].linkalias %>" style="scroll-margin-top: 10em;">
                     <% if (terms[i].essential== true) { %> 
-                        <dt id="<%- terms[i].linkalias %>" class="importantterm" onclick="copyLink('<%- terms[i].linkalias %>')"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
+                        <dt class="importantterm" onclick="copyLink('<%- terms[i].linkalias %>')"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
                     <% } else { %>
-                        <dt id="<%- terms[i].linkalias %>" onclick="copyLink('<%- terms[i].linkalias %>')"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
+                        <dt onclick="copyLink('<%- terms[i].linkalias %>')"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
                     <% } %>
                     <dd><%- terms[i].definition %></dd>  
                     </div>

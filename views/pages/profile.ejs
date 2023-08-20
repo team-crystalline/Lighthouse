@@ -90,14 +90,14 @@
 				<form method="post" style="margin-top:calc(.5em);">
 					<label for="skinSel">Select a skin for Lighthouse (Light mode only): </label>
 					<select name="skinSel">
-						<option value="lighthouse">Lighthouse (Default)</option>
-						<option value="waves">Waves (Blue)</option>
-						<option value="shells">Shells (Pink)</option>
-						<option value="slate">Slate (Grey)</option>
-						<option value="mermaid">Mermaid (Green + Purple)</option>
-						<option value="coral">Coral (Red + Orange)</option>
-						<option value="sand">Sand (Brown)</option>
-						<option value="icecream">Ice Cream (Pastel)</option>
+						<option value="lighthouse" <% if (cookies.skin=="lighthouse"){ %>selected<%} %>>Lighthouse (Default)</option>
+						<option value="waves"<% if (cookies.skin=="waves"){ %>selected<%} %>>Waves (Blue)</option>
+						<option value="shells"<% if (cookies.skin=="shells"){ %>selected<%} %>>Shells (Pink)</option>
+						<option value="slate"<% if (cookies.skin=="slate"){ %>selected<%} %>>Slate (Grey)</option>
+						<option value="mermaid"<% if (cookies.skin=="mermaid"){ %>selected<%} %>>Mermaid (Green + Purple)</option>
+						<option value="coral"<% if (cookies.skin=="coral"){ %>selected<%} %>>Coral (Red + Orange)</option>
+						<option value="sand"<% if (cookies.skin=="sand"){ %>selected<%} %>>Sand (Brown)</option>
+						<option value="icecream"<% if (cookies.skin=="icecream"){ %>selected<%} %>>Ice Cream (Pastel)</option>
 					</select>
 					<input type="submit" value="Set Skin">
 				</form>

@@ -6,6 +6,7 @@
         <style>
             dt{
                 font-style: normal;
+                cursor: pointer;
             }
             #important{
                 display: block;
@@ -13,24 +14,36 @@
             #important > div {
             display: block;
             }
+            #copyNotification{
+                z-index: 5;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 50%;
+                padding: 1em;
+                background: var(--col2);
+                display: none;
+            }
         </style>
     </head>
     <%- include ("../partials/nav.ejs") %>
     <body>
+        <div id="copyNotification">Copied Link!</div>
         <div id="wrapper">
+            
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <h2>Glossary</h2>
             <p>The terms used in plural spaces are not usually ones known to the layman. Here are a list of terms you might see being used.</p>
-            <p><strong>This page isn't fully complete.</strong> Terms are still being added. Terms that are deemed important are in different colour text.</p>
+            <p><strong>This page isn't fully complete.</strong> Terms are still being added. Terms that are deemed important are in different colour text. Click on a term to copy a link to this term. Feel free to share this page!</p>
             <section>
             <h3>Important Terms</h3>
             <p>It's best to understand these terms first before reading further.</p>
             <dl id="important">
                 <% for (i in important) { %> 
                     <div id="<%- important[i].term %>" style="scroll-margin-top: 10em;">
-                    <dt class="importantterm"><%- important[i].term %> <small><em>(<%- important[i].type %>)</em></small></dt>
+                    <dt onclick="copyLink('<%- terms[i].term %>')" class="importantterm"><%- important[i].term %> <small><em>(<%- important[i].type %>)</em></small></dt>
                     <dd><%- important[i].definition %></dd>  
                     </div>
                 <% } %>
@@ -66,9 +79,9 @@
                         if (terms[i].start_letter == abc[n]){ %>
                             <div id="<%- terms[i].term %>" style="scroll-margin-top: 10em;">
                     <% if (terms[i].essential== true) { %> 
-                        <dt class="importantterm"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
+                        <dt class="importantterm" onclick="copyLink('<%- terms[i].term %>')"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
                     <% } else { %>
-                        <dt><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
+                        <dt onclick="copyLink('<%- terms[i].term %>')"><%- terms[i].term %> <small><em>(<%- terms[i].type %>)</em></small></dt>
                     <% } %>
                     <dd><%- terms[i].definition %></dd>  
                     </div>
@@ -81,5 +94,16 @@
         </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
+    <script>
+        // console.log(window.location.hash)
+        if (window.location.hash){
+            // console.log("Found hash")
+            $(`${window.location.hash}`).css("background-color", "rgba(255, 255, 0, .2)")
+        }
+        function copyLink(url) {
+            navigator.clipboard.writeText(`www.writelighthouse.com/glossary/#${url}`);
+            $("#copyNotification").show().delay(3000).fadeOut();
+            } 
+        </script>
     </body>
 </html>

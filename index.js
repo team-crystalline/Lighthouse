@@ -2675,7 +2675,7 @@ app.get('/wish-d/:id', (req, res) => {
                 res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
             } else {
                 // Write to the db
-                console.log(`Writing...`)
+				
                 var query = {
                   text: "INSERT INTO users (email, username, pass, email_link) VALUES ($1, $2, $3, $4)",
                   values: [`'${Buffer.from(req.body.email).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`, `'${Math.random().toString(36).substr(2, 16)}'`]
@@ -2685,6 +2685,7 @@ app.get('/wish-d/:id', (req, res) => {
                       console.log(err.stack);
                       res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
                   } else {
+					console.log(`Welcome to Lighthouse, ${req.body.username}.`);
 					ejs.renderFile(__dirname + '/views/pages/email-welcome.ejs', { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) }, (err, data) => {
 						if (err) {
 						  console.log(err);

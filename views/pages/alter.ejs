@@ -132,8 +132,8 @@ td{
                 <label for="skin">Change Journal skin:</label>
                 <select name="skin" id="skin">
                  <% for (i in journalArr) { %>
-                    <% if (parseInt(altJournal[0].skin) == parseInt(journalArr[i].val)){ %>
-                        <option value="<%- journalArr[i].val %>"><%- journalArr[i].c %></option>
+                    <% if (parseInt((altJournal[0].skin).replace("'", "")) == parseInt(journalArr[i].val)){ %>
+                        <option value="<%- journalArr[i].val %>" selected><%- journalArr[i].c %></option>
                     <% } else { %>
                         <option value="<%- journalArr[i].val %>"><%- journalArr[i].c %></option>
                     <% } %>

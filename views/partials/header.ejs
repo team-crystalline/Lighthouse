@@ -46,3 +46,19 @@
 <meta property="og:title" content="Lighthouse">
 
 <script>0</script>
+
+<script>
+  
+        const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+console.log(new Date().toLocaleDateString("de-DE", options));
+// "Donnerstag, 20. Dezember 2012"
+
+// an application may want to use UTC and make that visible
+options.timeZoneName = "short";
+console.log(new Date().toLocaleDateString("en-US", options));
+</script>

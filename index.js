@@ -1351,7 +1351,8 @@ app.get('/wish-d/:id', (req, res) => {
 					 req.session.sysList = result.rows;
 				 if (alterInfo.is_archived == true){
 					// This is an archived alter. Do a query to grab their posts?
-					client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${altJournal[0].j_id}`]}, (err, mresult) => {
+					try {
+						client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${altJournal[0].j_id}`]}, (err, mresult) => {
 						if (err) {
 						  console.log(err.stack);
 						 console.log("Error with alter's system query.");
@@ -1369,6 +1370,9 @@ app.get('/wish-d/:id', (req, res) => {
 						  res.render(`pages/archived-alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo, altJournal:altJournal, archivedPosts: archivedPosts });
 					  }
 					});
+				} catch (e){
+					res.render(`pages/archived-alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo, altJournal:altJournal, archivedPosts: [] });
+				}
 					
 				   } else {
 					res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo, altJournal:altJournal });

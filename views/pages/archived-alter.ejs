@@ -184,6 +184,7 @@
                     </table>
                     
                     <a class="linkbutton" style="width:auto;" href="/archive-alter/<%= alterInfo.alt_id %>">Un-Archive <%= Buffer.from(alterInfo.name, 'base64').toString() %></a>
+                    <% if (archivedPosts.length > 0){ %>
                     <hr>
                     <h2>Journal Archive</h2>
                     <section>
@@ -198,6 +199,7 @@
                             </article>
                         <% } %>
                     </section>
+                    <% } %>
                     
             </section>
     </div>

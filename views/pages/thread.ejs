@@ -75,8 +75,15 @@
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
+            <% for (i in alterArr){ 
+               if (alterArr[i].id == originalPost.alt_id){ 
+                var opInfo= alterArr[i];
+                break;
+               }
+               } %>
+
             <a href="/forum/<%= originalPost.topic_id %>">Back to <%= originalPost.forum_name %></a>
-            <h2><%= originalPost.title %> <a title="Edit <%- originalPost.title %>" class="editCat"><i id="tbutton" class="fa fa-pencil" aria-hidden="true"></i></a> <a title="Delete <%- originalPost.title %>"  class="" onclick="deleteTopic('<%- originalPost.title %>', '<%- originalPost.id %>')"><i class="fa fa-trash textless" aria-hidden="true"></i></a></h2>
+            <h2><%= originalPost.title %> <% if (!opInfo.is_archived){%><a title="Edit <%- originalPost.title %>" class="editCat"><i id="tbutton" class="fa fa-pencil" aria-hidden="true"></i></a> <% } %><a title="Delete <%- originalPost.title %>"  class="" onclick="deleteTopic('<%- originalPost.title %>', '<%- originalPost.id %>')"><i class="fa fa-trash textless" aria-hidden="true"></i></a></h2>
             <section class="threadpost">
                 <div class="user">
                 <!-- Time to do some alter logic. -->
@@ -99,8 +106,11 @@
                 <section class="threadpost">
                     <div class="user">
                     <!-- Time to do some alter logic. -->
-                    <% for (i in alterArr){ %> 
-                        <% if (alterArr[i].id == replyArr[r].alt_id){ %> 
+                    <% for (i in alterArr){ 
+                      %> 
+                        <% if (alterArr[i].id == replyArr[r].alt_id){ 
+                          var is_archived = alterArr[i].is_archived;
+                          %> 
                             <h3 style="padding-bottom:0;"><a href="/alter/<%= alterArr[i].id %>"><%= alterArr[i].name %> <% if (alterArr[i].id == originalPost.alt_id){ %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i> <% } %></a></h3>
                             <% if (alterArr[i].is_archived == true) { %><span><small>Archived</small><br/></span><% } %>
                             <img src="<%= alterArr[i].avatar %>" class="tinyimg"><br>
@@ -111,7 +121,7 @@
                     <% } %>
                     </div>
                     <div class="post">
-                        <p><small>Posted <%- (replyArr[r].created_on).toLocaleString().split(",")[0] %><a title="Edit reply" class="editCat" href="/reply/<%- replyArr[r].id %>"><i class="fa fa-pencil" aria-hidden="true"></i></a> <a title="Delete <%- replyAuthor %>'s Reply" onclick="deleteReply('<%- replyAuthor %>','<%- replyArr[r].id %>')"><i class="fa fa-trash textless" aria-hidden="true"></i></a></small></p>
+                        <p><small>Posted <%- (replyArr[r].created_on).toLocaleString().split(",")[0] %><% if (!is_archived){ %><a title="Edit reply" class="editCat" href="/reply/<%- replyArr[r].id %>"><i class="fa fa-pencil" aria-hidden="true"></i></a><% } %> <a title="Delete <%- replyAuthor %>'s Reply" onclick="deleteReply('<%- replyAuthor %>','<%- replyArr[r].id %>')"><i class="fa fa-trash textless" aria-hidden="true"></i></a></small></p>
                         <%- replyArr[r].body %>
                     </div>
                 </section>

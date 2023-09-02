@@ -552,10 +552,28 @@ app.get('/tutorial', (req, res) => {
 		res.render(`pages/tutorial`, { session: req.session, splash:splash, cookies:req.cookies});
 	
 });
-
-  app.get('/worksheets', (req, res) => {
+app.get('/worksheets', (req, res) => {
 	if (isLoggedIn(req)){
-		res.render(`pages/worksheets`, { session: req.session, splash:splash, cookies:req.cookies });
+		res.render(`pages/edit_innerworld`, { session: req.session, splash:splash, cookies:req.cookies });
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	
+  });
+
+  app.get('/inner-world/:id', (req, res) => {
+	if (isLoggedIn(req)){
+		client.query({text: "SELECT * FROM inner_worlds WHERE u_id=$1 AND id=$2;",values: [getCookies(req)['u_id'], req.params.id]}, (err, result) => {
+			if (err) {
+			  console.log(err.stack);
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+		  } else {
+			res.render(`pages/edit_innerworld`, { session: req.session, splash:splash, cookies:req.cookies,  iw: {
+				id: result.rows[0].id,
+				title: Buffer.from(result.rows[0].key, "base64").toString(),
+				body: Buffer.from(result.rows[0].value, "base64").toString()
+			  } });
+		  }
+		});
+		
 	splash=null;
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	
@@ -1639,6 +1657,27 @@ app.get('/wish-d/:id', (req, res) => {
 
 
 	*/
+	app.post('/inner-world/:id', (req, res) => {
+		if (isLoggedIn(req)){
+			client.query({text: "UPDATE inner_worlds SET key=$3, value=$4 WHERE u_id=$1 AND id=$2;",
+			values: [
+				getCookies(req)['u_id'], 
+				req.params.id,
+				`'${Buffer.from(req.body.keytitle).toString("base64")}`,
+				`'${Buffer.from(req.body.valuebody).toString("base64")}`,
+			]}, (err, result) => {
+				if (err) {
+				  console.log(err.stack);
+				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+			  } else {
+				req.flash("flash", "Inner world updated!")
+				res.redirect("/inner-world")
+			  }
+			});
+		}else {
+			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
+		}
+	});
 	app.post("/archive-alter/:id", (req, res, next)=>{
 		if (isLoggedIn(req)){
 			client.query({text: "UPDATE alters SET is_archived= NOT is_archived WHERE alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {

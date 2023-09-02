@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="visibility: hidden;">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                <h2>Edit <%= iw.title %></h2>
+                <form method="post">
+                    <label for="keytitle">Name</label>
+                    <input type="text" id="keytitle" name="keytitle" value="<%= iw.body %>"><br>
+                    <label for="valuebody">Description</label><br>
+                    <textarea name="valuebody" id="valuebody"><%= iw.body %></textarea><br>
+                    <input type="submit" name="edit" value="Edit Entry"><input type="reset" value="Start Over">
+                </form>
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

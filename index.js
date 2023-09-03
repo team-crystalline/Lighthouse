@@ -554,7 +554,7 @@ app.get('/tutorial', (req, res) => {
 });
 app.get('/worksheets', (req, res) => {
 	if (isLoggedIn(req)){
-		res.render(`pages/edit_innerworld`, { session: req.session, splash:splash, cookies:req.cookies });
+		res.render(`pages/worksheets`, { session: req.session, splash:splash, cookies:req.cookies });
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	
   });

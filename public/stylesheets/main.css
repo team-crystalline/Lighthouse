@@ -715,6 +715,3 @@ img.emoji {
   .image > img{
     max-width: 100%;
   }
-  img{
-    pointer-events: none;
-  }

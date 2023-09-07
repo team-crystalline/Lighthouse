@@ -293,14 +293,13 @@ ul.breadcrumb {
 .grid{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 1em;
     width: 100%;
     max-width: calc(50vw);
     flex-wrap: wrap;
 }
 .grid > *{
-    width: 8em;
     margin-top: .5em;
 }
 
@@ -309,15 +308,14 @@ ul.breadcrumb {
     flex-wrap: wrap;
     flex-direction: row;
   }
-.child {
+/* .child {
     flex: 1 0 21%;
     margin: calc(.5em);
     height: 7em;
     justify-items: center;
-    /* background-color: blue; */
-  }
+  } */
 
-.grid > a, .alterbutton, .editbtn, .deletebtn{
+ .alterbutton, .editbtn, .deletebtn{
     /* padding: 1em; */
     display: inline-block;
     text-align: center;
@@ -373,7 +371,10 @@ ul.breadcrumb {
     text-align: center;
     height: 9em;
     width: 7em;
-    filter: drop-shadow(0 0 0.75rem rgba(0,0,0,.5));
+    filter: drop-shadow(0 0 1px rgba(0,0,0,.5));
+    flex: 1 0 21%;
+    margin: calc(.5em);
+    justify-items: center;
 }
 a> .polaroid{
     text-decoration: none;

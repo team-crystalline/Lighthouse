@@ -69,7 +69,7 @@ var journSkin=[
                 <% for ( i in alterArr) {  
                     if (alterArr[i].is_archived== false){
                     %>
-                    <a href="/alter/<%= alterArr[i].a_id %>"><div class="polaroid">
+                    <a href="/alter/<%= alterArr[i].a_id %>"><div class="polaroid child">
                      <img src="<%= Buffer.from(alterArr[i].icon, "base64").toString() %>" class="smallimg"><br>
                      <%= truncate(alterArr[i].name, 10) %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %>  
                     </div></a> 

@@ -65,7 +65,11 @@ var journSkin=[
                 <% for ( i in alterArr) {  
                     if (alterArr[i].is_archived== false){
                     %>
-                    <a href="/alter/<%= alterArr[i].a_id %>"><%= alterArr[i].name %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %></a>
+                    <a href="/alter/<%= alterArr[i].a_id %>"><div class="polaroid">
+                     <img src="<%= Buffer.from(alterArr[i].icon, "base64").toString() %>" class="smallimg"><br>
+                     <%= truncate(alterArr[i].name, 10) %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %>  
+                    </div></a> 
+                    
                 <% }} %>
             </div>
             <% } %>
@@ -74,11 +78,15 @@ var journSkin=[
                 <% for ( i in alterArr) {  
                     if (alterArr[i].is_archived== true){
                     %>
-                    <a href="/alter/<%= alterArr[i].a_id %>"class="archived"><%= alterArr[i].name %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %></a>
+                    <a href="/alter/<%= alterArr[i].a_id %>"><div class="gridbutton archived">
+                        <img src="<%= Buffer.from(alterArr[i].icon, "base64").toString() %>" class="tinyimg"><br>
+                        <%= alterArr[i].name %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %>
+                    </div></a>
+                    
                 <% }} %>
             </div>
             <% } %>
-            <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="deletebtn">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="editbtn">Edit</a>
+            <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton deletebtn">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton editbtn">Edit</a>
             <form method="post" style="margin-top: calc(2vh);">
                 <label for="altname">Add a New <%= capitalise(cookies.alter_term) %></label>
                 <input type="text" name="altname" placeholder="New <%= capitalise(cookies.alter_term) %> Name Here" autofocus="autofocus">

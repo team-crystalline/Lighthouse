@@ -1328,7 +1328,7 @@ app.get('/wish-d/:id', (req, res) => {
 			  req.session.chosenSys= result.rows[0];
 		  }
 		});
-			client.query({text: "SELECT alters.alt_id, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
+			client.query({text: "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
 	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1336,7 +1336,7 @@ app.get('/wish-d/:id', (req, res) => {
 	              req.session.alters = [];
 	              for (i in (result.rows)){
 	                //   console.table(result.rows[i]);
-	                  (req.session.alters).push({name: Buffer.from(result.rows[i].name, 'base64').toString(), id: result.rows[i].sys_id, a_id: result.rows[i].alt_id, mood: result.rows[i].mood, pronouns: result.rows[i].pronouns, is_archived: result.rows[i].is_archived})
+	                  (req.session.alters).push({name: Buffer.from(result.rows[i].name, 'base64').toString(), id: result.rows[i].sys_id, a_id: result.rows[i].alt_id, mood: result.rows[i].mood, pronouns: result.rows[i].pronouns, is_archived: result.rows[i].is_archived, icon: result.rows[i].img_url})
 	              }
 				  try {
 					(req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
@@ -1344,7 +1344,6 @@ app.get('/wish-d/:id', (req, res) => {
 					// Weird.
 				  }
 	          }
-			  // console.table(req.session.sys);
 			  (req.session.alters).sort((a, b) => a.distance - b.distance)
 	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies, sys_id: req.params.id});
 	        });

@@ -188,7 +188,7 @@ async function fetchPosts(){
               // This is a system.
               sysCount++;
               $("#sysList").append(`<div class="systemdiv" id="${sysInfo.sysArr[i].sys_id}">
-              <a class="systembutton" title="${sysInfo.sysArr[i].alias}" href="/system/${sysInfo.sysArr[i].sys_id}">${sysInfo.sysArr[i].alias} <a class="editbtn" href="/editsys/${sysInfo.sysArr[i].sys_id}">Rename</a></a><a href="/deletesys/${sysInfo.sysArr[i].sys_id}" name="${sysInfo.sysArr[i].sys_id}" class="deletebtn">Delete</a>
+              <a class="systembutton" title="${sysInfo.sysArr[i].alias}" href="/system/${sysInfo.sysArr[i].sys_id}">${sysInfo.sysArr[i].alias} <a class="linkbutton editbtn" href="/editsys/${sysInfo.sysArr[i].sys_id}">Rename</a></a><a href="/deletesys/${sysInfo.sysArr[i].sys_id}" name="${sysInfo.sysArr[i].sys_id}" class="linkbutton deletebtn">Delete</a>
               </div>`);
                             // Grab one system.
                 for (n in sysInfo.sysArr){

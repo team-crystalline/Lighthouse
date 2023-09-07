@@ -276,12 +276,12 @@ footer{
     align-items: center;
     justify-content: space-between;
     padding: 1em;
-    width: calc(50vw);
+    width: 100%;
     max-width: calc(50vw);
     flex-wrap: wrap;
 }
 .grid > *{
-    min-width: 10em;
+    width: 8em;
     margin-top: .5em;
 }
 
@@ -299,7 +299,7 @@ footer{
   }
 
 .grid > a, .alterbutton, .editbtn, .deletebtn{
-    padding: 1em;
+    /* padding: 1em; */
     display: inline-block;
     text-align: center;
     text-decoration: none;
@@ -347,6 +347,20 @@ footer{
     background: var(--col3);
 }
 
+.polaroid {
+    padding-top: calc(.5em);
+    padding-bottom: 1em;
+    background: ghostwhite;
+    text-align: center;
+    height: 9em;
+    width: 7em;
+    filter: drop-shadow(0 0 0.75rem rgba(0,0,0,.5));
+}
+a> .polaroid{
+    text-decoration: none;
+}
+
+
 .vvtinyimg{
     width: calc(1em);
     height: auto;
@@ -364,8 +378,16 @@ footer{
     width: calc(4em);
     height: auto;
 }
+.smallimg{
+    width: calc(6em);
+    height: auto;
+}
 .medimg{
     width: calc(8em);
+    height: auto;
+}
+.lgimg{
+    width: calc(10em);
     height: auto;
 }
 .splash{
@@ -590,6 +612,7 @@ button[disabled=disabled]{
     width: 100%;
     padding: 1em;
 }
+
 /* End Mobile */
 }
 

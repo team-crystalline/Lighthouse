@@ -6,6 +6,11 @@
     <body>
         <%- include ("../partials/nav.ejs") %>
         <div id="wrapper">
+            <ul class="breadcrumb">
+                <li><a href="/system" title=""><%= capitalise(cookies.system_term) %></a></li>
+                <li><a href="/system/<%= alterInfo.sys_id %>" title="Back to <%= capitalise(Buffer.from(alterInfo.sys_alias, "base64").toString()) %>"><%= capitalise(Buffer.from(alterInfo.sys_alias, "base64").toString()) %></a></li>
+                <li><%= Buffer.from(alterInfo.name, 'base64').toString() %></li>
+              </ul> 
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>

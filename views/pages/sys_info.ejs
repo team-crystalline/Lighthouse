@@ -62,7 +62,7 @@ var journSkin=[
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <h2><% if (session.chosenSys.icon) { %> <img src="/img/svg/<%- session.chosenSys.icon %>.svg" class="vtinyimg"> <% } %><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
-            <div id="parent"></div>
+
             <p>This <%= cookies.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= cookies.alter_term %><% } else { %><%= pluralize(cookies.alter_term)%><% } %>.</p>
             <% if (alterArr.length > 0){ %>
             <div class="grid">

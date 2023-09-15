@@ -17,6 +17,7 @@
     --col7: #f3f2ed;
     --col8: #500921;
     color-scheme: light;
+    --forum-shade: rgba(177, 0, 147, 0.05);
 }
 html{
     background-image: url("../img/sorbet.png");

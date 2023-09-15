@@ -17,6 +17,7 @@
     --ck-color-button-default-active-background: var(--col2);
     --ck-color-button-on-hover-background: var(--col2);
     --polar: rgb(36, 32, 46);
+    --forum-shade: rgba(255,255,255,.05);
 }
 
 #wrapper{
@@ -26,12 +27,6 @@
 * :not(.systembutton > span){
     color: rgb(222, 222, 247);
 }
-/* html{
-    background-image: url("../img/night-lighthouse.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-} */
 
 
 #logoname{

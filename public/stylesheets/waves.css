@@ -9,6 +9,7 @@
     --col7: #62a3c9;
     --col8: #1f2b5f;
     color-scheme: light;
+    --forum-shade: rgba(10, 13, 153, 0.05);
 }
 html{
     background-image: url("../img/water.png");

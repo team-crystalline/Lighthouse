@@ -9,6 +9,7 @@
     --col7: #c3faf7;
     --col8: #09193d;
     color-scheme: light;
+    --forum-shade: rgba(1, 149, 175, 0.05);
 }
 html{
     background-image: url("../img/winter-bg.png");

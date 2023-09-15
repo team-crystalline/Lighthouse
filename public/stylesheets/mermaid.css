@@ -9,6 +9,7 @@
     --col7: #b1f1ee;
     --col8: #161f50;
     color-scheme: light;
+    --forum-shade: rgba(33, 209, 33, 0.05);
 }
 html{
     background-image: url("../img/fish.png");

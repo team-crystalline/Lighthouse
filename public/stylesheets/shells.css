@@ -9,6 +9,7 @@
     --col7: #f3d6e3;
     --col8: #501638;
     color-scheme: light;
+    --forum-shade: rgba(209, 33, 33, 0.05);
 }
 html{
     background-image: url("../img/shells.png");

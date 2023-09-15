@@ -9,6 +9,7 @@
     --col7: #cfc1ae;
     --col8: #504116;
     color-scheme: light;
+    --forum-shade: rgba(104, 59, 1, 0.05);
 }
 html{
     background-image: url("../img/autumn-bg.png");

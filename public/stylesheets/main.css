@@ -10,6 +10,7 @@
     --col7: #def1f0;
     --col8: #065966;
     --polar: ghostwhite;  
+    --forum-shade: rgba(0,0,0,.05);
 }
 .dark_mode{
     background-image: url("../img/night-lighthouse.png"), rgb(30,30,30);
@@ -99,7 +100,7 @@ nav {
     top:0;
     left: 0;
     filter: drop-shadow(0 3px 3px rgba(0,0,0, .2));
-    z-index: 200;
+    z-index: 5;
     height: 6em;
     max-height: 6em;
 }
@@ -549,7 +550,7 @@ button[disabled=disabled]{
     top:0;
     left: 0;
     filter: drop-shadow(3px 10px 4px rgba(0,0,0, .2));
-    z-index: 200;
+    z-index: 5;
     /* vertical-align: middle; */
   }
   .menu li{
@@ -695,7 +696,7 @@ img.emoji {
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 200; /* Sit on top */
     padding-top: 100px; /* Location of the box */
     left: 0;
     top: 0;

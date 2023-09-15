@@ -9,6 +9,7 @@
     --col7: #d6fde8;
     --col8: #0e093d;
     color-scheme: light;
+    --forum-shade: rgba(52, 163, 52, 0.05);
 }
 html{
     background-image: url("../img/spring-bg.png");

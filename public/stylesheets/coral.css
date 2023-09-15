@@ -9,6 +9,7 @@
     --col7: #ffceb2;
     --col8: #501638;
     color-scheme: light;
+    --forum-shade: rgba(116, 0, 71, 0.05);
 }
 html{
     background-image: url("../img/coral.png");

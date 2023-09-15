@@ -760,10 +760,12 @@ app.get('/worksheets', (req, res) => {
 					if (err) {
 					  console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-				  } else if( result.rows.length==0){
-					// Deleted forum.
-					  res.status(410).render('pages/410',{ session: req.session, code:"Gone", splash:splash, cookies:req.cookies });
-				  } else {
+				  } 
+				//   else if( result.rows.length==0){
+				// 	// Deleted forum.
+				// 	  res.status(410).render('pages/410',{ session: req.session, code:"Gone", splash:splash, cookies:req.cookies });
+				//   } 
+				  else {
 					let catArr= new Array();
 					for (i in bresult.rows){
 						catArr.push({id: bresult.rows[i].id, name: decryptWithAES(bresult.rows[i].name)})

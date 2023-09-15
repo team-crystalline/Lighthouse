@@ -9,6 +9,7 @@
     --col7: #dbdbdb;
     --col8: #131313;
     color-scheme: light;
+    --forum-shade: rgba(65, 65, 65, 0.05);
 }
 html{
     background-image: url("../img/slate.png");

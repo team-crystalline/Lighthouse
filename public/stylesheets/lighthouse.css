@@ -9,6 +9,7 @@
 	--col6: #52565c;
     --col7: #def1f0;
     --col8: #065966;
+    --forum-shade: rgba(0,0,0,.05);
 }
 html{
     /* background: var(--col7); */

@@ -4,8 +4,14 @@
         <%- include ("../partials/header.ejs") %>
         <style>
           table{
-            border-collapse: collapse; 
+            border-collapse: collapse;
           }
+          td{
+            padding: .5em;
+          }
+          table tr:nth-child(odd) td{
+            background: var(--forum-shade);
+}
           .radio-toolbar input[type="radio"] {
                  display: none;
         }

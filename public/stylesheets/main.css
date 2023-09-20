@@ -202,12 +202,6 @@ footer{
 
 /* IDs */
 
-/* #logo{
-    position: fixed;
-    top: 1vh;
-    left: 1vh;
-} */
-
 
 #wrapper{
     width: 80vw;
@@ -574,7 +568,7 @@ button[disabled=disabled]{
       display: none;
   }
   #logo img{
-      width:10vw;
+      width:7em;
 	  margin-bottom: 1vh;
       vertical-align: middle;
   }
@@ -626,7 +620,7 @@ button[disabled=disabled]{
 }
 
 #logo img{
-    width:2em;
+    width:5em;
     margin-bottom: 1vh;
     vertical-align: middle;
 }

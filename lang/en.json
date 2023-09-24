@@ -16,7 +16,7 @@
         "imported": "Imported from Pluralkit successfully."
     },
     "account":{
-        "created": "Thank you for signing up to Lighthouse! You are now logged in.",
+        "created": "Thank you for signing up to Lighthouse! Please check your email to verify your account.",
         "updated": "Settings updated!",
         "deleted": "So sorry to see you go. You can sign up again at any time.",
         "alreadyExists": "<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>",
@@ -24,7 +24,9 @@
         "loggedout": "You're now logged out.",
         "loggedin": "You're now logged in!",
         "sessionExpired": "Your session might have expired. Please log in again.",
-        "skin": "Website skin changed successfully!"
+        "skin": "Website skin changed successfully!",
+        "notVerified": "Your account isn't verified yet! Please check your email and verify your account.",
+        "alreadyVerified": "Your account is already verified."
     },
     "wish":{
         "created": "Wish created!",

@@ -24,7 +24,8 @@
         "loggedout": "Sie sind jetzt ausgeloggt.",
         "loggedin": "Sie sind jetzt eingeloggt!",
         "sessionExpired": "Deine Sitzung ist abgelaufen. Bitte neu anmelden.",
-        "skin": "Website-Theme erfolgreich geändert!"
+        "skin": "Website-Theme erfolgreich geändert!",
+        "notVerified": "Your account isn't verified yet!"
     },
     "wish":{
         "created": "Wunsch gemacht!",

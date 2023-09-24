@@ -54,6 +54,7 @@ const api = new PKAPI({
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
+  secure: true,
   auth: {
     user: 'dee_deyes@writelighthouse.com',
     pass: process.env.gmail_pass,
@@ -118,7 +119,7 @@ client.connect();
 
 
 var app = express();
-app.use(flash());
+
   app.use('/', express.static(__dirname + '/public'))
   app.use(session({
 	name: "session",
@@ -127,8 +128,8 @@ app.use(flash());
 	resave: true,
 	saveUninitialized: true,
     }));
+	app.use(flash());
 app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
-
   app.use(cookieParser());
   app.use(function (req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -143,6 +144,7 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 
 
 // App Local Variables
+app.locals.version= pjson.version;
 app.locals.siteLanguage= langVar.siteLanguage;
 app.locals.editorColours=[
 	{color: 'red',label: 'Red'},
@@ -308,8 +310,9 @@ app.locals.pluralize= pluralize;
 		client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
 			if (err) {
 			console.log(err.stack);
+			// req.flash("flash", strings.account.sessionExpired);
 			res.redirect("/");
-			req.flash("flash", strings.account.sessionExpired);
+			
 			} else{
 				// Let's grab IDs while we're at it.
 				try{
@@ -367,13 +370,61 @@ app.locals.pluralize= pluralize;
 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
 			  } else {
 				var donators= result.rows;
-				res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:req.cookies, version: pjson.version, donators:donators });
-	        splash=null;
+				req.flash("flash", "<a href='/tos'>Terms of Service</a> and <a href='/privacypolicy'>Privacy Policy</a> have been added.")
+				res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:req.cookies, donators:donators });
 			  }
 			});
 			
 		}
 	});
+  });
+  app.get('/verify/:id', (req, res)=>{
+	if (isLoggedIn(req)){
+		// Redirect them to the index.
+		res.redirect("/")
+	} else {
+		client.query({text:'SELECT * FROM WHERE id=$1;', values: [req.params.id]}, (err, aresult) => {
+			if (err) {
+			  console.log(err.stack);
+			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+		  } else {
+			req.session.alter_term= aresult.rows[0].alter_term;
+			req.session.system_term= aresult.rows[0].system_term;
+			req.session.subsystem_term= aresult.rows[0].subsystem_term;
+			req.session.loggedin = true;
+			req.session.u_id= aresult.rows[0].id;
+			req.session.username = Buffer.from(aresult.rows[0].username, 'base64').toString();
+			req.session.is_legacy= aresult.rows[0].is_legacy;
+			 // Add to cookies
+			 res
+			 .cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('username',  Buffer.from(aresult.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('u_id', aresult.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('alter_term', aresult.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('system_term', aresult.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('subsystem_term', aresult.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('is_legacy', aresult.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+			 .cookie('skin', aresult.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+			if (aresult.rows[0].verified == false){
+				console.log("They aren't verified. Fixing this now.");
+				client.query({text:'UPDATE users SET verified=true WHERE id=$1;', values: [aresult.rows[0].id]}, (err) => {
+					if (err) {
+					  console.log(err.stack);
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+				  } else {
+					res.render('pages/verify',{ session: req.session,splash:splash, cookies:req.cookies });
+				  }
+				});
+			} else {
+				req.flash("flash", strings.account.alreadyVerified);
+				res.redirect("/")
+			}
+			
+		  }
+		});
+		
+	}
+	
   });
   app.get('/safety-plan', (req, res) => {
 	if (isLoggedIn(req)){
@@ -901,6 +952,13 @@ app.get('/lighthouse-system', (req, res, next) => {
       res.render(`pages/about`, { session: req.session, splash:splash, cookies:req.cookies });
   });
 
+  app.get('/tos', (req, res) => {
+	res.render(`pages/tos`, { session: req.session, splash:splash, cookies:req.cookies });
+});
+
+app.get('/privacypolicy', (req, res) => {
+	res.render(`pages/privacypolicy`, { session: req.session, splash:splash, cookies:req.cookies });
+});
 
   app.get('/todos', (req, res, next) => {
       res.render(`pages/todos`, { session: req.session, splash:splash,cookies:req.cookies });
@@ -920,9 +978,11 @@ app.get('/lighthouse-system', (req, res, next) => {
       
   });
 
-  app.get('/login', (req, res, next) => {
+  app.get('/login', (req, res) => {
+	// Bookmark: login page
+	// req.flash('info', 'Welcome');
       res.render(`pages/login`, { session: req.session, splash:splash,cookies:req.cookies });
-      splash=null;
+
   });
   app.get('/cookies', (req, res, next) => {
       res.render(`pages/cookies`, { session: req.session, splash:splash,cookies:req.cookies });
@@ -2117,7 +2177,11 @@ app.get('/wish-d/:id', (req, res) => {
 							// Clear all cookies/session data.
 							   
 							   req.flash("flash", strings.account.deleted);
-							   req.session.destroy();
+							   try{
+								req.session.destroy();
+							   } catch (e){
+								console.log("Tried destroying the session, but it seems that wasn't doable!")
+							   }
 							   res.clearCookie('loggedin');
 							   res.clearCookie('username');
 							   res.clearCookie('u_id');
@@ -2941,11 +3005,12 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
   app.post('/signup', function(req, res) {
-      // console.log(`${req.body.email}`);
-      var splash;
+	// Bookmarks: signup post, post signup
+
+	  if (req.body.spamcheck) return console.log("(:"); // It's a bot. Do not let them load anything.
       var query = {
         text: "SELECT * FROM users WHERE email=$1 OR username=$2;",
-        values: [`'${Buffer.from(req.body.email).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`]
+        values: [`'${Buffer.from((req.body.email).toLowerCase()).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`]
       }
       client.query(query, (err, result) => {
           if (err) {
@@ -2964,39 +3029,43 @@ app.get('/wish-d/:id', (req, res) => {
                   text: "INSERT INTO users (email, username, pass, email_link) VALUES ($1, $2, $3, $4)",
                   values: [`'${Buffer.from(req.body.email).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`, `'${Math.random().toString(36).substr(2, 16)}'`]
                 }
-                client.query(query, (err, result) => {
+                client.query(query, (err, aresult) => {
                     if (err) {
                       console.log(err.stack);
                       res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
                   } else {
-					console.log(`Welcome to Lighthouse, ${req.body.username}.`);
-					ejs.renderFile(__dirname + '/views/pages/email-welcome.ejs', { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]) }, (err, data) => {
+					console.log(`Welcome to Lighthouse, ${req.body.username}. <3`);
+					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
 						if (err) {
-						  console.log(err);
-						} else {
-						  var mailOptions = {
-							from: '"Lighthouse" <dee_deyes@writelighthouse.com>',
-							to: req.body.email,
-							subject: `Welcome to Lighthouse, ${req.body.username}!`,
-							html: data
-						  };
-					
-						  transporter.sendMail(mailOptions, (error, info) => {
-							if (error) {
-							  return console.log(error);
+						  console.log(err.stack);
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					  } else {
+						console.log(result.rows[0].id);
+						ejs.renderFile(__dirname + '/views/pages/email-welcome.ejs', { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]), userid: result.rows[0].id }, (err, data) => {
+							if (err) {
+							  console.log(err);
+							} else {
+							  var mailOptions = {
+								from: '"Lighthouse" <dee_deyes@writelighthouse.com>',
+								to: req.body.email,
+								subject: `Welcome to Lighthouse, ${req.body.username}!`,
+								html: data
+							  };
+						
+							  transporter.sendMail(mailOptions, (error, info) => {
+								if (error) {
+								  return console.log(error);
+								}
+							  });
 							}
-							// console.log('Message sent: %s', info.messageId);
 						  });
-						}
-					  });
-					/*
-					  req.session.alt_term= result.rows[0].alter_term;
-				req.session.sys_term= result.rows[0].system_term;
-			   req.session.loggedin = true;
-			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
-					*/
-					// res.redirect("/");
-                    //   res.render(`pages/registered`, { session: req.session, splash:splash,cookies:req.cookies });
+						  req.flash("flash", strings.account.created);
+						  res.redirect("/")
+					  }
+					})
+					
+					
+					  /*
 					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
 						if (err) {
 						  console.log(err.stack);
@@ -3026,7 +3095,7 @@ app.get('/wish-d/:id', (req, res) => {
 					   .redirect("/tutorial");
 					   
 					  }
-					});
+					}); */
 
                   }
               });
@@ -3040,7 +3109,7 @@ app.get('/wish-d/:id', (req, res) => {
 	if (req.body.loggingin){
 		var query = {
 			text: "SELECT * FROM users WHERE email=$1 AND pass=$2;",
-			values: [`'${Buffer.from(req.body.email).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`]
+			values: [`'${Buffer.from((req.body.email).toLowerCase()).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`]
 		  }
 		  client.query(query, (err, result) => {
 			  if (err) {
@@ -3049,8 +3118,11 @@ app.get('/wish-d/:id', (req, res) => {
 			} else {
 				if (result.rows.length == 0){
 					req.flash("flash", strings.account.incorrect);
-					res.redirect(req.get('referer'));
-				} else {
+					res.redirect("/");
+				} /* else if(result.rows[0].verified== false){
+					req.flash("flash", strings.account.notVerified);
+					res.redirect("/");
+				} */ else {
 					 req.session.alter_term= result.rows[0].alter_term;
 					 req.session.system_term= result.rows[0].system_term;
 					 req.session.subsystem_term= result.rows[0].subsystem_term;
@@ -3155,9 +3227,10 @@ app.get('/wish-d/:id', (req, res) => {
 });
 
  app.post('/login', function(req, res) {
+	// Bookmark: login page post
      var query = {
        text: "SELECT * FROM users WHERE email=$1 AND pass=$2;",
-       values: [`'${Buffer.from(req.body.email).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`]
+       values: [`'${Buffer.from((req.body.email).toLowerCase()).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`]
      }
      client.query(query, (err, result) => {
          if (err) {
@@ -3165,9 +3238,13 @@ app.get('/wish-d/:id', (req, res) => {
            res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
        } else {
 		   if (result.rows.length == 0){
-			   req.flash("flash", strings.account.incorrect);
-			   res.redirect('/login');
-		   } else {
+				req.flash("flash", "Your email or password is incorrect.");
+				  res.render(`pages/login`, { session: req.session, splash:splash,cookies:req.cookies });
+		   } /* else if (result.rows[0].verified== false){
+				req.flash("flash", strings.account.notVerified);
+				   res.render(`pages/login`, { session: req.session, splash:splash,cookies:req.cookies });
+				
+		   } */ else {
 				req.session.alter_term= result.rows[0].alter_term;
 				req.session.system_term= result.rows[0].system_term;
 				req.session.subsystem_term= result.rows[0].subsystem_term;
@@ -3175,8 +3252,6 @@ app.get('/wish-d/:id', (req, res) => {
 			   req.session.u_id= result.rows[0].id;
 			   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
 			   req.session.is_legacy= result.rows[0].is_legacy;
-			   
-         // getCookies(req)['u_id']= result.rows[0].id;
 				 // Add to cookies
 				 res.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('subsystem_term', result.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true }).cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
 					res.redirect(302, '/');

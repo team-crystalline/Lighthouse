@@ -14,9 +14,7 @@
     <body>
         <%- include ("../partials/nav.ejs") %>
         <div id="wrapper">
-            <% if (locals.messages.flash) { %>
-                <div class="splash"><%- locals.messages.flash %></div>
-            <% } %>
+            <% if (messages.flash){ %> <p class="splash"><%= messages.flash %></p><% } %>
             <h2>Log In to Lighthouse</h2>
             <small>No Account? <a id="signup" href="/signup">Signing Up takes only a minute!</a></small><br/>
             <form method="post">

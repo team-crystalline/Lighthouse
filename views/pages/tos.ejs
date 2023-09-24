@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="visibility: hidden;">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+        <style>
+        </style>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                <h1>Terms of Service</h1>
+                <p>Welcome to Lighthouse's Terms of Service. Please read these terms over thoroughly. For clarification, we've added small blurbs at the end of each term to sum up what is being said.</p>
+                <h2>1. Copyright</h2>
+                <p>You own the copyright to all of the content that you create in Lighthouse. We will not use your content for promotional purposes without your consent.</p>
+                <p class="splash">What you write is yours. We cannot use what you write in here to advertise or promote Lighthouse.</p>
+                <h2>2. Restrictions</h2>
+                <p>You agree not to:<ul>
+                    <li>Sell, redistribute, or rent Lighthouse.</li>
+                    <li>Modify, decompile, or reverse engineer Lighthouse except to modify its front-end appearance. Lighthouse is a close-sourced application.</li>
+                    <li>Use Lighthouse for any commercial purpose.</li>
+                </ul></p>
+                <p class="splash">Do not try and tamper Lighthouse except to use a skin or in a way that makes it more accessible for you. We are not going to release the code, so selling a duplicate of Lighthouse or selling accounts is not okay.</p>
+            <h2>3. Disclaimer of Warranties</h2>
+            <p>Lighthouse is provided on an "as is" and "as available" basis. We make no warranties, express or implied, with respect to Lighthouse, including any warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
+            <p class="splash">We make no claims or promises that Lighthouse will be <strong>the</strong> app for you and your system. You may find that this method of journalling doesn't work for your system.</p>
+            <h2>4. Limitation of Liability</h2>
+            <p>We shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with your use of Lighthouse.</p>
+            <p class="splash">If you write something highly illegal and the law somehow finds out, that's on you-- not us. If you break your internet service provider's rules, we aren't responsible for that, either.</p>
+            <h2>5. Governing Law and Jurisdiction</h2>
+            <p>These Terms of Service shall be governed by and construed in accordance with the laws of the State of Pennsylvania, United States of America. Any dispute arising out of or in connection with these Terms of Service shall be subject to the exclusive jurisdiction of the courts of the State of Pennsylvania.</p>
+            <p class="splash">Lighthouse was developed in Pennsylvania, so any internet laws passed there will apply to Lighthouse. We want to add that we're working on making Lighthouse GDPR compliant as fast as possible.</p>
+            <h2>6. Entire Agreement</h2>
+            <p>These Terms of Service constitute the entire agreement between you and us with respect to the subject matter hereof and supersedes all prior or contemporaneous communications, representations, or agreements.</p>
+            <p class="splash">When an update to the Terms of Service is made, you are held to that new Terms of Service.</p>
+            <h2>7. Severability</h2>
+            <p>If any provision of these Terms of Service is held to be invalid or unenforceable, such provision shall be struck from these Terms of Service and the remaining provisions shall remain in full force and effect.</p>
+            <p class="splash">If we find that we can't enforce one of the terms here, we will remove it. That doesn't nullify the rest of the Terms of Service.</p>
+            <h2>8. Waiver</h2>
+            <p>No waiver of any provision of these Terms of Service shall be effective unless in writing and signed by both parties.</p>
+            <p class="splash">Everyone on this website is bound to the Terms of Service unless if they have a legal waiver for whatever reason.</p>
+            <h2>9. Notices</h2>
+            <p>All notices and other communications hereunder shall be through email and shall be deemed to have been duly given when delivered to the User's provided email address.</p>
+            <p class="splash">When we email you about Terms of Service changes, that is considered us giving you notice.</p>
+            <h2>10. Changes to Terms of Service</h2>
+            <p>We may update these Terms of Service from time to time. If we make any material changes to these Terms of Service, we will notify you by email or by posting a notice on our website. Your continued use of Lighthouse after any such changes will constitute your acceptance of the new Terms of Service.</p>
+            <p>If you have any questions about these Terms of Service, please contact us at dee_deyes@writelighthouse.com.</p>
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

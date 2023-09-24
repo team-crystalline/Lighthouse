@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="visibility: hidden;">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                <h1>Privacy Policy</h1>
+                <p>We respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and share your personal information when you use the Lighthouse app.</p>
+                <h2>1. Information We Collect</h2>
+                <p>We collect the following information from you when you use Lighthouse:<ul>
+                 <li>Your encrypted journal entries and forum posts.</li>
+                <li>Any data you willingly provide of your mental health, including information on alters or systems.</li>
+                </ul></p><p>Lighthouse is a close-sourced application. Your journal entries and forum posts are encrypted and we have no way to decrypt the data on our own.</p>
+                <h2>2. How We Use Your Information</h2>
+                <p>We use your information to:<ul>
+                    <li>Provide you with the services that you have requested.</li>
+                    <li>Collect aggregate statistics to better understand how Lighthouse is being used. (Examples: “45 users use [x] skin”, “Each user has an average of around 23 alters”) Users are <strong>not</strong> identified or individually studied in these statistics.</li>
+                    <li>Comply with legal requirements.</li></ul></p>
+                <h2>3. How We Share Your Information</h2>
+                    <p>We do not share your personal information with any third parties, unless required by law or as described in this Privacy Policy.</p>
+                <h2>4. Security</h2>
+                    <p>We take reasonable steps to protect your personal information from unauthorized access, use, or disclosure. However, no security measure is perfect, and we cannot guarantee the absolute security of your personal information (no one truly can).</p>
+                <h2>5. Your Choices</h2>
+                    <p>You can access and update your personal information at any time by logging in. You can also delete your personal information and account, or fix your locked-out account by contacting us at dee_deyes@writelighthouse.com.</p>
+                <h2>6. Changes to This Privacy Policy</h2>
+                    <p>We may update this Privacy Policy from time to time. If we make any material changes to this Privacy Policy, we will notify you by email or by posting a notice on our website. Your continued use of Lighthouse after any such changes will constitute your acceptance of the new Privacy Policy.</p>
+                <h2>7. Contact Us</h2>
+<p>If you have any questions about this Privacy Policy, please contact us at dee_deyes@writelighthouse.com.</p>
+
+
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

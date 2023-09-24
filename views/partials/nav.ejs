@@ -114,13 +114,13 @@
   </style>
   </head>
   <div id="menubg"></div>
-  <div id="logo" style="display: inline-block; margin-left: 30px; vertical-align: middle;width:50%;"><a href="/"><img style="vertical-align:middle; margin-right: 10px; float: left;" src="/img/logo.png" width="64px" alt="<%= siteLanguage[session.language || "en"].title %> logo"><span id="logoname"><%= siteLanguage[session.language || "en"].title %><br/>
+  <div id="logo" style="display: inline-block; margin-left: 30px; width:50%;filter: drop-shadow(0 0 .2em black);"><a href="/"><img style="margin-right: 10px; float: left;" src="/img/logo.png" width="64px" alt="<%= siteLanguage[session.language || "en"].title %> logo"><span id="logoname" style="line-height:30px;"><%= siteLanguage[session.language || "en"].title %></span> <span class="version">Beta v<%- version %></span><br/>
     <% if (isLoggedIn(cookies)) { %>
-      <sup><%= (siteLanguage[session.language || "en"].greeting).replace("[[USER]]",cookies.username ? cookies.username : "friend") %></sup>
+      <span style="color:var(--col7)"><%= (siteLanguage[session.language || "en"].greeting).replace("[[USER]]",cookies.username ? cookies.username : "friend") %></span>
     <% } else { %>
-    <sup>Journal Together</sup>
+    <span style="color:var(--col7)">Journal Together</span>
       <% } %>
-  </span></a></div>
+  </a></div>
   <div class="topnav" id="myTopnav">
     <% if (isLoggedIn(cookies)){ %>
       <a href="/logout"><%= siteLanguage[session.language || "en"].signOut %></a>
@@ -156,7 +156,6 @@
       <a href="javascript:history.back()"><%= siteLanguage[session.language || "en"].back %></a>
   <button style="background:transparent; "onclick="toggleMode()"><span name="mode" class="material-symbols-outlined" style="vertical-align:middle;color: var(--col2);">light_mode</span></button>
   <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="toggleMobile()">&#9776;</a>
-    <!-- <a href="/system">News</a> -->
   
 
     

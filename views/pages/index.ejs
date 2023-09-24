@@ -28,6 +28,7 @@
             }
             input{
                 margin-bottom:1em;
+                display: block;
             }
             #signup{
                 color: var(--col4);
@@ -66,34 +67,34 @@
                         <p>👥 Today is Plural Pride Day!<a href="/glossary#plurality">Read here.</a></p>
                         <% } %>
             </div>
-
-            <hgroup style="text-align:center;"><h1 style="font-family: 'Berkshire Swash','Lobster Two', cursive;font-size:3em;margin-bottom:-.5em">Lighthouse</h1><br><sup>Beta v<%- version %></sup>
-                <h2>Journal Together</h2></hgroup>         
-                <% if (locals.messages.flash) { %>
-                    <div class="splash"><%- locals.messages.flash %></div>
-                <% } %>
-                <section id="desktopsection">
-                    <%  if (!cookies.loggedin){ %>
-                        <!-- Login -->
-                        <form method="post" id="login">
-                            <h3>Log In</h3>
-                            <small>No Account? <a id="signup" href="/signup">Signing Up takes only a minute!</a></small><br/>
-                            <label for="email">Email: </label>
-                            <input type="email" placeholder="something@mail.com" name="email"></br>
-                            <label for="password">Password: </label>
-                            <input type="password" name="password"><br/>
-                            <input type="submit" value="Log in" name="loggingin">
-                        </form>
-                        <% } %>                    
+            <!-- <h1 style="font-family: 'Berkshire Swash','Lobster Two', cursive;font-size:3em;margin-bottom:-.5em">Lighthouse</h1> -->
+            <% if (messages.flash){ %> <p class="splash"><%- messages.flash %></p><% } %>
+            <%  if (!cookies.loggedin){ %>
+                <!-- Login -->
+                <form method="post" id="login" style="float: left; height: auto;">
+                    <h2>Log In</h2>
+                    <small>No Account? <a id="signup" href="/signup">Signing Up takes only a minute!</a></small><br/>
+                    <label for="email">Email: </label>
+                    <input type="email" placeholder="something@mail.com" name="email"></br>
+                    <label for="password">Password: </label>
+                    <input type="password" name="password"><br/>
+                    <input type="submit" value="Log in" name="loggingin">
+                </form>
+                <% } %>   
+            <hgroup style="text-align:center;">
+                <h2>Journal Together</h2></hgroup>
+                
+                <section id="desktopsection">                 
                 </section>
                 
                 <section style="text-align:center;">
-                    <img src="/img/<%= Math.floor(Math.random() * (18 - 1 + 1)) + 1  %>.png" alt="a journal book" style="display:inline; height: 128px; width: auto;margin-bottom:-1em;">
+                    <img src="/img/<%= Math.floor(Math.random() * (18 - 1 + 1)) + 1  %>.png" alt="a journal book" style="display:inline; height: 256px; width: auto;margin-bottom:-1em;" class="pixelart">
                 </center>
                 <h4>We're helping  <span style="color:var(--col1)"><%= (userCount).toLocaleString() %></span> systems!</h4>
                
             </section>
-            <p>We use cookies to keep your experience running smoothly while logged in. <a href="/cookies">Read more here.</a></p>
+            <article style="float:none">
+                <p>We use cookies to keep your experience running smoothly while logged in. <a href="/cookies">Read more here.</a></p>
             <p>Lighthouse is a safe and supportive space for people with PTSD and DID to explore their thoughts and feelings, identify their different parts, and develop healthy and positive communication internally.<%  if (!cookies.loggedin){ %> <a href="/signup">Sign up today and start your journey.</a><% } %></p>
                 <p><small>
                     <span class="material-symbols-outlined">
@@ -104,6 +105,8 @@
                     <center>
                         <p>Designed and programmed by The Lighthouse System.</p>
                         <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Us on Ko-fi!', '#29abe0', 'M4M81XKEG');kofiwidget2.draw();</script></center> 
+            </article>
+            
         <hr>
         <section id="features">
             <div>

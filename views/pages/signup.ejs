@@ -2,6 +2,18 @@
 <html lang="en" dir="ltr" style="visibility: hidden;">
     <head>
         <%- include ("../partials/header.ejs") %>
+        <style>
+          input[type=email],input[type=username],input[type=password],input[type=submit], #passSplash{
+            display: block;
+          }
+          #passSplash{
+            margin-top: -2em;
+            margin-bottom: 1em;
+            font-weight: 300;
+            font-style: italic;
+            font-size: .85em;
+          }
+        </style>
     </head>
     <body>
         <%- include ("../partials/nav.ejs") %>
@@ -10,37 +22,52 @@
             <div class="splash"><%- locals.messages.flash %></div>
         <% } %>
             <h2>Sign Up to Lighthouse</h2>
-            <p>We're happy to have you! But first, we need some  information. <strong>Please use a valid email!</strong> If not, losing your password will lose your account to the void.</p>
+            <p>We're happy to have you! But first, we need some  information. <strong>Please use a valid, non-temporary email.</strong> You will need to verify your account before you can use the website.</p>
             <form method="post" autocomplete="off">
                 <label for="email">Email: </label>
-                <input type="email" autocomplete="off" placeholder="Email" name="email" required></br>
+                <input type="email" autocomplete="off" placeholder="Email" name="email" required>
                 <label for="username">Username: </label>
-                <input type="username" autocomplete="off" placeholder="Pick something You." name="username" required><br/>
+                <input type="username" autocomplete="off" placeholder="Pick something You." name="username" required>
                 <label for="password">Password: </label>
-                <input minlength="8" type="password" autocomplete="off" placeholder="Write your password." name="password" id="pass" onchange="checkPass()" required><br/>
+                <input minlength="8" type="password" autocomplete="off" placeholder="Write your password." name="password" id="pass" required>
                 <label for="v-password">Verify Password: </label>
-                <input minlength="8" type="password" autocomplete="off" placeholder="Write it again." name="v-password" id="v-pass" onchange="checkPass()" required><br/>
-                <p id="passSplash"></p>
+                <input minlength="8" type="password" autocomplete="off" placeholder="Write it again." name="v-password" id="v-pass" required>
+                <span id="passSplash"></span>
+                <input type="checkbox" style="margin-top: 1em;" id="agreement" onchange="verifySubmit()"> <label for="agreement">By signing up, you agree to the <a href="/tos" target="_blank">Terms of Service</a> and <a href="/privacypolicy" target="_blank">Privacy Policy</a>.</label>
+                <input type="hidden" name="spamcheck" id="spamcheck" placeholder="Users should not see this! This is a bot honeypot.">
                 <input type="submit" id="signup" value="Sign Up" disabled>
             </form>
         </div>
         <%- include ("../partials/footer.ejs") %>
         <script>
+          /* -------------------------------- */
           const button= document.querySelector("#signup");
           const pass= document.querySelector("#pass");
           const vPass= document.querySelector("#v-pass");
           const passSplash= document.querySelector("#passSplash");
-          function checkPass(){
-            // console.log(pass.value);
-            // console.log(vPass.value);
-            if (pass.value !== vPass.value){
-              passSplash.innerHTML="Passwords do not match.";
-              button.disabled= true;
-            } else {
-              passSplash.innerHTML="";
+          /* -------------------------------- */
+
+          function randomise (arr){
+              return arr[Math.floor(Math.random()*arr.length)];
+            }
+          function verifySubmit(){
+            if (pass.value.length >= 8 && (pass.value.match(/^(?=.*[a-zA-Z])(?=.*[0-9])/)) && document.querySelector('#agreement').checked){
               button.disabled= false;
+            } else {
+              button.disabled=true;
             }
           }
+
+          $("#pass, #v-pass").on("keyup", function(){
+            if (pass.value !== vPass.value){
+              passSplash.innerHTML="Passwords do not match.";
+            } else {
+              passSplash.innerHTML="";
+            }
+            if (pass.value.length < 8 || (!pass.value.match(/^(?=.*[a-zA-Z])(?=.*[0-9])/))){
+              passSplash.innerHTML+= " Please make your password at least 8 characters with letters and a number."
+            }
+          });
         </script>
     </body>
 </html>

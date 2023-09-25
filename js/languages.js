@@ -1,5 +1,6 @@
 const siteLanguage={
     "en":{ // English
+        "flag": "🇬🇧",
         "title": "Lighthouse",
         "greeting": "Hi, [[USER]]!",
         "signUp": "Sign Up",
@@ -15,9 +16,12 @@ const siteLanguage={
         "changelog": "Changelog",
         "crisis": "In Crisis?",
         "back": "Go Back",
-        "system": "System"
+        "system": "System",
+        "tos": "Terms of Service",
+        "pp": "Privacy Policy"
     },
     "es":{ // Spanish
+        "flag": "🇪🇸",
         "title": "Faro",
         "greeting": "Hola, [[USER]]!",
         "signUp": "Regístrate",
@@ -33,9 +37,12 @@ const siteLanguage={
         "changelog": "Registro de cambios",
         "crisis": "Intervención en crisis",
         "back": "Volver",
-        "system": "Sistema"
+        "system": "Sistema",
+        "tos": "Términos de Servicio",
+        "pp": "Política de Privacidad"
     },
     "fr":{ // French
+        "flag": "🇫🇷",
         "title": "Phare",
         "greeting": "Salut, [[USER]]!",
         "signUp": "Inscrivez-vous",
@@ -51,9 +58,12 @@ const siteLanguage={
         "changelog": "Journal des modifications",
         "crisis": "Intervention de crise",
         "back": "Retour",
-        "system": "Système"
+        "system": "Système",
+        "tos": "Conditions d'utilisation",
+        "pp": "Politique de confidentialité"
     },
     "de":{ // German
+        "flag": "🇩🇪",
         "title": "Leuchtturm",
         "greeting": "Hallo, [[USER]]!",
         "signUp": "Melden Sie sich an",
@@ -69,9 +79,12 @@ const siteLanguage={
         "changelog": "Änderungsprotokoll",
         "crisis": "Krisenintervention",
         "back": "Gehen Sie zurück",
-        "system": "System"
+        "system": "System",
+        "tos": "Nutzungsbedingungen",
+        "pp": "Datenschutzrichtlinie"
     },
     "ko":{ // Korean
+        "flag": "🇰🇷",
         "title": "등대",
         "greeting": "안녕하세요, [[USER]]님!",
         "signUp": "가입",
@@ -87,9 +100,12 @@ const siteLanguage={
         "changelog": "변경내역",
         "crisis": "위기 개입",
         "back": "돌아가기",
-        "system": "체계"
+        "system": "체계",
+        "tos": "서비스 약관",
+        "pp": "개인정보 보호정책"
     },
     "pl":{ // Polish
+        "flag": "🇵🇱",
         "title": "Latarnia Morska",
         "greeting": "Witaj, [[USER]]!",
         "signUp": "Zarejestruj się",
@@ -105,9 +121,12 @@ const siteLanguage={
         "changelog": "Lista zmian",
         "crisis": "Interwencja kryzysowa",
         "back": "Go Back",
-        "system": "Wróć"
+        "system": "Wróć",
+        "tos": "Regulamin",
+        "pp": "Polityka prywatności"
     },
     "fil":{ // Filipino
+        "flag": "🇵🇭",
         "title": "Parola",
         "greeting": "Kumusta, [[USER]]!",
         "signUp": "Mag-sign Up",
@@ -123,9 +142,12 @@ const siteLanguage={
         "changelog": "Changelog",
         "crisis": "Panghihimasok sa krisis",
         "back": "Bumalik ka",
-        "system": "Sistema"
+        "system": "Sistema",
+        "tos": "Mga Tuntunin ng Serbisyo",
+        "pp": "Patakaran sa Privacy"
     },
     "jp":{ // Japanese
+        "flag": "🇯🇵",
         "title": "灯台",
         "greeting": "こんにちは、[[USER]]!",
         "signUp": "サインアップ",
@@ -141,9 +163,75 @@ const siteLanguage={
         "changelog": "変更履歴",
         "crisis": "危機介入",
         "back": "ゴーバック",
-        "system": "システム"
+        "system": "システム",
+        "tos": "利用規約",
+        "pp": "プライバシーポリシー"
+    },
+    "uk":{ // Ukranian
+        "flag": "🇺🇦",
+        "title": "Маяк",
+        "greeting": "Привіт, [[USER]]!",
+        "signUp": "Зареєструватися",
+        "signOut": "Вихід",
+        "signIn": "Увійдіть",
+        "mySys": "Моя [[SYSTEM]]",
+        "settings": "Налаштування",
+        "myForum": "Мій форум",
+        "info": "Інформація",
+        "about": "Про нас",
+        "tutorial": "Як використовувати",
+        "glossary": "Глосарій",
+        "changelog": "Журнал змін",
+        "crisis": "Кризова інтервенція",
+        "back": "Попередній",
+        "system": "Система",
+        "tos": "Умови надання послуг",
+        "pp": "Політика конфіденційності"
+    },
+    "gd":{ // Gaelic, Scotland
+        "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+        "title": "Taigh-solais",
+        "greeting": "Halo, [[USER]]!",
+        "signUp": "Clàradh",
+        "signOut": "Clàraich a-mach",
+        "signIn": "Clàraich a-steach",
+        "mySys": "Mo [[SYSTEM]]",
+        "settings": "Suidhichidhean",
+        "myForum": "Mo fhòram",
+        "info": "Fiosrachadh",
+        "about": "Mu thimchioll",
+        "tutorial": "Treòir",
+        "glossary": "Briathrachas",
+        "changelog": "Ùrachaidhean",
+        "crisis": "Ann an èiginn slàinte inntinn?",
+        "back": "Cùl",
+        "system": "Siostam",
+        "tos": "Cumhachan seirbheis",
+        "pp": "Poileasaidh Dìomhaireachd"
+    },
+    "ie":{ // Irish
+        "flag": "🇮🇪",
+        "title": "Tigh Solais",
+        "greeting": "Dia dhaoibh, [[USER]]!",
+        "signUp": "Cláraigh",
+        "signOut": "Logáil Amach",
+        "signIn": "Logáil isteach",
+        "mySys": "Mo [[SYSTEM]]",
+        "settings": "Socruithe",
+        "myForum": "Mo fóram",
+        "info": "Eolas",
+        "about": "Fúinn",
+        "tutorial": "Treoir",
+        "glossary": "Stór focal",
+        "changelog": "Nuashonruithe",
+        "crisis": "Idirghabháil Meabhair-Shláinte",
+        "back": "Cùl",
+        "system": "Córas",
+        "tos": "Téarmaí seirbhíse",
+        "pp": "Beartas Príobháideachta"
     },
     "eo":{ // Esperanto
+        "flag": "🇺🇳", // The actual esperanto flag isn't available.
         "title": "Lumturo",
         "greeting": "Saluton, [[USER]]!",
         "signUp": "Aliĝu",
@@ -159,7 +247,9 @@ const siteLanguage={
         "changelog": "Ŝanĝprotokolo",
         "crisis": "Kriza interveno",
         "back": "Reiru",
-        "system": "Sistemo"
+        "system": "Sistemo",
+        "tos": "Servokondiĉoj",
+        "pp": "Privateca Politiko"
     },
 }
 

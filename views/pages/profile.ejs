@@ -76,15 +76,18 @@
 				<form method="post" style="margin-top:1em;">
 					<label for="userlang">User Language (still a work in progress)</label>
 					<select name="userlang" id="userlang">
-						<option value="en" <% if (session.language == "en") {%> selected <% }%>>English</option>
-						<option value="es" <% if (session.language == "es") {%> selected <% }%>>Español</option>
-						<option value="fr" <% if (session.language == "fr") {%> selected <% }%>>Français</option>
-						<option value="de" <% if (session.language == "de") {%> selected <% }%>>Deutsch</option>
-						<option value="ko" <% if (session.language == "ko") {%> selected <% }%>>한국인</option>
-						<option value="pl" <% if (session.language == "pl") {%> selected <% }%>>Polski</option>
-						<option value="fil" <% if (session.language == "fil") {%> selected <% }%>>Filipino</option>
-						<option value="jp" <% if (session.language == "jp") {%> selected <% }%>>日本語</option>
-						<option value="eo" <% if (session.language == "eo") {%> selected <% }%>>Esperanto</option>
+						<option value="en" <% if (session.language == "en") {%> selected <% }%>>English 🇬🇧</option>
+						<option value="es" <% if (session.language == "es") {%> selected <% }%>>Español 🇪🇸</option>
+						<option value="fr" <% if (session.language == "fr") {%> selected <% }%>>Français 🇫🇷</option>
+						<option value="de" <% if (session.language == "de") {%> selected <% }%>>Deutsch 🇩🇪</option>
+						<option value="ko" <% if (session.language == "ko") {%> selected <% }%>>한국인 🇰🇷</option>
+						<option value="pl" <% if (session.language == "pl") {%> selected <% }%>>Polski 🇵🇱</option>
+						<option value="fil" <% if (session.language == "fil") {%> selected <% }%>>Filipino 🇵🇭</option>
+						<option value="jp" <% if (session.language == "jp") {%> selected <% }%>>日本語 🇯🇵</option>
+						<option value="uk" <% if (session.language == "uk") {%> selected <% }%>>Українська 🇺🇦</option>
+						<option value="gd" <% if (session.language == "gd") {%> selected <% }%>>Gàidhlig na h-Alba 🏴󠁧󠁢󠁳󠁣󠁴󠁿</option>
+						<option value="ie" <% if (session.language == "ie") {%> selected <% }%>>Gaeilge 🇮🇪</option>
+						<option value="eo" <% if (session.language == "eo") {%> selected <% }%>>Esperanto 🇺🇳</option>
 					</select><br>
 					<input name="languageUpdate" type="submit" value="Update Language"><br>
 					<small>Default language is English.</small>

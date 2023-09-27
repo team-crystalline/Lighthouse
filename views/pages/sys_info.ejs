@@ -66,12 +66,26 @@ var journSkin=[
             <p>This <%= cookies.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= cookies.alter_term %><% } else { %><%= pluralize(cookies.alter_term)%><% } %>.</p>
             <% if (alterArr.length > 0){ %>
             <div class="grid">
-                <% for ( i in alterArr) {  
+                <% for ( i in alterArr) {
                     if (alterArr[i].is_archived== false){
                     %>
                     <a href="/alter/<%= alterArr[i].a_id %>" style="text-decoration: none;"><div class="polaroid child">
-                     <img src="<%= Buffer.from(alterArr[i].icon, "base64").toString() %>" class="smallimg"><br>
-                     <%= truncate(alterArr[i].name, 10) %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %>  
+                        <% if (alterArr[i].img_blob){ %> 
+                            <img class="smallimg" style="float:left; margin-right:calc(1em);" src="data:<%= alterArr[i].blob_mimetype %>;base64,<%= Buffer.from(alterArr[i].img_blob).toString("base64") %>"> 
+                            
+                            <% } else if (distill(alterArr[i].icon)) { %>
+                            <img src="<%= Buffer.from(alterArr[i].icon, 'base64').toString() %>" class="smallimg" style="float:left; margin-right:calc(1em);">
+                        <% } else { %> 
+                            <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="smallimg" style="float:left; margin-right:calc(1em);" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s icon">
+                        <% } %>
+                     <br>
+                     <%= truncate(alterArr[i].name, 10) %> 
+                     <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
+                     <% if (alterArr[i].pronouns){ %> 
+                        <% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small>
+                        <% } %> 
+                        <% } %>
+                        
                     </div></a> 
                     
                 <% }} %>
@@ -79,8 +93,22 @@ var journSkin=[
                     if (alterArr[i].is_archived== true){
                     %>
                     <a href="/alter/<%= alterArr[i].a_id %>" style="text-decoration: none;"><div class="polaroid archived child">
-                        <img src="<%= Buffer.from(alterArr[i].icon, "base64").toString() %>" class="tinyimg"><br>
-                        <%= alterArr[i].name %> <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %><% if (alterArr[i].pronouns){ %><% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small><% } %><% } %>
+                        <% if (alterArr[i].img_blob){ %> 
+                            <img class="smallimg" style="float:left; margin-right:calc(1em);" src="data:<%= alterArr[i].blob_mimetype %>;base64,<%= Buffer.from(alterArr[i].img_blob).toString("base64") %>"> 
+                            
+                            <% } else if (distill(alterArr[i].icon)) { %>
+                            <img src="<%= Buffer.from(alterArr[i].icon, 'base64').toString() %>" class="smallimg" style="float:left; margin-right:calc(1em);">
+                        <% } else { %> 
+                            <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="smallimg" style="float:left; margin-right:calc(1em);" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s icon">
+                        <% } %>
+                        <br>
+                        <%= alterArr[i].name %> 
+                        <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
+                        <% if (alterArr[i].pronouns){ %>
+                            <% if (distill(alterArr[i].pronouns)){ %>
+                                <br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small>
+                                <% } %>
+                                <% } %>
                     </div></a>
                     
                 <% }} %>

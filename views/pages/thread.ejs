@@ -95,7 +95,15 @@
                 <% for (i in alterArr){ %> 
                     <% if (alterArr[i].id == originalPost.alt_id){ %> 
                         <h3><a href="/alter/<%= alterArr[i].id %>"><%= alterArr[i].name %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i></a></h3>
-                        <img src="<%= alterArr[i].avatar %>" class="tinyimg"><br>
+
+                        <% if (alterArr[i].img_blob){ %> 
+                          <img src="data:<%= alterArr[i].blob_mimetype %>;base64,<%= Buffer.from(alterArr[i].img_blob).toString("base64") %>" class="smallimg">
+                        <% } else if (alterArr[i].avatar){ %>
+                          <img src="<%= alterArr[i].avatar %>" class="smallimg">
+                        <% } else { %> 
+                          <img src="/img/avatar-default.jpg" class="smallimg">
+                        <% } %>
+                            <br>
                         <% if (alterArr[i].pronouns){ %><small>Pronouns: <%= alterArr[i].pronouns %><br></small><% } %>
                         <% if (alterArr[i].type){ %><small>Type: <%= alterArr[i].type %></small><% } %>
                     <% break; } %>
@@ -118,7 +126,15 @@
                           %> 
                             <h3 style="padding-bottom:0;"><a href="/alter/<%= alterArr[i].id %>"><%= alterArr[i].name %> <% if (alterArr[i].id == originalPost.alt_id){ %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i> <% } %></a></h3>
                             <% if (alterArr[i].is_archived == true) { %><span><small>Archived</small><br/></span><% } %>
-                            <img src="<%= alterArr[i].avatar %>" class="tinyimg"><br>
+
+                            <% if (alterArr[i].img_blob){ %> 
+                          <img src="data:<%= alterArr[i].blob_mimetype %>;base64,<%= Buffer.from(alterArr[i].img_blob).toString("base64") %>" class="smallimg">
+                        <% } else if (alterArr[i].avatar){ %>
+                          <img src="<%= alterArr[i].avatar %>" class="smallimg">
+                        <% } else { %> 
+                          <img src="/img/avatar-default.jpg" class="smallimg">
+                        <% } %>
+                            <br>
                             <% if (alterArr[i].pronouns){ %>Pronouns: <%= alterArr[i].pronouns %><br><% } %>
                             <% if (alterArr[i].type){ %>Type: <%= alterArr[i].type %><% } %>
                             <% var replyAuthor= alterArr[i].name %>

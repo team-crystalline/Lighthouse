@@ -1,6 +1,6 @@
 {
   "name": "lighthouse",
-  "version": "1.4.34",
+  "version": "1.5.34",
   "description": "A journal app for systems to write diaries. DID and OSDD specifically.",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "dotenv": "^10.0.0",
     "ejs": "^3.1.5",
     "express": "^4.18.2",
+    "express-fileupload": "^1.4.1",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.2",
     "flash": "^1.1.0",

@@ -17,6 +17,7 @@ var pluralize = require('pluralize');
 var pjson = require('./package.json');
 var flash = require('express-flash');
 console.log( `Lighthouse v${pjson.version}`);
+const fileUpload = require('express-fileupload');
 
 const tuning= require('./js/genVars.js');
 const strings= require("./lang/en.json");
@@ -131,6 +132,7 @@ var app = express();
 	app.use(flash());
 app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
   app.use(cookieParser());
+  app.use(fileUpload());
   app.use(function (req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -747,7 +749,9 @@ app.get('/worksheets', (req, res) => {
 								type: bresult.rows[i].type,
 								avatar: Buffer.from(bresult.rows[i].img_url, "base64").toString() || "",
 								sys_alias: Buffer.from(bresult.rows[i].sys_alias, "base64").toString() || "",
-								is_archived: bresult.rows[i].is_archived
+								is_archived: bresult.rows[i].is_archived,
+								img_blob: bresult.rows[i].img_blob,
+								mimetype: bresult.rows[i].blob_mimetype
 							})
 					}
 					client.query({text: "SELECT * FROM forums WHERE u_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
@@ -1412,7 +1416,7 @@ app.get('/wish-d/:id', (req, res) => {
 			  req.session.chosenSys= result.rows[0];
 		  }
 		});
-			client.query({text: "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
+			client.query({text: "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
 	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1420,7 +1424,17 @@ app.get('/wish-d/:id', (req, res) => {
 	              req.session.alters = [];
 	              for (i in (result.rows)){
 	                //   console.table(result.rows[i]);
-	                  (req.session.alters).push({name: Buffer.from(result.rows[i].name, 'base64').toString(), id: result.rows[i].sys_id, a_id: result.rows[i].alt_id, mood: result.rows[i].mood, pronouns: result.rows[i].pronouns, is_archived: result.rows[i].is_archived, icon: result.rows[i].img_url})
+	                  (req.session.alters).push({
+						name: Buffer.from(result.rows[i].name, 'base64').toString(), 
+						id: result.rows[i].sys_id, 
+						a_id: result.rows[i].alt_id, 
+						mood: result.rows[i].mood, 
+						pronouns: result.rows[i].pronouns, 
+						is_archived: result.rows[i].is_archived, 
+						icon: result.rows[i].img_url,
+						img_blob: result.rows[i].img_blob,
+						mimetype: result.rows[i].blob_mimetype
+					})
 	              }
 				  try {
 					(req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
@@ -1447,6 +1461,8 @@ app.get('/wish-d/:id', (req, res) => {
 			   return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		   } else {
 			// This is our selected alter.
+			// console.log("Backend")
+			// console.log((result.rows[0].img_blob))
 			var alterInfo= result.rows[0];
 			try{
 				
@@ -2679,11 +2695,11 @@ app.get('/wish-d/:id', (req, res) => {
 			}
 	});
 	app.post("/edit-alter/:id", (req, res, next)=>{
-		// Make sure to base64 all information!
-
+		// Bookmark : post edit alter
+		// return console.log(req.body.clear ? "clear file" : "keep file.");
 		if (isLoggedIn(req)){
 			// return console.log(`'${Buffer.from(req.body.pronouns).toString('base64')}'`);
-			client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24 WHERE alt_id=$1",values: [
+			client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, img_blob=$25, blob_mimetype=$26 WHERE alt_id=$1",values: [
 				`${req.params.id}`,
 				`'${Buffer.from(req.body.name).toString('base64')}'`,
 				`'${Buffer.from(req.body.postr).toString('base64')}'`,
@@ -2708,6 +2724,8 @@ app.get('/wish-d/:id', (req, res) => {
 				`'${Buffer.from(req.body.relationships).toString('base64')}'`,
 				`'${Buffer.from(req.body.hobbies).toString('base64')}'`,
 				`'${Buffer.from(req.body.appearance).toString('base64')}'`,
+				req.body.clear ? null : req.files.imgupload.data,
+				req.body.clear ? null : req.files.imgupload.mimetype
 			]}, (err, result) => {
 				if (err) {
 				  console.log(err.stack);

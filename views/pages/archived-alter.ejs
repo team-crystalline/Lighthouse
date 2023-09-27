@@ -17,11 +17,14 @@
             <section>
                 <h2>About <%= Buffer.from(alterInfo.name, "base64").toString() %></h2>
                 <p><span class="material-symbols-outlined">archive</span> This <%= cookies.alter_term %> is <strong>archived</strong>. Everything is read-only.</p>
-                <% if (distill(alterInfo.img_url)) { %>
-                    <img src="<%= Buffer.from(alterInfo.img_url, 'base64').toString() %>" class="medimg" style="float:left; margin-right:calc(1em);">
-                    <% } else { %> 
-                        <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="medimg" style="float:left; margin-right:calc(1em);" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s icon">
-                    <% } %>
+                <% if (alterInfo.img_blob){ %> 
+                    <img class="smallimg" style="float:left; margin-right:calc(1em);" src="data:<%= alterInfo.blob_mimetype %>;base64,<%= Buffer.from(alterInfo.img_blob).toString("base64") %>"> 
+                    
+                    <% } else if (distill(alterInfo.img_url)) { %>
+                    <img src="<%= Buffer.from(alterInfo.img_url, 'base64').toString() %>" class="smallimg" style="float:left; margin-right:calc(1em);">
+                <% } else { %> 
+                    <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="smallimg" style="float:left; margin-right:calc(1em);" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s icon">
+                <% } %>
                 <table>
                     <tbody>
                         <% if (alterInfo.agetext) { %>

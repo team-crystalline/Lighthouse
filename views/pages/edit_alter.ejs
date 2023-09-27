@@ -4,6 +4,11 @@
     <head>
         <%- include ("../partials/header.ejs") %>
         <style>
+            .fail{
+                background: red !important;
+                color: white !important;
+                transition: .5s;
+            }
             label{
                 margin-top:calc(1em);
             }
@@ -46,7 +51,7 @@
             <% } %>
             <h2>Edit <%= Buffer.from(chosenAlter.name, 'base64').toString() %></h2>
             <p>The only required response is <%= Buffer.from(chosenAlter.name, 'base64').toString() %>'s name. Feel free to leave any other questions blank.</p>
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 <div class="column">
                 <label for="name" >Name</label>
                 <input type="text" name="name" required <% if (chosenAlter.name){ %> value="<%= Buffer.from(chosenAlter.name, "base64").toString() %>" <% } %>>
@@ -96,16 +101,21 @@
                 <textarea name="notes"><% if (chosenAlter.notes !== null) { %><%- Buffer.from(chosenAlter.notes, 'base64').toString() %><% } %></textarea>
                 <label for="appearance">Internal Appearance</label>       
                 <textarea name="appearance"><% if (chosenAlter.appearance !== null) { %><%- Buffer.from(chosenAlter.appearance, 'base64').toString() %><% } %></textarea>
+                
+                <label for="imgupload">Upload Avatar (max 2MB)</label> <% if (chosenAlter.img_blob){ %><a id="fileClear" style="display:inline-block;">Remove Uploaded Avatar</a> <% } %>
+                <input type="file" name="imgupload" id="imgupload" accept=".gif,.jpg,.png,.bmp,.webp"> 
+                <input type="hidden" id="clear" name="clear">
                 <label for="imgurl">Image URL</label>
                 <input type="text" name="imgurl" value="<% if (chosenAlter.img_url !== null) { %><%- Buffer.from(chosenAlter.img_url, 'base64').toString() %><% } %>">
-                
             </div>
-                <input type="submit" value="Update <%= Buffer.from(chosenAlter.name, 'base64').toString() %>"><input type="reset" value="Start Over">
+            <p>Uploaded images take priority over Image URLs.</p>
+                <input type="submit" onclick="return verifyUp()" value="Update <%= Buffer.from(chosenAlter.name, 'base64').toString() %>" id="submit"><input type="reset" value="Start Over">
             </form>
         </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
     <script>
+        var originalSubmit = $("#submit").clone();
         	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
             let alterTermCap= "<%= capitalise(cookies.alter_term) %>";
             let alterTermLow= "<%= cookies.alter_term %>";
@@ -116,6 +126,31 @@
                 // $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`);
             });
         });
+        $("#fileClear").click(function(){
+            event.preventDefault();
+            if ($("#clear").val()=="true"){
+                $("#clear").val("false");
+                $("#fileClear").text("Remove Uploaded Avatar");
+            } else {
+                $("#clear").val("true");
+                $("#fileClear").text("Keep Uploaded Avatar");
+            }
+        });
+        $("#imgupload").change(function(){
+            verifyUp();
+        });
+        function verifyUp(){
+       var maxBytes = 2097152; // 2MB
+       var fld = document.getElementById("imgupload");
+       if( fld.files && fld.files.length == 1 && fld.files[0].size > maxBytes )
+       {
+        //   alert("The file size must be no more than " + parseInt(MaxSizeInBytes/1024/1024) + "MB");
+        $("#submit").val(`Keep uploaded files under ${parseInt(maxBytes/1024/1024)}MB`).addClass("fail").prop("disabled", true);
+          return false;
+       }
+       $("#submit").replaceWith(originalSubmit).removeClass("fail").prop("disabled", false);
+       return true;
+    }
     </script>
     </body>
 </html>

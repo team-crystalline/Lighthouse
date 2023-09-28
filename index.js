@@ -2699,42 +2699,85 @@ app.get('/wish-d/:id', (req, res) => {
 		// return console.log(req.body.clear ? "clear file" : "keep file.");
 		if (isLoggedIn(req)){
 			// return console.log(`'${Buffer.from(req.body.pronouns).toString('base64')}'`);
-			client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, img_blob=$25, blob_mimetype=$26 WHERE alt_id=$1",values: [
-				`${req.params.id}`,
-				`'${Buffer.from(req.body.name).toString('base64')}'`,
-				`'${Buffer.from(req.body.postr).toString('base64')}'`,
-				`'${Buffer.from(req.body.negtr).toString('base64')}'`,
-				`'${Buffer.from(req.body.age).toString('base64')}'`,
-				`'${Buffer.from(req.body.likes).toString('base64')}'`,
-				`'${Buffer.from(req.body.dislikes).toString('base64')}'`,
-				`'${Buffer.from(req.body.internalJob).toString('base64')}'`,
-				`'${Buffer.from(req.body.safety).toString('base64')}'`,
-				`'${Buffer.from(req.body.wish).toString('base64')}'`,
-				`'${Buffer.from(req.body.acc).toString('base64')}'`,
-				`'${Buffer.from(req.body.notes).toString('base64')}'`,
-				`'${Buffer.from(req.body.imgurl).toString('base64')}'`,
-				req.body.type,
-				`'${Buffer.from(req.body.pronouns).toString('base64')}'`,
-				`'${Buffer.from(req.body.birthday).toString('base64')}'`,
-				`'${Buffer.from(req.body.firstnoted).toString('base64')}'`,
-				`'${Buffer.from(req.body.gender).toString('base64')}'`,
-				`'${Buffer.from(req.body.sexuality).toString('base64')}'`,
-				`'${Buffer.from(req.body.source).toString('base64')}'`,
-				`'${Buffer.from(req.body.fronttells).toString('base64')}'`,
-				`'${Buffer.from(req.body.relationships).toString('base64')}'`,
-				`'${Buffer.from(req.body.hobbies).toString('base64')}'`,
-				`'${Buffer.from(req.body.appearance).toString('base64')}'`,
-				req.body.clear ? null : req.files.imgupload.data,
-				req.body.clear ? null : req.files.imgupload.mimetype
-			]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-			  } else {
-				splash= req.flash("flash","Page updated!");
-		res.redirect(`/alter/${req.params.id}`);
-			  }
-			});
+			if (req.files){
+				// They've uploaded a thing.
+				console.log("Caught an upload.")
+				client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, img_blob=$25, blob_mimetype=$26 WHERE alt_id=$1",values: [
+					`${req.params.id}`,
+					`'${Buffer.from(req.body.name).toString('base64')}'`,
+					`'${Buffer.from(req.body.postr).toString('base64')}'`,
+					`'${Buffer.from(req.body.negtr).toString('base64')}'`,
+					`'${Buffer.from(req.body.age).toString('base64')}'`,
+					`'${Buffer.from(req.body.likes).toString('base64')}'`,
+					`'${Buffer.from(req.body.dislikes).toString('base64')}'`,
+					`'${Buffer.from(req.body.internalJob).toString('base64')}'`,
+					`'${Buffer.from(req.body.safety).toString('base64')}'`,
+					`'${Buffer.from(req.body.wish).toString('base64')}'`,
+					`'${Buffer.from(req.body.acc).toString('base64')}'`,
+					`'${Buffer.from(req.body.notes).toString('base64')}'`,
+					`'${Buffer.from(req.body.imgurl).toString('base64')}'`,
+					req.body.type,
+					`'${Buffer.from(req.body.pronouns).toString('base64')}'`,
+					`'${Buffer.from(req.body.birthday).toString('base64')}'`,
+					`'${Buffer.from(req.body.firstnoted).toString('base64')}'`,
+					`'${Buffer.from(req.body.gender).toString('base64')}'`,
+					`'${Buffer.from(req.body.sexuality).toString('base64')}'`,
+					`'${Buffer.from(req.body.source).toString('base64')}'`,
+					`'${Buffer.from(req.body.fronttells).toString('base64')}'`,
+					`'${Buffer.from(req.body.relationships).toString('base64')}'`,
+					`'${Buffer.from(req.body.hobbies).toString('base64')}'`,
+					`'${Buffer.from(req.body.appearance).toString('base64')}'`,
+					req.body.clear ? null : req.files.imgupload.data,
+					req.body.clear ? null : req.files.imgupload.mimetype
+				]}, (err, result) => {
+					if (err) {
+					  console.log(err.stack);
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+				  } else {
+					req.flash("flash","Page updated!");
+					res.redirect(`/alter/${req.params.id}`);
+				  }
+				});
+
+			} else {
+				// No upload was made.
+				console.log("No upload.");
+				client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24 WHERE alt_id=$1",values: [
+					`${req.params.id}`,
+					`'${Buffer.from(req.body.name).toString('base64')}'`,
+					`'${Buffer.from(req.body.postr).toString('base64')}'`,
+					`'${Buffer.from(req.body.negtr).toString('base64')}'`,
+					`'${Buffer.from(req.body.age).toString('base64')}'`,
+					`'${Buffer.from(req.body.likes).toString('base64')}'`,
+					`'${Buffer.from(req.body.dislikes).toString('base64')}'`,
+					`'${Buffer.from(req.body.internalJob).toString('base64')}'`,
+					`'${Buffer.from(req.body.safety).toString('base64')}'`,
+					`'${Buffer.from(req.body.wish).toString('base64')}'`,
+					`'${Buffer.from(req.body.acc).toString('base64')}'`,
+					`'${Buffer.from(req.body.notes).toString('base64')}'`,
+					`'${Buffer.from(req.body.imgurl).toString('base64')}'`,
+					req.body.type,
+					`'${Buffer.from(req.body.pronouns).toString('base64')}'`,
+					`'${Buffer.from(req.body.birthday).toString('base64')}'`,
+					`'${Buffer.from(req.body.firstnoted).toString('base64')}'`,
+					`'${Buffer.from(req.body.gender).toString('base64')}'`,
+					`'${Buffer.from(req.body.sexuality).toString('base64')}'`,
+					`'${Buffer.from(req.body.source).toString('base64')}'`,
+					`'${Buffer.from(req.body.fronttells).toString('base64')}'`,
+					`'${Buffer.from(req.body.relationships).toString('base64')}'`,
+					`'${Buffer.from(req.body.hobbies).toString('base64')}'`,
+					`'${Buffer.from(req.body.appearance).toString('base64')}'`
+				]}, (err, result) => {
+					if (err) {
+					  console.log(err.stack);
+					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+				  } else {
+					req.flash("flash","Page updated!");
+					res.redirect(`/alter/${req.params.id}`);
+				  }
+				});
+			}
+			
 		} else {
 			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 		}

@@ -2701,7 +2701,7 @@ app.get('/wish-d/:id', (req, res) => {
 			// return console.log(`'${Buffer.from(req.body.pronouns).toString('base64')}'`);
 			if (req.files){
 				// They've uploaded a thing.
-				console.log("Caught an upload.")
+				// console.log("Caught an upload.")
 				client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, img_blob=$25, blob_mimetype=$26 WHERE alt_id=$1",values: [
 					`${req.params.id}`,
 					`'${Buffer.from(req.body.name).toString('base64')}'`,
@@ -2741,7 +2741,7 @@ app.get('/wish-d/:id', (req, res) => {
 
 			} else {
 				// No upload was made.
-				console.log("No upload.");
+				// console.log("No upload.");
 				client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24 WHERE alt_id=$1",values: [
 					`${req.params.id}`,
 					`'${Buffer.from(req.body.name).toString('base64')}'`,
@@ -2772,8 +2772,21 @@ app.get('/wish-d/:id', (req, res) => {
 					  console.log(err.stack);
 					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 				  } else {
-					req.flash("flash","Page updated!");
+					if (req.body.clear){
+						client.query({text: "UPDATE alters SET  img_blob=null, blob_mimetype=null WHERE alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+					  }
+					  req.flash("flash","Page updated!");
 					res.redirect(`/alter/${req.params.id}`);
+				  });
+					} else {
+						req.flash("flash","Page updated!");
+					res.redirect(`/alter/${req.params.id}`);
+					}
+					
+					
 				  }
 				});
 			}

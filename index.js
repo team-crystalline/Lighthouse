@@ -1558,6 +1558,7 @@ app.get('/wish-d/:id', (req, res) => {
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 		  } else {
 			  let chosenAlter = result.rows[0];
+			  req.flash("flash", "Heads up: Discord plans to change how images are stored. Please use the image upload tool, or use image hosts listed at the bottom of the page.")
 			  res.render(`pages/edit_alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes,chosenAlter:chosenAlter });
 		  }
 		});
@@ -2695,8 +2696,6 @@ app.get('/wish-d/:id', (req, res) => {
 			}
 	});
 	app.post("/edit-alter/:id", (req, res, next)=>{
-		// Bookmark : post edit alter
-		// return console.log(req.body.clear ? "clear file" : "keep file.");
 		if (isLoggedIn(req)){
 			// return console.log(`'${Buffer.from(req.body.pronouns).toString('base64')}'`);
 			if (req.files){

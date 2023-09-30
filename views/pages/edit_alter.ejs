@@ -35,6 +35,13 @@
                 float:none;
             }
 }
+#discordwarning{
+    font-size: .75em;
+    color: var(--col4);
+}
+#discordwarning::before{
+    content: "🛑 ";
+}
         </style>
     </head>
     <body>
@@ -106,15 +113,36 @@
                 <input type="file" name="imgupload" id="imgupload" accept="image/*"> 
                 <input type="hidden" id="clear" name="clear">
                 <label for="imgurl">Image URL</label>
-                <input type="text" name="imgurl" value="<% if (chosenAlter.img_url !== null) { %><%- Buffer.from(chosenAlter.img_url, 'base64').toString() %><% } %>">
+                <input type="text" name="imgurl" id="imgurl" value="<% if (chosenAlter.img_url !== null) { %><%- Buffer.from(chosenAlter.img_url, 'base64').toString() %><% } %>">
+                <p id="discordwarning"></p>
             </div>
             <p>Uploaded images take priority over Image URLs.</p>
                 <input type="submit" onclick="return verifyUp()" value="Update <%= Buffer.from(chosenAlter.name, 'base64').toString() %>" id="submit"><input type="reset" value="Start Over">
             </form>
         </section>
+        <!-- Info about image hosts -->
+        <hr/>
+        <section>
+            <h2>Image Hosts</h2>
+            <p>Though there's been no date or official announcement posted yet, Discord plans to change how images are hosted on their servers, making the link require specific parameters and becoming unavailable after a couple hours. This will affect services like AO3, Pluralkit, Tupperbox, and Lighthouse. Below is a list of image hosting websites you can use in Discord's stead. <strong>If this <%= cookies.alter_term %> has their icon pointing to cdn.discordapp.com, then we advise you to upload their icon to one of the websites below:</strong></p>
+            <ul>
+                <li><a href="https://tumblr.com/">Tumblr (you can make a photo post, save it as a draft and grab the link that way)</a></li>
+                <li><a href="https://imgbb.com/" target="_blank">ImgBB</a></li>
+                <li><a href="https://filegarden.com/" target="_blank">FileGarden (requires an account)</a></li>
+                <li><a href="https://imgur.com/" target="_blank">Imgur</a></li>
+                <li><a href="https://www.mediafire.com/" target="_blank">Mediafire</a></li>
+                <li><a href="https://www.google.com/drive/" target="_blank">Google Drive</a></li>
+                <li><a href="https://neocities.org/" target="_blank">Neocities (free up to 1GB)</a></li>
+                <li><a href="https://www.dropbox.com/" target="_blank">Dropbox (free up to 2GB)</a></li>
+            </ul>
+        </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
     <script>
+        if ($("#imgurl").val().match(/cdn.discordapp.com/g)){
+            // They have a discord icon.
+            $("#discordwarning").text("We have detected that this <%= cookies.alter_term %> has an icon pointing to Discord. Please read below for more information.")
+        }
         var originalSubmit = $("#submit").clone();
         	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
             let alterTermCap= "<%= capitalise(cookies.alter_term) %>";

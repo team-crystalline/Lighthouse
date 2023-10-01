@@ -1058,6 +1058,11 @@ app.get('/privacypolicy', (req, res) => {
 			} catch(e){
 				console.log("Didn't have that cookie.")
 			}
+			try{
+				res.clearCookie('textsize');
+				} catch(e){
+					console.log("Didn't have that cookie.")
+				}
      res.redirect("/");
   });
 

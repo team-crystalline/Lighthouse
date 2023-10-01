@@ -115,8 +115,11 @@
 					</select>
 					<span id="skinsplash"></span><br><br>
 					<label for="textsize">Website text size</label><br>
-					<input type="range" name="textsize" id="textsize" min="0.95" max="1.1" value="<% if (cookies.textsize){ %><%= cookies.textsize %><% } else { %>1<% } %>" step=".05" onchange="showFontSize()"> <span id="sizesplash"></span><br>
-					<input type="submit" value="Set Skin">
+					<div style="display:flex; align-items: center;">
+					<input type="range" name="textsize" id="textsize" min="0.95" max="1.1" value="<% if (cookies.textsize){ %><%= cookies.textsize %><% } else { %>1<% } %>" step=".05" onchange="showFontSize()"> <span id="sizesplash" style="font-size: .75em;"></span><br>
+						
+					</div>
+					<input type="submit" value="Set Customisation Settings">
 				</form>
 			</section>
 			<section>

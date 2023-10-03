@@ -123,7 +123,7 @@ getAlters();
 //Fill name in.
 $("#alter-name").on("keyup paste change", function(){
     $(".alter-name").each(function() {
-    $(this).text($("#alter-name").val()== ""? "this alter": $("#alter-name").val());
+    $(this).text($("#alter-name").val()== ""? "this <%= cookies.alter_term %>": $("#alter-name").val());
 });
 });
 
@@ -136,7 +136,7 @@ $("#likes").on("keyup paste change", function(){
 
 
 $(".alter-name").each(function() {
-    $(this).text($("#alter-name").val()== ""? "this alter": $("#alter-name").val());
+    $(this).text($("#alter-name").val()== ""? "this <%= cookies.alter_term %>": $("#alter-name").val());
 });
 $(".alter-likes").each(function() {
     $(this).text($("#likes").val()== ""? "their interests": $("#likes").val());

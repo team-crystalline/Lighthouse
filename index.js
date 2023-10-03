@@ -672,7 +672,7 @@ app.get('/worksheets', (req, res) => {
 
   app.get('/forum', (req, res) => {
 	if (isLoggedIn(req)){
-		client.query({text: "SELECT * FROM categories WHERE u_id=$1 ORDER BY f_order ASC;",values: [getCookies(req)['u_id']]}, (err, result) => {
+		client.query({text: "SELECT * FROM categories WHERE u_id=$1 ORDER BY f_order, created_on ASC;",values: [getCookies(req)['u_id']]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });

@@ -30,15 +30,24 @@
         display: table;
         clear: both;
         }
+        #typeSplash{
+    padding-right: 1em;
+}
         @media only screen and (max-width: 900px) {
             .column {
                 float:none;
+                width: 100%;
+            }
+            #typeSplash{
+                padding-right: 0;
+                margin-bottom: .5em;
             }
 }
 #discordwarning{
     font-size: .75em;
     color: var(--col4);
 }
+
         </style>
     </head>
     <body>
@@ -55,7 +64,7 @@
             <% } %>
             <h2>Edit <%= Buffer.from(chosenAlter.name, 'base64').toString() %></h2>
             <p>The only required response is <%= Buffer.from(chosenAlter.name, 'base64').toString() %>'s name. Feel free to leave any other questions blank.</p>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" autocomplete="off">
                 <div class="column">
                 <label for="name" >Name</label>
                 <input type="text" name="name" required <% if (chosenAlter.name){ %> value="<%= Buffer.from(chosenAlter.name, "base64").toString() %>" <% } %>>
@@ -68,8 +77,9 @@
                 <label for="age" >Perceived Age</label>
                 <input type="text" name="age" <% if (chosenAlter.agetext){ %> value="<%= Buffer.from(chosenAlter.agetext, "base64").toString() %>" <% } %>>
                 <label for="type" id="typeinfo"><%= capitalise(cookies.alter_term) %> Type</label>
-                <input type="text" name="type" value="<%= chosenAlter.type %>">
-                <span style="display:block; margin-bottom:2em; margin-top:-1.5em;">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
+                <input type="text" id="type" name="type" value="<%= chosenAlter.type %>">
+                <span style="display:block;" id="typeSplash"></span>
+                <span style="display:block; margin-bottom:2em;">Check out the <a href="/glossary" target="_blank">glossary</a> for definitions of different alter types.</span>
                 <label for="source">If introject, source:</label>
                 <input type="text" name="source" <% if (chosenAlter.source){ %> value="<%= Buffer.from(chosenAlter.source, "base64").toString() %>" <% } %>>
                 
@@ -123,13 +133,14 @@
             <h2>Image Hosts</h2>
             <p>Though there's been no date or official announcement posted yet, Discord plans to change how images are hosted on their servers, making the link require specific parameters and becoming unavailable after a couple hours. This will affect services like AO3, Pluralkit, Tupperbox, and Lighthouse. Below is a list of image hosting websites you can use in Discord's stead. <strong>If this <%= cookies.alter_term %> has their icon pointing to cdn.discordapp.com, then we advise you to upload their icon to one of the websites below:</strong></p>
             <ul>
-                <li><a href="https://tumblr.com/">Tumblr (you can make a photo post, save it as a draft and grab the link that way)</a></li>
-                <li><a href="https://imgbb.com/" target="_blank">ImgBB</a></li>
-                <li><a href="https://filegarden.com/" target="_blank">FileGarden (requires an account)</a></li>
-                <li><a href="https://imgur.com/" target="_blank">Imgur</a></li>
-                <li><a href="https://www.mediafire.com/" target="_blank">Mediafire</a></li>
-                <li><a href="https://www.google.com/drive/" target="_blank">Google Drive</a></li>
-                <li><a href="https://www.dropbox.com/" target="_blank">Dropbox (free up to 2GB)</a></li>
+                <li><a href="https://tumblr.com/" title="Tumblr">Tumblr (you can make a photo post, save it as a draft and grab the link that way)</a></li>
+                <li><a href="https://imgbb.com/" target="_blank" title="ImgBB">ImgBB</a></li>
+                <li><a href="https://filegarden.com/" target="_blank" title="FileGarden">FileGarden (requires an account)</a></li>
+                <li><a href="https://imgur.com/" target="_blank" title="Imgur">Imgur</a></li>
+                <li><a href="https://www.mediafire.com/" target="_blank" title="MediaFire">Mediafire</a></li>
+                <li><a href="https://www.google.com/drive/" target="_blank" title="Google Drive">Google Drive</a></li>
+                <li><a href="https://www.dropbox.com/" target="_blank" title="Dropbox">Dropbox (free up to 2GB)</a></li>
+                <li><a href="https://files.catbox.moe/" target="_blank" title="Catbox.moe">Catbox.moe</a></li>
             </ul>
         </section>
     </div>
@@ -146,15 +157,43 @@
         checkURL()
         $("#imgurl").bind("change paste keyup keydown", function(){ checkURL()});
         var originalSubmit = $("#submit").clone();
-        	var alterTypes=[{name: "Apparently Normal Part", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)"},{name:"Emotional/Traumatised Part", desc: "has lots of memories of trauma, or is solely meant to hold traumatic memories. (Also sometimes called a \"Trauma Holder\")"},{name: "Younger Part", desc: "presents as younger than the body."},{name: "Older Part", desc: "presents as older than the body."},{name: "Introject (Factual)", desc: "presents as an existing person in the real world."},{name: "Introject (Fictional)", desc: "presents as a fictional character."},{name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species."}, {name: "Robot", desc: "presents as a robot or machine."},{name: "Animal", desc: "presents as an animal of some variety."},{name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity."}, {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction."}]
-            let alterTermCap= "<%= capitalise(cookies.alter_term) %>";
-            let alterTermLow= "<%= cookies.alter_term %>";
-            $(document).ready(function(){
-            $("#typeSel").change(function(){
-                var selectedAlt = $(this).children("option:selected").val();
-                
-                // $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`);
-            });
+        var alterTypes=[
+            {name: "Apparently Normal <%= capitalise(cookies.alter_term) %>", desc: "doesn't seem to have many memories of trauma. (This doesn't mean they have none at all-- They just look non-traumatised on the surface)", keywords:["apparently normal part"]},
+            {name:"Memory Holder", desc: "has lots of memories or trauma, or is solely meant to hold traumatic memories.", keywords:["emotional part", "traumatised", "traumatized", "memory holder", "trauma holder"]},
+            {name: "Younger <%= capitalise(cookies.alter_term) %>", desc: "presents as younger than the body.", keywords:["little", "child", "baby"]},
+            {name: "Older <%= capitalise(cookies.alter_term) %>", desc: "presents as older than the body.", keywords: ["adult", "big"]},
+            {name: "Introject", desc: "has adopted parts of their identity from the outside world in some way.", keywords:["introject", "introjected"]},
+            {name: "Introject (Factual)", desc: "presents as an existing person in the real world.", keywords:["factual", "factive", "factual introject"]},
+            {name: "Introject (Fictional)", desc: "presents as a fictional character.", keywords:["fictional", "fictive", "fictional introject"]},
+            {name: "Non-Human", desc: "presents as a mythical being, religious figure, or other non-human species.", keywords: ["nonhuman", "non-human", "angel", "demon"]}, 
+            {name: "Robot", desc: "presents as a robot or machine.", keywords: ["android", "robot", "machine"]},
+            {name: "Animal", desc: "presents as an animal of some variety.", keywords: ["animal", "furry"]},
+            {name: "Fragment", desc: "may not be fully formed, or have a solid sense of identity.", keywords:["fragment", "shard"]},
+            {name:"Introject (Mixed)", desc: "presents as a fictional character with real-world identities mixed in, a real-world person with fictional aspects, or in a different blend of reality and fiction.", keywords:["mixed introject"]},
+            {name:"Host", desc: "is fronting the most often.", keywords: ["host", "main <%= cookies.alter_term %>"]},
+            {name:"Dormant", desc: "no longer fronts, or is no longer able to be contacted by the rest of the <%= cookies.system_term %>.", keywords: ["dormant", "asleep", "gone"]},
+            {name:"Fused", desc: "fused with another <%= cookies.alter_term %> at some point.", keywords: ["fused"]},
+            {name:"Protector", desc: "protects their <%= cookies.system_term %>, other <%= pluralize(cookies.alter_term) %>, or others in the outside world.", keywords: ["protector", "bodyguard", "guard", "defender"]},
+            {name:"Persecutor", desc: "may be self-destructive or harmful to their <%= cookies.system_term %>.", keywords: ["persecutor"]},
+            {name:"Caretaker", desc: "cares for other <%= pluralize(cookies.alter_term) %>, or others in the outside world who may be vulnerable.", keywords: ["caretaker"]},
+            {name:"Gatekeeper", desc: "keeps vulnerable <%= pluralize(cookies.alter_term) %> from fronting at inappropriate times.", keywords: ["gatekeeper", "doorkeeper"]},
+            {name:"Shell", desc: "may not have a solid sense of identity, but helps mask other <%= pluralize(cookies.alter_term) %> who are fronting.", keywords: ["shell"]}
+        ]
+        let alterTermCap= "<%= capitalise(cookies.alter_term) %>";
+        let alterTermLow= "<%= cookies.alter_term %>";
+        $("#type").bind("change paste keyup keydown", function(){
+            // $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`); 
+            if ($("#type").val()=="") return $("#typeSplash").empty();
+            $("#typeSplash").empty();
+            for (i in alterTypes){
+                for (n in alterTypes[i].keywords){
+                    let currKey= alterTypes[i].keywords[n];
+                    if (($("#type").val()).toLowerCase().match(currKey)){
+                        $("#typeSplash").append(`<em><strong>${alterTypes[i].name}</strong> - This <%= cookies.alter_term %> ${alterTypes[i].desc}</em> `);
+                        break;
+                    }
+                }
+            }
         });
         $("#fileClear").click(function(){
             event.preventDefault();

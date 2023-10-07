@@ -3356,8 +3356,6 @@ app.get('/wish-d/:id', (req, res) => {
 							  });
 							}
 						  });
-						  req.flash("flash", strings.account.created);
-						  res.redirect("/")
 					  }
 					})
 					
@@ -3373,11 +3371,11 @@ app.get('/wish-d/:id', (req, res) => {
 						req.session.subsystem_term= result.rows[0].subsystem_term;
 						req.session.innerworld_term= result.rows[0].innerworld_term;
 						req.session.plural_term= result.rows[0].plural_term;
-					   req.session.loggedin = true;
-					   req.session.u_id= result.rows[0].id;
-					   req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
-					   req.session.is_legacy= result.rows[0].is_legacy;
-					   req.flash("flash", strings.account.created);
+					   	req.session.loggedin = true;
+					   	req.session.u_id= result.rows[0].id;
+					   	req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
+					   	req.session.is_legacy= result.rows[0].is_legacy;
+					   	req.flash("flash", strings.account.created);
 					   res
 					   .cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
 					   .cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })

@@ -183,8 +183,9 @@ app.locals.journalArr= [
 	{val: '15', c: "Autumn"}, 
 	{val: '16', c: "Spring"}, 
 	{val: '17', c: "Summer"}, 
-	{val: '18', c: "Flowers"},  // 19 is skipped bc that's the legacy journal.
+	{val: '18', c: "Flowers"},  // 19 is skipped bc thato's the legacy journal.
 	{val: '24', c: "Coniferous (🎨Quantum System)"},
+	{val: '25', c: "Cosmos (🎨Galaxii Kingdom)"},
 	{val: '20', c: "Witchy"},
 	{val: '21', c: "Spraypaint"},
 	{val: '22', c: "Princess"},

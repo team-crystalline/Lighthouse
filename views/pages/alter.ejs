@@ -130,7 +130,7 @@ td{
                 <% } else { %>
                     <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%- (altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal."></a>
                 <% } %>
-                <section>
+                <section><span id="saveSplash"></span>
             <form method="post" name="changejournal">
                 <label for="skin">Change Journal skin:</label>
                 <select name="skin" id="skin">
@@ -146,7 +146,8 @@ td{
                     <% } %>
                     
                 </select> 
-                <input type="submit" name="newjournalSkin" value="Update Journal Skin">
+                <input type="submit" name="newjournalSkin" id="newSkin" value="Update Journal Skin">
+                
                 </form>
 
         </section>
@@ -455,8 +456,18 @@ td{
             $( "#moodForm" ).show("fast");
         });
 
+        $("#skin").change(function(){
+            $("#login").fadeTo("fast", 0,function(){
+            $("#login").load(function () { //avoiding blinking, wait until loaded
+                $("#login").fadeTo("fast", 1);
+            });
+            $("#login").attr("src",`/img/${$("#skin").val()}.png`);
+            $("#saveSplash").text("You currently have unsaved changes.");
+            $("#newSkin").addClass("glow")
+        });
 
-
+        })
+        
 
     </script>
 </body>

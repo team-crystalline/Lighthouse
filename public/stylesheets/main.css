@@ -706,7 +706,10 @@ img.emoji {
 
 
  .glow{
-    box-shadow:transparent;
+    box-shadow: 0 0 5px 5px var(--col3);
+ }
+ .glow:hover{
+    box-shadow: 0 0 8px 8px var(--col4);
  }
 
  #menubg{

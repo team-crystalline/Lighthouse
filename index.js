@@ -404,7 +404,7 @@ app.locals.possessive= function(s){
 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
 			  } else {
 				var donators= result.rows;
-				req.flash("flash", "<a href='/tos'>Terms of Service</a> and <a href='/privacypolicy'>Privacy Policy</a> have been added.")
+				// req.flash("flash", "<a href='/tos'>Terms of Service</a> and <a href='/privacypolicy'>Privacy Policy</a> have been added.")
 				res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:req.cookies, donators:donators });
 			  }
 			});

@@ -12,6 +12,12 @@
     --polar: ghostwhite;  
     --forum-shade: rgba(0,0,0,.05);
 }
+*{
+    font-family: 'Lexend',Verdana, Arial,sans-serif;
+    scroll-margin-top: 10em;
+    color: rgb(5,5,5);
+    word-wrap: break-word;
+}
 .dark_mode{
     background-image: url("../img/night-lighthouse.png"), rgb(30,30,30);
     background-size: cover;
@@ -55,12 +61,7 @@ a:visited{
 a:hover{
     color: var(--col6);
 }
-*{
-    font-family: 'Lexend',Verdana, Arial,sans-serif;
-    scroll-margin-top: 10em;
-    color: rgb(5,5,5);
-    word-wrap: break-word;
-}
+
 small{
     font-weight: 300;
 }
@@ -179,22 +180,7 @@ p{
     text-indent: 1em;
 }
 
-h1, h2, h3, h4{
-	font-family: 'Roboto Slab', serif;
-    color: var(--col5);
-}
-h1{
-    font-size: 32px;
-}
-h2{
-    font-size: 24px;
-}
-h3{
-    font-size: 18px;
-}
-h4{
-    font-size: 1em;
-}
+
 li {
     margin-bottom: 1em;
 }
@@ -225,6 +211,9 @@ footer{
     margin: 9vh auto auto auto;
     background: rgba(255,255,255,.4);
 }
+#wrapper > *{
+    color: rgb(5,5,5)
+}
 
 #wrapper::after{
   content: "";
@@ -232,6 +221,22 @@ footer{
   display: table;
 }
 
+h1, h2, h3, h4{
+	font-family: 'Roboto Slab', serif;
+    color: var(--col5) !important;
+}
+h1{
+    font-size: 32px;
+}
+h2{
+    font-size: 24px;
+}
+h3{
+    font-size: 18px;
+}
+h4{
+    font-size: 1em;
+}
 #blogpopup{
     padding: calc(.5em);
     background: ghostwhite;
@@ -830,3 +835,17 @@ img.emoji {
   .currPage{
     border:1px solid var(--col1);
   }
+  .tabulator, .tabulator-col-content, .tabulator-cell, .tabulator-col-title {
+    
+    color: black;
+    border-collapse: collapse;
+  }
+  /* .tabulator-row{
+    padding:.5em;
+  } */
+  .tabulator-cell {
+    border: 0;
+  }
+  /* .tabulator-row .tabulator-cell{
+    background-color: var(--col7);
+  } */

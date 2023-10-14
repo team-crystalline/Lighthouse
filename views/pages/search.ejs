@@ -2,8 +2,11 @@
 <html lang="en" dir="ltr" style="visibility: hidden;">
     <head>
         <%- include ("../partials/header.ejs") %>
+        <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
     </head>
     <body>
+        
+        </script>
         <%- include ("../partials/nav.ejs") %>
         <div id="wrapper">
             <% if (locals.messages.flash) { %>
@@ -20,7 +23,9 @@
                         <option value="type">Type</option>
                         <option value="source">Source (if introject)</option>
                         <option value="job">Job/Role</option>
-                        <option value="any">Any fields</option>
+                        <option value="agetext">Age</option>
+                        <option value="notes">Notes</option>
+                        <option value="any">All fields</option>
                     </select>
                     <label for="query">Query </label>
                     <input type="text" name="query" id="query">
@@ -33,7 +38,7 @@
             
             <section>
                 <span id="resNum"></span>
-                <table style="width: 90%;">
+                <table style="width: 90%;" id="resultTable" class="tabulator tabulator-theme-dark">
                     <thead style="text-align: left;">
                       <tr id="headerRes">
                       </tr>
@@ -47,8 +52,27 @@
             </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
     <script>
+        
         $(document).ready(function(){
+            var table = new Tabulator("#resultTable", {
+                layout:"fitDataStretch",
+                        columns:[
+                        {title:"Name", field:"name", formatter: "html", sorter:"string", headerSortStartingDir:"desc"},
+                        
+                        {title: "Age", formatter: "html", field: "age"},
+                        {title:"<%= capitalise(cookies.system_term) %>", field:"syslink", formatter: "html"},
+                        {title:"Pronouns", field:"pronouns", formatter: "html"},
+                        {title:"Type", field:"type", formatter: "html"},
+                        {title:"Job", field:"job", formatter: "html"},
+                        {title: "Source", field: "source", formatter: "html"},
+                        {title: "Notes", field: "notes", formatter: "plaintext"},
+                        {title: "Archived", field: "is_archived"},
+                        ]
+                        });
+            $("#resultTable").hide();
+                    
             $("#showall").click (async function(){
                 // (req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
                 event.preventDefault();
@@ -56,21 +80,28 @@
                 $("#searchRes").empty();
                 $("#resNum").empty();
                 $("#wait").show();
+                var searchResults= new Array();
                 let results= await fetchData().then(res=>{
-                    $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th><th>Role/Job</th><th>Source</th>`);
+                    // $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th><th>Role/Job</th><th>Source</th>`);
                     (res.search).sort((a, b) => a.name.localeCompare(b.name))
                     for (i in res.search){
-                        
-                        $("#searchRes").append(`<tr>
-                                    <td><a href="/alter/${res.search[i].alt_id}">${res.search[i].name}${res.search[i].is_archived == true ? ' (Archived)' : ''}</a></td>
-                                    <td><a href="/system/${res.search[i].sys_id}">${res.search[i].sys_alias}</a></td>
-                                    <td>${res.search[i].pronouns || "N/A"}</td>
-                                    <td>${res.search[i].type || "N/A"}</td>
-                                    <td>${res.search[i].job || "N/A"}</td>
-                                    <td>${res.search[i].source || "N/A"}</td>
-                                    </tr>`);
+                        searchResults.push({
+                                syslink: `${res.search[i].sys_alias} <a href="/system/${res.search[i].sys_id}"><i class="fa fa-external-link" aria-hidden="true"></i></a>`,
+                                archived: res.search[i].is_archived, 
+                                name: `${res.search[i].name} <a href="/alter/${res.search[i].alt_id}"><i class="fa fa-external-link" aria-hidden="true"></i></a>`,
+                                pronouns: res.search[i].pronouns,
+                                type: res.search[i].type,
+                                job: res.search[i].job,
+                                source: res.search[i].source,
+                                age: res.search[i].agetext,
+                                notes: res.search[i].notes,
+                                is_archived: (res.search[i].is_archived == false ? "No" : "Yes")
+                            });
                     }
                     $("#wait").hide();
+                    $("#resultTable").fadeIn("fast");
+                    table.setData(searchResults);
+                
                 });
             });
             $("#search").click(async function(){
@@ -86,22 +117,27 @@
                 let results= await fetchData().then(res=>{
                     $("#headerRes").html(`<th>Alter</th><th>System</th><th>Pronouns</th><th>Type</th><th>Role/Job</th><th>Source</th>`);
                     var searchCount = 0;
+                    table.clearData();
+                    var searchResults= new Array();
                     if (options == "any"){
-
                         // Look in all keys.
                         for (i in res.search){
                             for (n in res.search[i]){
-                                if (res.search[i][n] !== null){
+                                if (typeof res.search[i][n] !== "boolean" && res.search[i][n] !== null){
                                    if (res.search[i][n].toLowerCase().includes(query)){
                                     searchCount++;
-                                $("#searchRes").append(`<tr>
-                                    <td><a href="/alter/${res.search[i].alt_id}">${res.search[i].name}${res.search[i].is_archived == true ? ' (Archived)' : ''}</a></td>
-                                    <td><a href="/system/${res.search[i].sys_id}">${res.search[i].sys_alias}</a></td>
-                                    <td>${res.search[i].pronouns || "N/A"}</td>
-                                    <td>${res.search[i].type || "N/A"}</td>
-                                    <td>${res.search[i].job || "N/A"}</td>
-                                    <td>${res.search[i].source || "N/A"}</td>
-                                    </tr>`);
+                                    searchResults.push({
+                                            syslink: `${res.search[i].sys_alias} <a href="/system/${res.search[i].sys_id}"><i class="fa fa-external-link" aria-hidden="true"></i></a>`,
+                                            archived: res.search[i].is_archived, 
+                                            name: `${res.search[i].name} <a href="/alter/${res.search[i].alt_id}"><i class="fa fa-external-link" aria-hidden="true"></i></a>`,
+                                            pronouns: res.search[i].pronouns,
+                                            type: res.search[i].type,
+                                            job: res.search[i].job,
+                                            source: res.search[i].source,
+                                            age: res.search[i].agetext,
+                                            notes: res.search[i].notes,
+                                            is_archived: (res.search[i].is_archived == false ? "No" : "Yes")
+                                        });
                                     break;
                                 } 
                                 }
@@ -115,14 +151,18 @@
                         if (res.search[i][options]){
                             if ((res.search[i][options]).toLowerCase().includes(query)){
                                 searchCount++;
-                                $("#searchRes").append(`<tr>
-                                    <td><a href="/alter/${res.search[i].alt_id}">${res.search[i].name}${res.search[i].is_archived == true ? ' (Archived)' : ''}</a></td>
-                                    <td><a href="/system/${res.search[i].sys_id}">${res.search[i].sys_alias}</a></td>
-                                    <td>${res.search[i].pronouns || "N/A"}</td>
-                                    <td>${res.search[i].type || "N/A"}</td>
-                                    <td>${res.search[i].job || "N/A"}</td>
-                                    <td>${res.search[i].source || "N/A"}</td>
-                                    </tr>`);
+                                searchResults.push({
+                                            syslink: `${res.search[i].sys_alias} <a href="/system/${res.search[i].sys_id}"><i class="fa fa-external-link" aria-hidden="true"></i></a>`,
+                                            archived: res.search[i].is_archived, 
+                                            name: `${res.search[i].name} <a href="/alter/${res.search[i].alt_id}"><i class="fa fa-external-link" aria-hidden="true"></i></a>`,
+                                            pronouns: res.search[i].pronouns,
+                                            type: res.search[i].type,
+                                            job: res.search[i].job,
+                                            source: res.search[i].source,
+                                            age: res.search[i].agetext,
+                                            notes: res.search[i].notes,
+                                            is_archived: (res.search[i].is_archived == false ? "No" : "Yes")
+                                        });
                             }                           
                         }
 
@@ -135,8 +175,10 @@
                         
                         $("#searchRes").append(`<tr><td colspan="4" style="text-align: center;"><img src="/img/svg/noresults.svg" class="vtinyimg">Hmmm... Nothing found under "${query}".</td></tr>`);
                     } else {
-                        $("#resNum").text(`${searchCount} ${searchCount == 1? 'result': 'results'} found`);
+                        $("#resNum").text(`${searchCount} ${searchCount == 1 ? 'result': 'results'} found`);
                     }
+                    $("#resultTable").fadeIn("fast");
+                    table.setData(searchResults);
                 });
                 $("#wait").hide();
 
@@ -156,6 +198,7 @@
             let resInfo = JSON.parse(body);
             return resInfo;
         }
-    </script>
+        
+</script>
     </body>
 </html>

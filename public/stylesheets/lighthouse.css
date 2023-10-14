@@ -11,6 +11,13 @@
     --col8: #065966;
     --forum-shade: rgba(0,0,0,.05);
 }
+#wrapper{
+    background: rgba(255,255,255,.4);
+}
+*{
+    color: rgb(5,5,5)
+}
+
 html{
     /* background: var(--col7); */
     background-image: url("../img/lighthouse-photo-bw.png");

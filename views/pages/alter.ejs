@@ -131,7 +131,7 @@ td{
                     <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%- (altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal."></a>
                 <% } %>
                 <section><span id="saveSplash"></span>
-            <form method="post" name="changejournal">
+            <form method="post" name="changejournal" id="changejournal">
                 <label for="skin">Change Journal skin:</label>
                 <select name="skin" id="skin">
                  <% for (i in journalArr) { %>
@@ -463,11 +463,10 @@ td{
             });
             $("#login").attr("src",`/img/${$("#skin").val()}.png`);
             $("#saveSplash").text("You currently have unsaved changes.");
-            $("#newSkin").addClass("glow")
+            $("#newSkin").addClass("glow");
         });
 
-        })
-        
+        });
 
     </script>
 </body>

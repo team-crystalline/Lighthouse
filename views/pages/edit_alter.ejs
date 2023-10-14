@@ -124,7 +124,8 @@
                 <p id="discordwarning"></p>
             </div>
             <p>Uploaded images take priority over Image URLs.</p>
-                <input type="submit" onclick="return verifyUp()" value="Update <%= Buffer.from(chosenAlter.name, 'base64').toString() %>" id="submit"><input type="reset" value="Start Over">
+            <!-- onclick="return verifyUp()"  -->
+                <input type="submit" value="Update <%= Buffer.from(chosenAlter.name, 'base64').toString() %>" id="submit"><input type="reset" value="Start Over">
             </form>
         </section>
         <!-- Info about image hosts -->
@@ -208,17 +209,20 @@
         $("#imgupload").change(function(){
             verifyUp();
         });
+        $("#submit").click(function(){
+            verifyUp()
+        })
         function verifyUp(){
        var maxBytes = 2097152; // 2MB
        var fld = document.getElementById("imgupload");
-       if( fld.files && fld.files.length == 1 && fld.files[0].size > maxBytes )
-       {
+       if( fld.files && fld.files.length == 1 && fld.files[0].size > maxBytes ){
         //   alert("The file size must be no more than " + parseInt(MaxSizeInBytes/1024/1024) + "MB");
         $("#submit").val(`Keep uploaded files under ${parseInt(maxBytes/1024/1024)}MB`).addClass("fail").prop("disabled", true);
+            event.preventDefault();
           return false;
        }
-       $("#submit").replaceWith(originalSubmit).removeClass("fail").prop("disabled", false);
-       return true;
+       $("#submit").removeClass("fail").prop("disabled", false);
+        return true;
     }
     </script>
     </body>

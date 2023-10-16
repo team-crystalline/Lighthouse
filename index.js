@@ -183,16 +183,17 @@ app.locals.journalArr= [
 	{val: '15', c: "Autumn"}, 
 	{val: '16', c: "Spring"}, 
 	{val: '17', c: "Summer"}, 
-	{val: '18', c: "Flowers"},  // 19 is skipped bc thato's the legacy journal.
+	{val: '18', c: "Flowers"},  // 19 is skipped bc thato's the legacy journal.	
+	{val: '20', c: "Witchy"},
+	{val: '21', c: "Spraypaint"},
+	{val: '22', c: "Princess"},
 	{val: '24', c: "Coniferous (🎨Quantum System)"},
 	{val: '25', c: "Cosmos (🎨Galaxii Kingdom)"},
 	{val: '26', c: "Lunar (🎨Galaxii Kingdom)"},
 	{val: '27', c: "Axolotl (🎨Galaxii Kingdom)"},
 	{val: '28', c: "Fantasy (🎨Galaxii Kingdom)"},
 	{val: '29', c: "Fangs (CW: Teeth) (🎨Galaxii Kingdom)"},
-	{val: '20', c: "Witchy"},
-	{val: '21', c: "Spraypaint"},
-	{val: '22', c: "Princess"},
+	{val: '30', c: "Lighthouse (🎨Galaxii Kingdom)"},
 ]
 app.locals.strings=strings;
 app.locals.apiKey= process.env.apiKey;

@@ -421,7 +421,9 @@ ul.breadcrumb {
     -webkit-filter: drop-shadow(0 5px 5px var(--col6));
     filter: drop-shadow(0 5px 5px var(--col6));
 }
-
+.spoiler{
+    
+}
 .vvtinyimg{
     width: calc(1em);
     height: calc(1em);

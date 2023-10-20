@@ -2,6 +2,26 @@
 <html lang="en" dir="ltr" style="visibility: hidden;">
     <head>
         <%- include ("../partials/header.ejs") %>
+        <style>
+            .skins{
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-around;
+            }
+            .skins > li{
+                list-style-type: none;
+                flex: 1 0 21%; /* explanation below */
+                text-align:center;
+                max-width: 8em;
+                padding: .5em;
+            }
+            .skins > li > img{
+                display: block;
+                margin-left: auto;
+  margin-right: auto;
+            }
+        </style>
     </head>
     <body>
         <%- include ("../partials/nav.ejs") %>
@@ -112,15 +132,17 @@
             <li>Gorillaz art by Jamie Hewlett</li>
         </ul>
         <h3>Journal Skins</h3>
-        <ul>
+        <ul class="skins">
             <li><img src="/img/24.png" class="tinyimg">"Coniferous" - The Quantum System</li>
             <li><img src="/img/25.png" class="tinyimg">"Cosmos" - Galaxii Kingdom</li>
             <li><img src="/img/26.png" class="tinyimg">"Lunar" - Galaxii Kingdom</li>
             <li><img src="/img/27.png" class="tinyimg">"Axolotl" - Galaxii Kingdom</li>
             <li><img src="/img/28.png" class="tinyimg">"Fantasy" - Galaxii Kingdom</li>
             <li><img src="/img/30.png" class="tinyimg">"Lighthouse" - Galaxii Kingdom</li>
-            <li>"Fangs" (CW: teeth) - Galaxii Kingdom</li>
+            <li><img src="/img/32.png" class="tinyimg">"Fiery" - Galaxii Kingdom</li>
+            <li><img src="/img/29.png" class="tinyimg">"Fangs" - Galaxii Kingdom</li>
             <li><img src="/img/31.png" class="tinyimg">"Constellation" - Constellation Collective</li>
+            <li><img src="/img/35.png" class="tinyimg">"Sun in Shadows" - Constellation Collective</li>
             </ul>
             <p>Want to make a journal skin? Copy this image below, decorate it to your hearts content and send it to our <a title="Our blog" href="https://lighthouse-app.tumblr.com/submit" target="_blank">Tumblr</a> or <a title="Join our Discord" href="https://discord.gg/RQcfvtmKWn" target="_blank">Discord</a>!</p>
             <img src="/img/blank_journal_transparent.png">

@@ -314,10 +314,17 @@ td{
                         <input type="submit" value="Change <%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Password" name="changePass">
                     </form>
                 </div>
+                <% 
+                    if ((altJournal[0].skin).match(/undefined/gi) ){
+                        var skin= "1";
+                    } else {
+                        var skin= altJournal[0].skin;
+                    }
+                %>
                 <% if (altJournal[0].is_private == true){ %>
-                    <img class= "pixelart" src="/img/<%- (altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" onclick="blogPopup()" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal.">
+                    <img class= "pixelart" src="/img/<%= skin %>.png" width="400px" id="login" onclick="blogPopup()" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal.">
                 <% } else { %>
-                    <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%- (altJournal[0].skin).replace(/'/gi, '') %>.png" width="400px" id="login" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal."></a>
+                    <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%= skin %>.png" width="400px" id="login" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal."></a>
                 <% } %>
                 <section><span id="saveSplash"></span>
             <form method="post" name="changejournal" id="changejournal">

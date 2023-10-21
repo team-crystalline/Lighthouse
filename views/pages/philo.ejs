@@ -1,0 +1,54 @@
+<!--
+    Introduction
+
+    A brief overview of your website, its purpose, and its mission.
+    A statement about your commitment to providing a safe and supportive space for people with DID and OSDD.
+
+Our Philosophy
+
+    A discussion of your core values and beliefs. For example, you may want to talk about your belief in the importance of self-acceptance, self-compassion, and empowerment.
+    A discussion of your approach to recovery. For example, you may want to talk about your belief in a holistic approach to recovery that encompasses all aspects of the individual, including their physical, mental, emotional, and spiritual well-being.
+    A statement about your commitment to inclusivity and diversity. For example, you may want to talk about your commitment to providing a space where people of all backgrounds, identities, and experiences feel welcome and respected.
+
+Conclusion
+
+    A summary of your key points.
+    A call to action, such as encouraging users to share their feedback or learn more about your website.
+
+You may also want to include additional information on your "Our Philosophy" page, such as:
+
+    A list of resources for people with DID and OSDD, such as books, articles, and websites.
+    A list of frequently asked questions.
+    A link to your website's terms of service and privacy policy.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="visibility: hidden;">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                <h1>Philosophy</h1>
+                <p>Disclaimer: We use the terms "part", "system", and "plural" on this page, and  may not reflect the terms you have set on your settings page.</p>
+                <!-- -------- -->
+                <h2>Introduction</h2>
+                <p>Lighthouse is a website tailored specifically for people with parts to document that experience and begin to understand their system more. </p>
+                <!-- -------- -->
+                <h2>Our Core Values</h2>
+                <!-- -------- -->
+                <h2>Conclusion</h2>
+                <hr>
+                <!-- -------- -->
+                <h2>FAQ</h2>
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

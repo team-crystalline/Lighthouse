@@ -197,6 +197,7 @@ app.locals.journalArr= [
 	{val: '32', c: "Fiery (🎨Galaxii Kingdom)"},
 	{val: '31', c: "Constellation (🎨Constellation Collective)"},
 	{val: '35', c: "Sun in Shadows (🎨 Constellation Collective)"},
+	{val: '36', c: "Tangerine (🎨 Constellation Collective)"},
 	{val: '33', c: "Composition Notebook (🎨 Chaotic Troop)"},
 	{val: '34', c: "Spiralbound Notebook (🎨 Chaotic Troop)"},
 ]
@@ -414,7 +415,7 @@ app.locals.possessive= function(s){
 				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
 			  } else {
 				var donators= result.rows;
-				// req.flash("flash", "<a href='/tos'>Terms of Service</a> and <a href='/privacypolicy'>Privacy Policy</a> have been added.")
+				req.flash("flash", "Welcome to Lighthouse! We are happy to see you here, and hope we can provide you with a safe, supportive space.<br>We are thrilled to announce that Lighthouse has gone viral on TikTok! This is an incredible achievement, and we are so grateful for your support. We are currently experiencing a massive influx of users, and we are working hard to ensure that our website can handle the increased traffic. However, you may experience some technical difficulties as we adjust. We ask for your patience and understanding as we work to accommodate this growth. Thank you.💕")
 				res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:req.cookies, donators:donators });
 			  }
 			});
@@ -1118,7 +1119,11 @@ app.get('/lighthouse-system', (req, res, next) => {
 		});
 	
 });
-  app.get('/about', (req, res, next) => {
+
+// app.get('/philosophy', (req, res, next) => { res.render(`pages/philo`, { session: req.session, splash:splash, cookies:req.cookies })});
+  
+
+app.get('/about', (req, res, next) => {
       res.render(`pages/about`, { session: req.session, splash:splash, cookies:req.cookies });
   });
 

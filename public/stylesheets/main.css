@@ -473,7 +473,7 @@ ul.breadcrumb {
 }
 .splash{
     width: 50vw;
-    background: url('../img/svg/splash-fish.svg'), var(--col2);
+    background: var(--col2);
     background-repeat: no-repeat;
     background-position: right;
     padding: calc(2em);

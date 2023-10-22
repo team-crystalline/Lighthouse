@@ -81,6 +81,20 @@
                     <input type="submit" value="Log in" name="loggingin">
                 </form>
                 <% } %>   
+                <% 
+                var altTerm;
+                var sysTerm;
+                if (cookies.alter_term){
+                    altTerm= cookies.alter_term;
+                } else {
+                    altTerm= "alter";
+                }
+                if (cookies.system_term){
+                    sysTerm= cookies.system_term;
+                } else {
+                    sysTerm= "system";
+                }
+                %>
             <hgroup style="text-align:center;">
                 <h2>Journal Together</h2></hgroup>
                 
@@ -90,16 +104,14 @@
                 <section style="text-align:center;">
                     <img src="/img/<%= Math.floor(Math.random() * (18 - 1 + 1)) + 1  %>.png" alt="a journal book" style="display:inline; height: 256px; width: auto;margin-bottom:-1em;" class="pixelart">
                 </center>
-                <h4>We're helping  <span style="color:var(--col1)"><%= (userCount).toLocaleString() %></span> systems!</h4>
+                <h4>We're helping  <span style="color:var(--col1)"><%= (parseInt(userCount)).toLocaleString() %></span> <%= pluralize(sysTerm) %>!</h4>
                
             </section>
             <article style="float:none;border:0;">
                 <p>We use cookies to keep your experience running smoothly while logged in. <a href="/cookies">Read more here.</a></p>
-            <p>Lighthouse is a safe and supportive space for people with PTSD and DID to explore their thoughts and feelings, identify their different parts, and develop healthy and positive communication internally.<%  if (!cookies.loggedin){ %> <a href="/signup">Sign up today and start your journey.</a><% } %></p>
+            <p>Lighthouse is a safe and supportive space for people with PTSD and DID to explore their thoughts and feelings, identify their different <%- pluralize(altTerm) %>, and develop healthy and positive communication internally.<%  if (!cookies.loggedin){ %> <a href="/signup">Sign up today and start your journey.</a><% } %></p>
                 <p><small>
-                    <span class="material-symbols-outlined">
-                    anchor
-                    </span>
+                    <i class="fa fa-anchor" aria-hidden="true"></i>
                     Lighthouse was not developed by a medical professional, and is not intended to be a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your mental health professional or other qualified health provider with any questions you may have regarding your condition.</small></p>
                     <p><a href="/about#credits">Image Credits Here.</a></p>
                     <center>
@@ -110,28 +122,28 @@
         <hr>
         <section id="features">
             <div>
-                <div><h2>Create a Space for Your Alters</h2>
-                    <p>Alters get a private journal for their own thoughts and feelings that can be safe-guarded with a password.</p></div>
+                <div><h2>Create a Space for Your <%- capitalise(pluralize(altTerm)) %></h2>
+                    <p><%- capitalise(pluralize(altTerm)) %> get a private journal for their own thoughts and feelings that can be safe-guarded with a password.</p></div>
                 
             </div>
             <div>
-                <div><h2>Keep Your System Informed</h2>
-                    <p>Users get both a Communal Journal and an Internal Forum that can be used by all alters to keep everyone up-to-date.</p></div>
+                <div><h2>Keep Your <%- capitalise(sysTerm) %> Informed</h2>
+                    <p>Users get both a Communal Journal and an Internal Forum that can be used by all <%- pluralize(altTerm) %> to keep everyone up-to-date.</p></div>
                 
             </div>
             <div>
                 <div><h2>Get to the Root of Feelings</h2>
-                    <p>Each alter can set a mood with a short reason as to why they feel that way.</p></div>
+                    <p>Each <%- altTerm %> can set a mood with a short reason as to why they feel that way.</p></div>
                 
             </div>
             <div>
-                <div><h2>Understand your Alters Better</h2>
-                    <p>Alters can provide basic information on themselves, but can also address what makes them feel safe, what they would want from the system, and what they would like accommodations for.</p></div>
+                <div><h2>Understand your <%- capitalise(pluralize(altTerm)) %> Better</h2>
+                    <p><%- capitalise(pluralize(altTerm)) %> can provide basic information on themselves, but can also address what makes them feel safe, what they would want from the <%- sysTerm %>, and what they would like accommodations for.</p></div>
                 
             </div>
             <div>
                 <div><h2>Import from Pluralkit</h2>
-                    <p>If you already use the popular Discord bot <strong>Pluralkit</strong>, you can import your system into Lighthouse!</p></div>
+                    <p>If you already use the popular Discord bot <strong>Pluralkit</strong>, you can import your <%- sysTerm %> into Lighthouse!</p></div>
                 
             </div>
         </section>

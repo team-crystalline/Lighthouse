@@ -82,7 +82,7 @@ var journSkin=[
                      <%= truncate(alterArr[i].name, 10) %> 
                      <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
                      <% if (alterArr[i].pronouns){ %> 
-                        <% if (distill(alterArr[i].pronouns)){ %><br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small>
+                        <% if (distill(alterArr[i].pronouns)){ %><br><small><%- Buffer.from(alterArr[i].pronouns, "base64").toString() %></small>
                         <% } %> 
                         <% } %>
                         
@@ -106,7 +106,7 @@ var journSkin=[
                         <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
                         <% if (alterArr[i].pronouns){ %>
                             <% if (distill(alterArr[i].pronouns)){ %>
-                                <br><small>(<%- Buffer.from(alterArr[i].pronouns, "base64").toString() %>)</small>
+                                <br><small><%- Buffer.from(alterArr[i].pronouns, "base64").toString() %></small>
                                 <% } %>
                                 <% } %>
                     </div></a>

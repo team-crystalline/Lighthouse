@@ -38,6 +38,7 @@
 			<h1>Edit Your Account</h1>
 				<h2>Global <%- capitalise(cookies.system_term) %> Settings</h2>
 				<form method="post" style="margin-top:calc(.5em);">
+					<h3>Terms</h3>
 					<p>Custom Terms max character limit: <%= maxLimit %></p>
 					<label for="altTerm">Term preferred for "alter": </label>
 					<input type="text" name="altTerm" placeholder="<%- cookies.alter_term %>" minlength="1" maxlength="<%= maxLimit %>"><br>
@@ -51,12 +52,14 @@
 					<input type="text" id="plurTerm" name="plurTerm" placeholder="<%- cookies.plural_term || session.plural_term %>" minlength="1" maxlength="<%= maxLimit %>"><br>
 
 					<p><small><em>Note: the custom term for "plural" will eventually show itself on the site. Right now, it's not used.</em></small></p>
+					<h3>Optional Experiences</h3>
+					<p>Some <%= pluralize(cookies.system_term) %> may not have </p>
 					<label for="innerworld"><%- capitalise(session.innerworld_term) %></label>
 					<select name="innerworld" id="innerworld">
 						<option value="true" <% if (session.inner_worlds == true) { %> selected <%}%>>Enabled</option>
 						<option value="false" <% if (session.inner_worlds == false) { %> selected <%}%>>Disabled</option>
 					</select><br>
-					<label for="ws">Worksheets</label>
+					<label for="ws">Self-Help Worksheets</label>
 					<select name="ws" id="ws">
 						<option value="true" <% if (session.worksheets_enabled == true) { %> selected <%}%>>Enabled</option>
 						<option value="false" <% if (session.worksheets_enabled == false) { %> selected <%}%>>Disabled</option>

@@ -1,4 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Lexend:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Slab:wght@500&display=swap');
+
+@font-face {
+    font-family: "Lexend";
+    src: url("../fonts/Lexend.ttf");
+}
+@font-face {
+    font-family: "Berkshire Swash";
+    src: url("../fonts/BerkshireSwash.ttf");
+}
+@font-face {
+    font-family: "Roboto Slab";
+    src: url("../fonts/RobotoSlab.ttf");
+}
 :root{
     color-scheme: dark light;
     --col1: #123859;

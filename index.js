@@ -824,6 +824,7 @@ app.get('/worksheets', (req, res) => {
 			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
 		  } else { 
 			// Here's the OP post
+			/* issue */
 			let originalPost = {
 				id: result.rows[0].id,
 				title: decryptWithAES(result.rows[0].title),
@@ -1083,8 +1084,8 @@ app.get('/worksheets', (req, res) => {
 
 });
 app.get('/glossary', (req, res, next) => {
-	
-	client.query({text: "SELECT * FROM glossary ORDER BY term ASC;",values: []}, (err, result) => {
+	res.render(`pages/glossary-maintenance`, { session: req.session, splash:splash, cookies:req.cookies, lang:req.acceptsLanguages()[0] });
+	/* client.query({text: "SELECT * FROM glossary ORDER BY term ASC;",values: []}, (err, result) => {
 		if (err) {
 		  console.log(err.stack);
 		  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
@@ -1100,7 +1101,7 @@ app.get('/glossary', (req, res, next) => {
 		  }
 	  });
 	  }
-  });
+  }); */
 
 });
 app.get('/thank-you', (req, res, next) => {
@@ -3177,6 +3178,7 @@ app.get('/wish-d/:id', (req, res) => {
 
 	app.post('/deletesys/:alt', function(req, res){
 		// console.table(req.session.chosenSys);
+		/* issue */
 		client.query({text: "SELECT * FROM systems WHERE sys_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			if (err) {
               console.log(err.stack);

@@ -9,126 +9,67 @@
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
+            <% 
+                var altTerm;
+                var sysTerm;
+                if (cookies.alter_term){
+                    altTerm= cookies.alter_term;
+                } else {
+                    altTerm= "alter";
+                }
+                if (cookies.system_term){
+                    sysTerm= cookies.system_term;
+                } else {
+                    sysTerm= "system";
+                }
+                if (cookies.subsystem_term){
+                    subSysTerm= cookies.subsystem_term;
+                } else {
+                    subSysTerm= "sub-system";
+                }
+                %>
             <h1>How to Use Lighthouse</h1>
             <section>
-                <img src="/img/svg/lighthouse.svg" alt="Lighthouse Logo" class="medimg" style="float: left; margin:calc(.5em)">
-                <p>Welcome to Lighthouse, a website for compartmentalised journalling! Specifically, keeping journals for <span id="alter" class="hoverhint" title="Alters are dissociated parts of a person. They are seen in Dissociative Identity Disorder, Partial Dissociative Identity Disorder (ICD), and Otherwise Specified Dissociative Disorder (DSM-V).">alters</span> to process memories, feelings, or whatever is needed. What you use Lighthouse for is up to you.</p>
-                <p>We don't dictate who can and cannot use Lighthouse. Even if you don't have alters, you may still find a benefit to using it. One example might be someone using the <a href="/glossary#Internal Family Systems Model (IFS)" target="_blank">IFS model</a> in therapy.</p>
-                <p>It's important to remember that <strong>data deletion on Lighthouse is irreversible</strong>. This includes accounts. In the future, Lighthouse will email you to verify that you want your account deleted.</p>
-                <p>A perk that we personally believe is important is that everything is for you, and you only. You cannot share pages publicly. There's no way for other users to contact you or see your system(s), giving you a space to focus on <em>just</em> yourself.</p>
-            </section>
+                <img src="/img/logo.png" alt="Lighthouse Logo" class="tinyimg clearfix" style="float: left; margin:calc(.5em)">
+                <p>Welcome to Lighthouse, a website for plural people to journal! Unlike a typical journal, Lighthouse allows each user to create <%= pluralize(altTerm) %> who all have their own separated journals. <%= capitalise(pluralize(altTerm)) %> can also fill out basic information on themselves from triggers to hobbies, to what they need from their <%= sysTerm %> for accommodation.</p>
             <section>
-                <h2>Communal Journal</h2>
-                <p>The communal journal serves almost like a bulletin board for every alter to read. If there's information you would want to share across your entire system, you can do so here. The post creator has a basic "What you see is what you get" editor to customise text colour, bold text, or even add images (with an existing URL-- We don't have the resources for image uploading yet).</p>
-                <p>If a specific communal journal entry is especially important, you can pin the post by clicking the thumbtack next to the post's title. There's no limit to how many posts you can pin. Remember, Lighthouse is ultimately meant to work best for you.</p>
+                <h2>Table of Contents</h2>
+                <ul>
+                    <li><a href="/tutorial#settings">Settings</a></li>
+                    <li><a href="/tutorial#alt">Creating <%= capitalise(pluralize(sysTerm)) %></a></li>
+                    <li><a href="/tutorial#sys">Creating <%= capitalise(pluralize(altTerm)) %> and Journals</a></li>
+                    <li><a href="/tutorial#comm">Communal Journals</a></li>
+                    <li><a href="/tutorial#forum">Forums</a></li>
+                </ul>
             </section>
-            <section>
-                <h2>Creating a System</h2>
-                <img src="/img/svg/group.svg" alt="Group of alters, aka a system" class="medimg" style="float: right; margin:calc(.5em)">
-                <p>When you navigate to the <a href="/system" target="_blank">My System</a> page, you will see a series of buttons, one of those saying "Add a <span id="system" class="hoverhint" title="A system is a group of alters.">System</span>". Click on "Add a System", and a popup should show up asking for a system name and if you would like to nest it under another system, effectively creating a <span id="subsystem" class="hoverhint" title="A subsystem is pretty much a system within a system.">subsystem</span>.</p>
-                <p>When you click "Create System" in this popup, it will appear in a list. Next to its name will be a "Rename" and "Delete" button. These rename and delete systems. When deleting systems, alters, journals, journal posts or other "major" pieces of information, you will be shown a warning screen so you are aware of what you are about to do.</p>
-                <p>If you click on a system, you will be taken to its page. Here, you can see all the alters listed under it, as well as any subsystems nested under this system. You can also set an icon for the system and even nest it under a different system.</p>
+            <hr>
+            <section id="settings">
+                <h2>Settings</h2>
+                <p>In your settings page, you can set custom terms, toggle certain parts of the site, and even set your language (though this is nowhere near done). If you need to change your email or username, you can do that as well.</p>
             </section>
-            <section>
-                <h2>Creating Alters</h2>
-                <img src="/img/svg/bust.svg" alt="A(n) alter" class="medimg" style="float: left; margin:calc(.5em)">
-                <p>Once as you've created a system, you can create alters. Simply click on the system, then type a name in the blank next to "Add a New Alter". Once as you click "Add", that alter will then appear on the page.</p>
-                <p>Clicking the alter will bring up their page. Here, you can see what system they're a part of, basic information on them, and a prompt to create a journal if they don't have one. Alters can also set a mood, which is visible on this page as well as the system page.</p>
-                <p>Alters can be moved across systems by the dropdown towards the top that says their name followed by "Is a part of".</p>
+            <section id="sys">
+                <h2>Creating <%= capitalise(pluralize(sysTerm)) %></h2>
+                <p>Before you can make <%= pluralize(altTerm) %>, you need to create a <%= sysTerm %> to put them in. On the <a href="/system" target="_blank" title="My <%= capitalise(sysTerm) %>">My <%= capitalise(sysTerm) %></a> page, you can add a <%= sysTerm %> by clicking "Add a <%= capitalise(sysTerm) %>". Lighthouse can support multiple <%= pluralize(sysTerm) %>, for those who may have <%= pluralize(subSysTerm) %>. You may also notice a Communal Journal section, which will be discussed later on.</p>
             </section>
-            <section>
-                <h2>Creating a Journal</h2>
-                <img src="/img/11.png" alt="A holographic journal" class="medimg" style="float: right; margin:calc(.5em)">
-                <p>Journals are where alters can put their private thoughts and feelings. Each alter gets just one journal. Alters can pick from a variety of colours and patterns for their journal, allowing for their own personal touch. This colour can be changed later. Not all patterns are immediately shown when creating a journal to keep it from getting overwhelming.</p>
-                <p>If alters feel the need to, they can add a password to their journal to keep others out. This is purely an honour-based approach, so it's implied that other alters will respect their privacy. If the password is forgotten, it can easily be reset.</p>
-                <p>In the future, journals will be able to have their passwords toggled.</p>
-                <p>When posts are made in a journal, they can also be pinned just like their communal counterparts. However, communal journal posts and alter posts are stored separately, and an ability to move posts between the two is in the works.</p>
+            <section id="alt">
+                <h2>Creating <%= capitalise(pluralize(altTerm)) %> and Journals</h2>
+                <p>Once a <%= sysTerm %> has been created, you can now add <%= pluralize(altTerm) %>! Simply click on the <%= sysTerm %>, and add the new <%= altTerm %>'s name in the "Add a New <%= capitalise(altTerm) %>" blank. This will generate a card with their name on it.</p>
+                <p>From here, you can click on the <%= altTerm %>'s card, taking you to their page. If this <%= altTerm %> is brand new, they won't have a journal yet. Simply pick a colour, choose if the journal should have a password, and hit "Create Journal" button.</p>
             </section>
-            <section>
-                <h2>User settings</h2>
-                <p>If you go into your settings page, you will see a variety of blanks. Here, you can set what term you'd like to use instead of "system", "alter", and "subsystem". The website will update accordingly. You can also change your username, email and password. <strong>If you're changing your username or email, you must check the availability before being allowed to update your account.</strong>.</p>
-                <p>As a small experiment to play with, Lighthouse also has "skins" to add to the site. These apply a new colour scheme across the website.</p>
-                <p>If you wish to delete your account, you can do so here. All data is permanently erased, as well as any data associated with you. You can remake an account with the same credentials any time you'd like.</p>
+            <section id="comm">
+                <h2>Your Communal Journal</h2>
+                <p>On the <a href="/system" target="_blank" title="My <%= capitalise(sysTerm) %>">My <%= capitalise(sysTerm) %></a> page, there is a section called the "Communal Journal". This is an area for all <%= pluralize(altTerm) %> to come together and document thoughts together. This could be memories, discussion, anything. You can also pin posts to the top, so that those posts always show up first.</p>
             </section>
-            <section>
-                <h2>Worksheets</h2>
-                <p>On the "My System" page, you will see a page for worksheets. This is a continual work in progress, with new worksheets being added occasionally. The most important one is at the top, your safety plan. This is a plan for you and your alters to use in case of a mental health crisis. When you've filled out this safety plan, you can download it as a PDF for printing out.</p>
-            </section>
-            <section>
-                <h2>System Development</h2>
-                <p>On the "My System" page, you will see buttons for other activities, such as "Alter Search", "System Rules", "Inner World" and "Wishlist". These are all geared towards understanding your system.</p>
-                <h3>Alter Search</h3>
-                <p>Here, you can search your entire account for specific alters based on name, pronouns, role, and more. Here, you can enter their page or even their system page.</p>
-                <h3>System Rules</h3>
-                <p>Here, you can set clear boundaries with other alters. This is not a means to attack alters. This is primarily guidelines, like "Please discuss large purchases" or "Don't cut our hair short". Rules can be deleted as needed.</p>
-                <h3>Inner World</h3>
-                <p>You and your system can describe what is in your inner world, to help others that may struggle to visualise it as well. It's important to remember that an inner world is a visualisation tool, and is for any alter to use as they see fit.</p>
-                <h3>Wishlist</h3>
-                <p>You can set wishes and goals for your system, and then "grant" them. Granted wishes show on a list at the bottom. There is no time limit, to keep pressure low.</p>
-            </section>
-            <section>
-                <h2>Conclusion</h2>
-                <p>This is by no means every single thing you can do in Lighthouse, but this is a crash course on the basics. If you need support with specific features or areas, you can use the following: 
-                    <ul>
-                        <li><a title="Email us" href="mailto:dee_deyes@writelighthouse.com">Email us</a></li>
-                        <li><a title="Send an ask on Tumblr" href="https://lighthouse-app.tumblr.com/" target="_blank">Send an ask on Tumblr</a></li>
-                        <li><a title="Join our Discord" href="https://discord.gg/RQcfvtmKWn" target="_blank">Join our Discord</a></li>
-                    </ul>
-                </p>
+            <section id="forum">
+                <h2>Forums</h2>
+                <p>On the <a href="/forum" target="_blank">Forum</a> page, <%= pluralize(altTerm) %> can chat amongst each other about a variety of topics. This is purely for your account only, and cannot communicate with other users on Lighthouse. Forums are to encourage longer forms of discussion, which some may find helpful.</p>
+                <p>You can start by creating a category, like "<%= capitalise(sysTerm) %> Discussion" or "Hobbies". Once a category has been made, forums can be created that go under their respective category. In the earlier example, you might put a forum named "Biking" or "Drawing" under the "Hobbies" category.</p>
+                <p>Inside each forum is a list of topics. This is where discussion happens. For instance, a topic might have a post titled "Which biking path should we take tomorrow?" with the post title having a list of nearby places to go biking. From there, <%= pluralize(altTerm) %> can leave replies.</p>
+                <p>For those who experienced or use forums and message boards, this is functionally the same but operated under one account.</p>
             </section>
     </div>
-    <div id="myModal" class="modal">
 
-        <!-- Modal content -->
-        <div class="modal-content" id="modalContent">
-          <span class="material-symbols-outlined close">
-            cancel
-            </span>
-            <h2 id="term">Definition</h2>
-            <hr>
-            <p id="definition"></p>
-        </div>
-
-      </div>
     <%- include ("../partials/footer.ejs") %>
     </body>
-    <script>
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
 
-        span.onclick = function() {
-          $("#myModal").fadeOut("fast");
-        }
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-          if (event.target == modal) {
-            $("#myModal").fadeOut("fast");
-          }
-        }
-        </script>
-    <script>
-        $(".hoverhint").click(function (){
-            // Show definitions.
-            $("#myModal").fadeToggle("fast");
-            // console.log(this.id)
-            let term;
-            let definition;
-            switch (this.id){
-                case "subsystem":
-                    term= "subsystem";
-                    definition= "A subsystem is pretty much a system within a system."
-                break;
-                case "system":
-                term= "System";
-                definition= "A system is a group of alters."
-                break;
-                case "alter":
-                term= "Alter";
-                definition= "Alters are dissociated parts of a person. They are seen in Dissociative Identity Disorder, Partial Dissociative Identity Disorder (ICD), and Otherwise Specified Dissociative Disorder (DSM-V)."
-                break;
-            }
-            $("#term").text(term);
-            $("#definition").text(definition);
-        });
-    </script>
 </html>

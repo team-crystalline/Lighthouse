@@ -705,8 +705,23 @@ app.get('/bottle-letters', (req, res) => {
 })
 app.get('/tutorial', (req, res) => {
 		res.render(`pages/tutorial`, { session: req.session, splash:splash, cookies:req.cookies});
-	
-});
+	});
+
+app.get('/combine/:item', (req, res) => {
+	if (isLoggedIn(req)){
+		let page;
+		switch (req.params.item){
+			case "alt":
+				page= "alts"
+				break;
+			default:
+				page="alts";
+				break; // May not need the break here but just in case.
+		}
+		res.render(`pages/combine-${page}`, { session: req.session, splash:splash, cookies:req.cookies });
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	});
+
 app.get('/worksheets', (req, res) => {
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
@@ -721,7 +736,6 @@ app.get('/worksheets', (req, res) => {
 		});
 		
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
-	
   });
 
   app.get('/forum/:id/new', (req, res) => {
@@ -3357,10 +3371,10 @@ app.get('/wish-d/:id', (req, res) => {
                 res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
             } else {
                 // Write to the db
-				
+				let email= (req.body.email).toLowerCase();
                 var query = {
                   text: "INSERT INTO users (email, username, pass, email_link) VALUES ($1, $2, $3, $4)",
-                  values: [`'${Buffer.from(req.body.email).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`, `'${Math.random().toString(36).substr(2, 16)}'`]
+                  values: [`'${Buffer.from(email).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`, `'${CryptoJS.SHA3(req.body.password)}'`, `'${Math.random().toString(36).substr(2, 16)}'`]
                 }
                 client.query(query, (err, aresult) => {
                     if (err) {

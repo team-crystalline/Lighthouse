@@ -64,9 +64,9 @@ var journSkin=[
             <% } %>
             <h2><% if (session.chosenSys.icon) { %> <img src="/img/svg/<%- session.chosenSys.icon %>.svg" class="vtinyimg"> <% } %><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></h2>
 
-            <p>This <%= cookies.system_term %> has <%= alterArr.length %> <% if (alterArr.length == 1){ %><%= cookies.alter_term %><% } else { %><%= pluralize(cookies.alter_term)%><% } %>.</p>
+            <p>This <%= cookies.system_term %> has <strong><%= parseInt(alterArr.length).toLocaleString() %></strong> <% if (alterArr.length == 1){ %><%= cookies.alter_term %><% } else { %><%= pluralize(cookies.alter_term)%><% } %>.</p>
             <% if (alterArr.length > 0){ %>
-            <div class="grid">
+            <div class="grid" id="sysContainer">
                 <% for ( i in alterArr) {
                     if (alterArr[i].is_archived== false){
                     %>
@@ -114,11 +114,7 @@ var journSkin=[
                 <% }} %>
             </div>
             <% } %>
-            <% if (alterArr.length > 0){ %>
-            <div class="grid">
-                
-            </div>
-            <% } %>
+        
             <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton deletebtn">Delete</a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton editbtn">Edit</a>
             <form method="post" style="margin-top: calc(2vh);">
                 <label for="altname">Add a New <%= capitalise(cookies.alter_term) %></label>
@@ -219,6 +215,10 @@ var journSkin=[
         fetchSubSystems();
         fetchSystems();
         $("input").attr('autocomplete','off');
+
+        if($("#sysContainer a").length <= 3){
+            $("#sysContainer").css({"justify-content": "space-evenly", "width": "50%", "margin": "auto"})
+        }
         });
     </script>
 </body>

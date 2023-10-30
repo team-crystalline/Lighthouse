@@ -1,5 +1,5 @@
-/* Sand Theme Colours */
-:root{
+/* Summer Theme Colours */
+[data-theme="light"]{
     --col1: #664f05;
     --col2: #f5bc52;
     --col3: #ff9100;
@@ -8,46 +8,52 @@
 	--col6: #1686a8;
     --col7: #fcf5eb;
     --col8: #3d2809;
-    color-scheme: light;
     --forum-shade: rgba(36, 33, 209, 0.05);
+    --input: rgba(255, 229, 158, 0.2); 
+    --bg-img: url("/img/summer-bg.png");
+    --menu-bg: url("../img/summer.jpg");
+    --wrapper: rgba(255, 246, 241, 0.527);
+    --text: black;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 223, 117);
+    --grad1: rgba(167, 105, 12, 0);
+    --grad2: rgb(238, 94, 37);
+    --nav-txt: #fff5c6;
+    --button: var(--nav-txt);
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/summer-bg.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-#menubg{
-    background: url("/img/summer.jpg");
-    background-size: cover;
-    background-position: center center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(255, 231, 13) 0%, rgba(41, 23, 0, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col4)
+[data-theme="dark"]{
+    --col1: #f8d257;
+    --col2: #a06b08;
+    --col3: #a36514;
+    --col4: #a0aeff;
+    --col5: #f3b67e;
+	--col6: #362d02;
+    --col7: #1f2b42;
+    --col8: #f1c583;
+    --forum-shade: rgba(36, 33, 209, 0.05);
+    --input: rgba(255, 229, 158, 0.2); 
+    --bg-img: url("/img/night-lighthouse.png"), var(--col7);
+    --menu-bg: url("../img/night.png");
+    --wrapper: rgba(39, 14, 1, 0.527);
+    --text: rgb(255, 251, 214);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 223, 117);
+    --grad1: rgba(12, 35, 167, 0);
+    --grad2: rgb(22, 3, 66);
+    --nav-txt: #fff5c6;
+    --button: var(--nav-txt);
 }
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_summer.svg');
 }
-#logo{
-    display: inline-block; 
-    margin-left: 30px; width:100%;
-    filter: drop-shadow(0 0 .2em rgb(155, 3, 3));
-}
+
 .greeting{
     color: var(--col4);
+}
+
+.version{
+    color:gainsboro;
 }

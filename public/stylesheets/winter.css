@@ -1,45 +1,62 @@
 /* Sand Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #0a7f8f;
-    --col2: #bee7ff;
+    --col2: #94d6fc;
     --col3: #2cd4c6;
     --col4: #13705c;
     --col5: #2ba1be;
 	--col6: #166ea8;
     --col7: #c3faf7;
     --col8: #09193d;
-    color-scheme: light;
     --forum-shade: rgba(1, 149, 175, 0.05);
+    --input: rgba(158, 160, 255, 0.2); 
+    --bg-img: url("../img/winter-bg.png"), var(--col7);
+    --menu-bg: url("/img/winter.jpg");
+    --wrapper: rgba(217, 247, 255, 0.527);
+    --text: rgb(6, 2, 65);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(202, 255, 255);
+    --grad1: rgba(12, 167, 141, 0);
+    --grad2: rgb(47, 162, 207);
+    --nav-txt: #6bfae7;
+    --button: var(--nav-txt);
+    --greeting: rgb(223, 227, 250);
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/winter-bg.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-#menubg{
-    background: url("/img/winter.jpg");
-    background-size: cover;
-    background-position: top left;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(32, 140, 167) 0%, rgba(41, 23, 0, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col7)
+[data-theme="dark"]{
+    --col1: #77ddeb;
+    --col2: #1d638b;
+    --col3: #0a645d;
+    --col4: #359782;
+    --col5: #84e2fa;
+	--col6: #0a3653;
+    --col7: #050050;
+    --col8: #5274c4;
+    --forum-shade: rgba(1, 149, 175, 0.05);
+    --input: rgba(82, 85, 235, 0.2); 
+    --bg-img: url("../img/dark-winter.png"), var(--col7);
+    --menu-bg: url("/img/aurora.jpg");
+    --wrapper: rgba(1, 44, 56, 0.527);
+    --text: rgb(232, 230, 255);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(202, 255, 255);
+    --grad1: rgba(12, 22, 167, 0);
+    --grad2: rgb(0, 11, 15);
+    --nav-txt: #6bfae7;
+    --button: var(--nav-txt);
+    --greeting: rgb(114, 134, 245);
 }
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_winter.svg');
+}
+.version{
+    color: var(--col2)
+}
+.greeting{
+    color: var(--greeting)
+}
+.dropdown-content a{
+    color: var(--text)
 }

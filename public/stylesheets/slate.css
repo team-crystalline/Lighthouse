@@ -1,5 +1,5 @@
 /* Slate Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #272727;
     --col2: #a7a7a7;
     --col3: #f8f8f8;
@@ -8,36 +8,74 @@
 	--col6: #292929;
     --col7: #dbdbdb;
     --col8: #131313;
-    color-scheme: light;
     --forum-shade: rgba(65, 65, 65, 0.05);
+    --input: rgba(126, 126, 126, 0.2); 
+    --bg-img: url("../img/slate.png");
+    --menu-bg: url("../img/biolum.jpg");
+    --wrapper: rgba(145, 145, 145, 0.096);
+    --text: black;
+    --button: gainsboro;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(206, 206, 206);
+    --grad1: rgba(83, 83, 83, 0);
+    --grad2: rgb(0, 0, 0);
+    --nav-txt: #ececec;
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
+[data-theme="dark"]{
+    --col1: #f1f1f1;
+    --col2: #868686;
+    --col3: #333333;
+    --col4: #b4b4b4;
+    --col5: #9c9c9c;
+	--col6: #1d1d1d;
+    --col7: #313131;
+    --col8: #6b6b6b;
+    --forum-shade: rgba(65, 65, 65, 0.05);
+    --input: rgba(180, 180, 180, 0.2); 
+    --bg-img: url("../img/slate.png"), var(--col3);
+    --menu-bg: url("../img/biolum.jpg");
+    --wrapper: rgba(36, 36, 36, 0.493);
+    --text: rgb(223, 223, 223);
+    --button: gainsboro;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(206, 206, 206);
+    --grad1: rgba(83, 83, 83, 0);
+    --grad2: rgb(0, 0, 0);
+    --nav-txt: #ececec;
+    /* CKEditor */
+    --ck-color-base-border: #b4b4b4 !important;
+    --ck-color-toolbar-background: #7e7e7e !important;
+    --ck-color-base-background: #303030 !important;
+    --ck-color-tooltip-background: var(--col3) !important;
+    --ck-color-split-button-hover-background: var(--col2) !important;
+    --ck-color-button-default-hover-background: var(--col2) !important;
+    --ck-color-button-default-active-background: var(--col2) !important;
+    --ck-color-button-on-hover-background: var(--col2) !important;
 }
 html{
-    background-image: url("../img/slate.png");
+    background-image: var(--bg-img);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
 #menubg{
-    background: url("/img/biolum.jpg");
+    background: var(--menu-bg);
     background-size: cover;
     background-position: bottom 35% center;
 }
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
+.greeting{
+    color: silver;
 }
-#logoname, #logoname > *{
-    color: var(--col7)
-}
+
 hr{
     background-image:url('../img/svg/horizontal_rule_slate.svg');
 }
+
+a:visited{
+    color: gainsboro;
+}
+/* a:hover{
+    color: yellow !important;
+} */

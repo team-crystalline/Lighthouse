@@ -1,45 +1,72 @@
 /* Autumn Theme Colours */
-:root{
-    --col1: #8a3b0e;
-    --col2: #ffbb3d;
-    --col3: #f5e340;
+
+[data-theme="light"]{
+    --col1: #3b1601;
+    --col2: #d15e00;
+    --col3: #ce6917;
     --col4: #701313;
-    --col5: #be620c;
+    --col5: #ffbe0b;
 	--col6: #a84716;
     --col7: #ffdba9;
     --col8: #3d0f09;
-    color-scheme: light;
     --forum-shade: rgba(42, 0, 61, 0.05);
+    --input: rgba(255, 158, 190, 0.2); 
+    --bg-img: url("../img/autumn-bg.png"), var(--col7);
+    --menu-bg: url("/img/autumn.jpg");
+    --wrapper: rgba(255, 246, 241, 0.527);
+    --text: black;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(248, 202, 183);
+    --grad1: rgba(167, 12, 97, 0);
+    --grad2: rgb(248, 102, 92);
+    --nav-txt: #d8be28;
+    --button: var(--nav-txt);
+    --autumn-header: rgb(117, 36, 16);
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/autumn-bg.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+[data-theme="dark"]{
+    --col1: #f37c2d;
+    --col2: #35043a;
+    --col3: #eebe22;
+    --col4: #813a01;
+    --col5: #1d8b07;
+	--col6: #650672;
+    --col7: #250e2b;
+    --col8: #fdbf6e;
+    --forum-shade: rgba(177, 0, 147, 0.05);
+    --input: rgba(236, 194, 160, 0.2); 
+    --bg-img: url("../img/spooky.png"), var(--col7);
+    --menu-bg: url("/img/halloween.jpg");
+    --wrapper: rgba(100, 76, 44, 0.527);
+    --text: rgb(245, 245, 213);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(248, 202, 183);
+    --grad1: rgba(167, 87, 12, 0);
+    --grad2: rgb(63, 6, 65);
+    --nav-txt: #ffd6bb;
+    --button: var(--nav-txt);
+    --autumn-header: rgb(58, 241, 22);
 }
 
-#menubg{
-    background: url("/img/autumn.jpg");
-    background-size: cover;
-    background-position: center center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(109, 5, 5) 0%, rgba(41, 23, 0, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col7)
-}
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_autumn.svg');
+}
+
+a:not(.child):hover{
+    color: var(--col5) !important;
+}
+.grid-sm > a{
+    color: var(--col1);
+}
+
+h1, h2, h3, h4{
+    color: var(--autumn-header) !important;
+}
+.greeting{
+    color: yellow;
+}
+.dropdown-content a{
+    color: var(--text);
 }

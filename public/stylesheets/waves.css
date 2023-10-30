@@ -1,5 +1,5 @@
 /* Waves Theme Colours */
-:root{
+[data-theme="light"] {
     --col1: #05465a;
     --col2: #87dde8;
     --col3: #50f7b7;
@@ -8,36 +8,71 @@
 	--col6: #1d2c42;
     --col7: #cee7f5;
     --col8: #1f2b5f;
-    color-scheme: light;
     --forum-shade: rgba(10, 13, 153, 0.05);
-}
-#wrapper{
-    background: rgba(255,255,255,.4);
+    --input: rgba(160, 193, 236, .2); 
+    --bg-img: url("../img/water.png");
+    --menu-bg: url("../img/big-wave.jpg");
+    --wrapper: rgba(200, 249, 255, 0.4);
+    --text: black;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(99, 232, 241);
+    --grad1: rgba(32, 95, 189,0);
+    --grad2: rgba(5, 54, 100,1);
+  }
+  
+  [data-theme="dark"] {
+    --col1: #a1d5ff;
+    --col2: #3050bb;
+    --nav-txt: #2ebdc7;
+    --col3: #0b9ea3;
+    --col4: #3436ca;
+    --col5: #3996d4;
+	--col6: #0f3b7e;
+    --col7: #1c1b1f;
+    --col8: #33c8df;
+    --input: rgb(29, 43, 68); 
+    --bg-img: url("../img/water.png"), rgb(6, 4, 34);
+    --menu-bg: url("../img/jellyfish.jpg");
+    --wrapper: rgba(1, 8, 29, 0.4);
+    --text: rgb(204, 195, 211);
+    --polar: rgb(68, 80, 92);
+    --archivedtxt: rgb(46, 46, 70);
+    --archivedbg: rgb(140, 159, 172);
+    --lighthouse: rgb(26, 152, 255);
+    --grad1: rgba(13, 108, 146, 0);
+    --grad2: rgb(0, 24, 44);
+
+    /* CKEditor */
+    --ck-color-base-border: #746fbd !important;
+    --ck-color-toolbar-background: #6762ad !important;
+    --ck-color-base-background: #33273d !important;
+    --ck-color-tooltip-background: var(--col3) !important;
+    --ck-color-split-button-hover-background: var(--col2) !important;
+    --ck-color-button-default-hover-background: var(--col2) !important;
+    --ck-color-button-default-active-background: var(--col2) !important;
+    --ck-color-button-on-hover-background: var(--col2) !important;
+  }
+input:hover{
+    color: var(--text);
 }
 html{
-    background-image: url("../img/water.png");
+    background-image: var(--bg-img);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
 #menubg{
-    background: url("/img/big-wave.jpg");
+    background: var(--menu-bg);
     background-size: cover;
     background-position: top 25% center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(50, 115, 153) 0%, rgba(153, 161, 255, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
 }
 #logoname > *{
     color: var(--col5)
 }
 hr{
     background-image:url('../img/svg/horizontal_rule_waves.svg');
+}
+a:not(.navel):hover{
+    color: var(--col8);
 }

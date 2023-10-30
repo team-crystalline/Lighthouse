@@ -53,7 +53,7 @@
 
 					<p><small><em>Note: the custom term for "plural" will eventually show itself on the site. Right now, it's not used.</em></small></p>
 					<h3>Optional Experiences</h3>
-					<p>Some <%= pluralize(cookies.system_term) %> may not have </p>
+					<p>The experiences below may not apply to all <%= pluralize(cookies.system_term) %>. You can toggle the below pages off or on for your account.</p>
 					<label for="innerworld"><%- capitalise(session.innerworld_term) %></label>
 					<select name="innerworld" id="innerworld">
 						<option value="true" <% if (session.inner_worlds == true) { %> selected <%}%>>Enabled</option>

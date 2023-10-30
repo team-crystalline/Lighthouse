@@ -929,7 +929,8 @@ app.get('/worksheets', (req, res) => {
 								sys_alias: Buffer.from(bresult.rows[i].sys_alias, "base64").toString() || "",
 								is_archived: bresult.rows[i].is_archived,
 								img_blob: bresult.rows[i].img_blob,
-								mimetype: bresult.rows[i].blob_mimetype
+								mimetype: bresult.rows[i].blob_mimetype,
+								colour: bresult.rows[i].colour
 							})
 					}
 					client.query({text: "SELECT * FROM forums WHERE u_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
@@ -1669,7 +1670,7 @@ app.get('/wish-d/:id', (req, res) => {
 			  req.session.chosenSys= result.rows[0];
 		  }
 		});
-			client.query({text: "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
+			client.query({text: "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 	            if (err) {
 	              console.log(err.stack);
 	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1686,7 +1687,8 @@ app.get('/wish-d/:id', (req, res) => {
 						is_archived: result.rows[i].is_archived, 
 						icon: result.rows[i].img_url || "aHR0cHM6Ly93d3cud3JpdGVsaWdodGhvdXNlLmNvbS9pbWcvYXZhdGFyLWRlZmF1bHQuanBn",
 						img_blob: result.rows[i].img_blob,
-						mimetype: result.rows[i].blob_mimetype
+						mimetype: result.rows[i].blob_mimetype,
+						colour: result.rows[i].colour
 					})
 	              }
 				  try {

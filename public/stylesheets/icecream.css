@@ -1,44 +1,62 @@
 /* Ice Cream Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #791122;
-    --col2: #f0cccc;
-    --col3: #a6bbce;
-    --col4: #e7a6c8;
-    --col5: #9e7daa;
-	--col6: #a1537e;
+    --col2: #e46e6e;
+    --col3: #6f97bd;
+    --col4: #ffcc26;
+    --col5: #33b419;
+	--col6: #f4c3f0;
     --col7: #f3f2ed;
     --col8: #500921;
-    color-scheme: light;
     --forum-shade: rgba(177, 0, 147, 0.05);
+    --input: rgba(255, 158, 190, 0.2); 
+    --bg-img: url("../img/sorbet.png");
+    --menu-bg: url("../img/icecream_banner.jpg");
+    --wrapper: rgba(255, 246, 241, 0.527);
+    --text: black;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(248, 202, 183);
+    --grad1: rgba(167, 12, 97, 0);
+    --grad2: rgb(248, 92, 170);
+    --nav-txt: #2f80a5;
+    --button: var(--nav-txt);
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
+[data-theme="dark"]{
+    --col1: #f3778c;
+    --col2: #6d0d32;
+    --col3: #3881c5;
+    --col4: #852757;
+    --col5: #78d670;
+	--col6: #c73183;
+    --col7: #102e52;
+    --col8: #ff8ab1;
+    --forum-shade: rgba(177, 0, 147, 0.05);
+    --input: rgba(236, 194, 160, 0.2); 
+    --bg-img: url("../img/sorbet.png"), var(--col7);
+    --menu-bg: url("../img/icecream_banner.jpg");
+    --wrapper: rgba(44, 70, 100, 0.527);
+    --text: rgb(245, 245, 213);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(248, 202, 183);
+    --grad1: rgba(12, 66, 167, 0);
+    --grad2: rgb(15, 6, 65);
+    --nav-txt: #ffe9c8;
 }
-html{
-    background-image: url("../img/sorbet.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-#menubg{
-    background: url("/img/icecream_banner.jpg");
-    background-size: cover;
-    background-position: center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(37, 108, 136) 0%, rgba(0, 52, 82, 0) 100%);
-    width: 70%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-.topnav a{
+
+
+.greeting{
     color: white;
 }
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_icecream.svg');
+}
+
+.dropdown-content a{
+    color: var(--nav-txt);
+}
+.warningbutton{
+    color: var(--text);
 }

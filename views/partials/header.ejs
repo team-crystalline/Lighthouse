@@ -1,7 +1,7 @@
 <title><%= siteLanguage[session.language || "en"].title %><% if (process.env.environment == "dev"){ %> (SANDBOX) <% } %></title>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<link rel="stylesheet" href="/stylesheets/main.css?v=1.5.10">
+<link rel="stylesheet" href="/stylesheets/main.css?v=1.5.11">
 <script defer>
     let domReady = (cb) => {
       document.readyState === 'interactive' || document.readyState === 'complete'
@@ -10,6 +10,11 @@
     };
     
     domReady(() => {
+      <% if (typeof cookies.skin == undefined || cookies.skin=="lighthouse"){ %>
+      <% } else { %>
+        $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- cookies.skin %>.css?v=1.0.7">`);
+      <% } %>
+      
       // Display body when DOM is loaded
       let isDark= window.matchMedia("(prefers-color-scheme: dark)");
       console.log(localStorage.getItem("lighthouse_mode"))
@@ -22,7 +27,7 @@
       }
       // if (localStorage.getItem("lighthouse_mode") == "light"){
       // //   $("html").addClass("light-mode");
-      // // $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- cookies.skin ||"lighthouse" %>.css?v=1.0.6">`);   
+      // //    
       // document.querySelector("html").setAttribute("data-theme", "light");    
       // } else {
       //   // $("html").addClass("dark-mode");

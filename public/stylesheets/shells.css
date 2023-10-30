@@ -1,44 +1,80 @@
 /* Shells Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #5a0539;
     --col2: #e887e0;
-    --col3: #ffa34c;
+    --col3: #fff0f4;
     --col4: #973c80;
     --col5: #b327a0;
-	--col6: #421d3a;
+	--col6: #9e3a88;
     --col7: #f3d6e3;
     --col8: #501638;
-    color-scheme: light;
     --forum-shade: rgba(209, 33, 33, 0.05);
+    --input: rgba(236, 160, 195, 0.2); 
+    --bg-img: url("../img/shells.png");
+    --menu-bg: url("../img/seashells.jpg");
+    --wrapper: rgba(255, 200, 214, 0.4);
+    --text: black;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 169, 209);
+    --grad1: rgba(245, 43, 167, 0);
+    --grad2: rgb(129, 4, 67);
+    --nav-txt: #ffbcbc;
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
+[data-theme="dark"]{
+    --col1: #ffb9e4;
+    --col2: #800b53;
+    --col3: #ff5ebc;
+    --col4: #973c80;
+    --col5: #fc98a0;
+	--col6: #8d1c75;
+    --col7: #d1327a;
+    --col8: #d4218a;
+    --forum-shade: rgba(209, 33, 33, 0.05);
+    --input: rgba(236, 160, 198, 0.2); 
+    --bg-img: url("../img/shells.png"), var(--col2);
+    --menu-bg: url("../img/seashells.jpg");
+    --wrapper: rgba(24, 0, 7, 0.781);
+    --text: rgb(255, 255, 255);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 169, 209);
+    --grad1: rgba(245, 43, 167, 0);
+    --grad2: rgb(129, 4, 67);
+    --nav-txt: #f87c7c;
+    /* CKEditor */
+    --ck-color-base-border: #bd6f96 !important;
+    --ck-color-toolbar-background: #ad626e !important;
+    --ck-color-base-background: #3d2736 !important;
+    --ck-color-tooltip-background: var(--col3) !important;
+    --ck-color-split-button-hover-background: var(--col2) !important;
+    --ck-color-button-default-hover-background: var(--col2) !important;
+    --ck-color-button-default-active-background: var(--col2) !important;
+    --ck-color-button-on-hover-background: var(--col2) !important;
 }
-html{
-    background-image: url("../img/shells.png");
+/* html{
+    background-image: var(--bg-img);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-}
+} */
 #menubg{
-    background: url("/img/seashells.jpg");
+    background: var(--menu-bg);
     background-size: cover;
     background-position: center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(209, 60, 189) 0%, rgba(133, 5, 75, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col7)
 }
 hr{
     height: 3em;
     background-image:url('../img/svg/horizontal_rule_shells.svg');
+}
+
+#wrapper a:hover{
+    color: var(--col1);
+}
+
+a:visited{
+    color: var(--col3);
+}
+#mode{
+    color: yellow !important;
 }

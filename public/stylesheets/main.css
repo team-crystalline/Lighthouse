@@ -47,7 +47,7 @@
     --col8: #33c8df;
     --input: rgb(56, 29, 68); 
     --bg-img: url("../img/night-lighthouse.png"), rgb(30,30,30);
-    --menu-bg: url("/img/night.png"), var(--col5);
+    --menu-bg: url("../img/night.png"), var(--col5);
     --wrapper: rgba(52, 24, 75, 0.4);
     --text: rgb(204, 195, 211);
     --polar: rgb(74, 78, 82);

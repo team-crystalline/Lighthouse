@@ -1,41 +1,54 @@
 /* Coral Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #791122;
     --col2: #ffae34;
-    --col3: #fd91d0;
-    --col4: #e922ad;
+    --col3: #ff8b3e;
+    --col4: #c5008a;
     --col5: #df5248;
-	--col6: #ca3e5c;
+	--col6: #b4193b;
     --col7: #ffceb2;
     --col8: #501638;
-    color-scheme: light;
     --forum-shade: rgba(116, 0, 71, 0.05);
+    --input: rgba(126, 126, 126, 0.2); 
+    --bg-img: url("../img/coral.png");
+    --menu-bg: url("../img/coral-reef.jpg");
+    --wrapper: rgba(255, 174, 120, 0.096);
+    --text: black;
+    --button: gainsboro;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 170, 188);
+    --grad1: rgba(112, 7, 7, 0);
+    --grad2: rgb(9, 7, 141);
+    --nav-txt: #f8e6eb;
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/coral.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-#menubg{
-    background: url("/img/coral-reef.jpg");
-    background-size: cover;
-    background-position: center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,7,82,0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    left:0;
+[data-theme="dark"]{
+    --col1: #fc5773;
+    --col2: #854905;
+    --col3: #ff893b;
+    --col4: #a70476;
+    --col5: #f33426;
+	--col6: #4b0212;
+    --col7: #460437;
+    --col8: #f3219c;
+    --forum-shade: rgba(116, 0, 71, 0.05);
+    --input: rgba(126, 126, 126, 0.2); 
+    --bg-img: url("../img/coral.png"), var(--col7);
+    --menu-bg: url("../img/coral-reef.jpg");
+    --wrapper: rgba(73, 1, 7, 0.281);
+    --text: rgb(255, 238, 238);
+    --button: gainsboro;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 170, 188);
+    --grad1: rgba(112, 7, 7, 0);
+    --grad2: rgb(9, 7, 141);
+    --nav-txt: #f8e6eb;
 }
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_coral.svg');
+}
+.greeting{
+    color: gainsboro;
 }

@@ -1,62 +1,58 @@
 /* Mermaid Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #04385a;
-    --col2: #d68dd8;
-    --col3: #53d0f7;
-    --col4: #5f19af;
+    --col2: #c051c4;
+    --col3: #6adcff;
+    --col4: #1955af;
     --col5: #5827b3;
-	--col6: #265d64;
+	--col6: #266457;
     --col7: #b1f1ee;
-    --col8: #161f50;
-    color-scheme: light;
+    --col8: #1c2763;
     --forum-shade: rgba(33, 209, 33, 0.05);
+    --input: rgba(126, 126, 126, 0.2); 
+    --bg-img: url("../img/fish.png");
+    --menu-bg: url("../img/glitter.jpg");
+    --wrapper: rgba(145, 145, 145, 0.096);
+    --text: black;
+    --button: gainsboro;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(252, 173, 255);
+    --grad1: rgba(7, 112, 95, 0);
+    --grad2: rgb(7, 99, 141);
+    --nav-txt: #e6f4f8;
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/fish.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-
-a{
-    color: var(--col5);
-}
-a:hover{
-    color: var(--col4);
-}
-
-a:visited{
-    color: var(--col5);
-}
-
-
-#menubg{
-    background: url("/img/glitter.jpg");
-    background-size: cover;
-    background-position: bottom 35% center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(17, 148, 115) 0%, rgba(2, 7, 77, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col7)
+[data-theme="dark"]{
+    --col1: #6bbdf3;
+    --col2: #4b706e;
+    --col3: #1a6a83;
+    --col4: #6896db;
+    --col5: #9f7ce0;
+	--col6: #0b4639;
+    --col7: #081b46;
+    --col8: #778af3;
+    --forum-shade: rgba(33, 209, 33, 0.05);
+    --input: rgba(84, 77, 182, 0.2); 
+    --bg-img: url("../img/fish.png"), var(--col7);
+    --menu-bg: url("../img/night.jpg");
+    --wrapper: rgba(145, 145, 145, 0.096);
+    --text: rgb(230, 230, 230);
+    --button: gainsboro;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(252, 173, 255);
+    --grad1: rgba(1, 63, 53, 0);
+    --grad2: rgb(1, 21, 31);
+    --nav-txt: #e6f4f8;
 }
 
-.systembutton > *{
-    color: var(--col5);
-}
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_mermaid.svg');
+}
+.greeting{
+    color: gainsboro;
+}
+a:visited, #tbutton,.linkbutton>*{
+    color: gainsboro !important;
 }

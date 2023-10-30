@@ -1,44 +1,60 @@
 /* Sand Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #4d3d1e;
     --col2: #e0b177;
-    --col3: #c09f84;
-    --col4: #8a775e;
+    --col3: #e9c5a8;
+    --col4: #77634a;
     --col5: #8a5e44;
-	--col6: #614d43;
+	--col6: #6e4734;
     --col7: #eee3d4;
     --col8: #504116;
-    color-scheme: light;
-    --forum-shade: rgba(104, 59, 1, 0.05);
+    --forum-shade: rgba(10, 13, 153, 0.05);
+    --input: rgba(236, 194, 160, 0.2); 
+    --bg-img: url("../img/sand.png"), var(--col3);
+    --menu-bg: url("../img/sand2.jpg");
+    --wrapper: rgba(255, 246, 241, 0.527);
+    --text: black;
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(248, 202, 183);
+    --grad1: rgba(167, 94, 12, 0);
+    --grad2: rgb(65, 23, 6);
+    --nav-txt: #ffe9c8;
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/sand.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+[data-theme="dark"]{
+    --col1: #c5b085;
+    --col2: #7e5626;
+    --col3: #cf7d3a;
+    --col4: #421b01;
+    --col5: #9e755e;
+	--col6: #692616;
+    --col7: #251a0a;
+    --col8: #d3c08b;
+    --forum-shade: rgba(153, 10, 10, 0.05);
+    --input: rgba(61, 30, 2, 0.2); 
+    --bg-img: url("../img/sand.png"), var(--col7);
+    --menu-bg: url("../img/sand2.jpg");
+    --wrapper: rgba(39, 18, 1, 0.26);
+    --polar: #554839;
+    --text: rgb(250, 234, 224);
+    --archivedtxt: rgb(95, 93, 93);
+    --archivedbg: rgb(46, 46, 45);
+    --lighthouse: rgb(241, 220, 99);
+    --grad1: rgba(189, 126, 32, 0);
+    --grad2: rgb(59, 23, 9);
+    --nav-txt: #c7b5a6;
+    --button: var(--nav-txt);
+    /* CKEditor */
+    --ck-color-base-border: #bd9b6f !important;
+    --ck-color-toolbar-background: #836243 !important;
+    --ck-color-base-background: #3d2d27 !important;
+    --ck-color-tooltip-background: var(--col3) !important;
+    --ck-color-split-button-hover-background: var(--col2) !important;
+    --ck-color-button-default-hover-background: var(--col2) !important;
+    --ck-color-button-default-active-background: var(--col2) !important;
+    --ck-color-button-on-hover-background: var(--col2) !important;
 }
 
-#menubg{
-    background: url("/img/sand2.jpg");
-    background-size: cover;
-    background-position: center center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(107, 73, 41) 0%, rgba(41, 23, 0, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col7)
-}
 hr{
     background-image:url('../img/svg/horizontal_rule_sand.svg');
 }

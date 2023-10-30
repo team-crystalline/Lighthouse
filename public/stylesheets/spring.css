@@ -1,5 +1,5 @@
 /* Sand Theme Colours */
-:root{
+[data-theme="light"]{
     --col1: #9b10ad;
     --col2: #f0c539;
     --col3: #bff540;
@@ -8,38 +8,57 @@
 	--col6: #21640c;
     --col7: #d6fde8;
     --col8: #0e093d;
-    color-scheme: light;
     --forum-shade: rgba(52, 163, 52, 0.05);
+    --input: rgba(158, 160, 255, 0.2); 
+    --bg-img: url("../img/spring-bg.png"), var(--col7);
+    --menu-bg: url("/img/spring.jpg");
+    --wrapper: rgba(220, 255, 204, 0.527);
+    --text: rgb(0, 0, 0);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(255, 254, 202);
+    --grad1: rgba(1, 107, 89, 0);
+    --grad2: rgb(83, 145, 119);
+    --nav-txt: #6bfae7;
+    --button: var(--nav-txt);
+    --greeting: rgb(223, 227, 250);
+    --linkhov: var(--col6);
 }
-#wrapper{
-    background: rgba(255,255,255,.4);
-}
-html{
-    background-image: url("../img/spring-bg.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+[data-theme="dark"]{
+    --col1: #ee9ef8;
+    --col2: #03491a;
+    --col3: #fdfa27;
+    --col4: #b15a88;
+    --col5: #76f371;
+	--col6: #0c3100;
+    --col7: #03361b;
+    --col8: #c1baff;
+    --forum-shade: rgba(52, 163, 52, 0.05);
+    --input: rgba(6, 56, 1, 0.2); 
+    --bg-img: url("../img/dew.png"), var(--col7);
+    --menu-bg: url("/img/rainy.jpg");
+    --wrapper: rgba(0, 24, 31, 0.527);
+    --text: rgb(232, 255, 241);
+    --archivedtxt: grey;
+    --archivedbg: silver;
+    --lighthouse: rgb(202, 255, 255);
+    --grad1: rgba(3, 85, 71, 0);
+    --grad2: rgb(0, 48, 21);
+    --nav-txt: #6bfa9b;
+    --button: var(--nav-txt);
+    --greeting: rgb(223, 250, 227);
+    --linkhov: var(--col4);
 }
 
-#menubg{
-    background: url("/img/spring.jpg");
-    background-size: cover;
-    background-position: center center;
-}
-#menubg:after{
-    content:' ';
-    background: linear-gradient(90deg, rgb(79, 5, 109) 0%, rgba(41, 23, 0, 0) 100%);
-    width: 50%;
-    height: 150px;
-    z-index: -3;
-    position: absolute;
-    top:0;
-    lefT:0;
-}
-#logoname, #logoname > *{
-    color: var(--col7)
-}
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_spring.svg');
+}
+
+.dropdown-content a{
+    color: var(--text)
+}
+
+a:hover{
+    color: var(--linkhov) !important;
 }

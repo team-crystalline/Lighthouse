@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="visibility: hidden;">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+        <style>
+            #roster{
+                list-style-type: none;
+            }
+            #loadcontainer{
+                width: 100%;
+                height: 2em;
+                background: var(--col2);
+                padding:calc(.25em);
+            }
+            #loadbar{
+                /* background: var(--col1); */
+                background: linear-gradient(var(--col1), var(--col4));
+                height: inherit;
+                width: 0%;
+                /* width: 50%; */
+                border-radius: 0 1em 1em 0;
+            }
+        </style>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <% if (locals.messages.flash) { %>
+                <div class="splash"><%- locals.messages.flash %></div>
+            <% } %>
+            <section>
+                <img src="./img/sp-icon.png" class="tinyimg" style="float:left;margin-right:.5em;" alt="Simply Plural Icon"><h1>Import from Simply Plural</h1>
+                <p>If you have a <%= cookies.system_term %> on Simply Plural, you can import your <%= pluralize(cookies.alter_term) %> onto Lighthouse. To do this, you will need your user ID. You can find this under Settings > Account > Account Settings. Your ID will be at the bottom of your account. You will also need to generate a token. Lighthouse only needs read permissions from this token. You can generate one under Settings > Account > Tokens.</p>
+                <p>Please keep in mind that <strong>Lighthouse does not store your User ID or your token.</strong> We cannot retrieve account information based on these things.</p>
+            </section>
+            <section id="form">
+                <p>All information below is <strong>required</strong> in order to import your <%= cookies.system_term %>.</p>
+                <label for="usertoken">Account Token</label> <input type="text" name="usertoken" id="usertoken" required><br>
+                <label for="userid">User ID</label> <input type="text" name="userid" id="userid" required><br>
+                <button id="fetch">Fetch from Simply Plural</button>
+                </section>
+                <section>
+                <br><span id="fetchsplash"></span>
+                <div id="submitAlt" style="display:none;">
+                    <ul id="roster">
+    
+                    </ul>
+                    <span class="linkbutton" id="checkall">Select All</span><br>
+                    <label for="sysLoc">These <%- pluralize(cookies.alter_term) %> will be imported into: </label>
+                    <select name="sysLoc" id="sysLoc">
+                        <option value="new" selected>Create New <%- capitalise(cookies.system_term) %></option>
+                    </select>
+                    
+                    <button onclick="allAboard()" id="import">Import <%= capitalise(cookies.system_term) %></button>
+                    <p class="splash">"Create New <%- capitalise(cookies.system_term) %>" will create a new <%- cookies.system_term %> called "Imported from Simply Plural". If you already have a <%- cookies.system_term %> named that, 3 random numbers will be appended to the end to prevent confusion. Press "rename" next to these <%- pluralize(cookies.system_term) %>' names on the "My <%- capitalise(cookies.system_term) %>" page to rename them to whatever you like.</p>
+                    
+                </div>
+            </section>
+    </div>
+    <div id="screen" class="modal" style="display:none;">
+        <div id="modal-content" class="modal-content" style="overflow:hidden;">
+            <h2>Talking to Simply Plural. Please wait.</h2>
+            <img src="/img/svg/bubbles.svg" class="medimg">
+            <p id="systemcreate" style="display: none;" class="loading">Creating the <%= cookies.system_term %></p>
+            <p id="importalter" style="display: none;"><span class="loading">Importing <span id="callno"></span> to <span id="systemDrop">SYS</span></span></p>
+            <div id="loadcontainer">
+                <div id="loadbar"></div>
+            </div>
+        </div>
+        
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    <script>
+        function randomise (arr){ return arr[Math.floor(Math.random()*arr.length)] }
+            async function getSystems(){
+                    let response = await fetch(`/system-data`, { 
+                    method: "GET",
+                    headers: { 
+                    "api-lh-call": "api-lh-call",
+                    'Content-Type': 'application/json',
+                    "grab": "systems"
+                    } 
+                });
+            body = await response.text();
+            if (!response.ok) return $("#wrapper").html("<p><img src='/img/svg/ship-icon.svg' class='tinyimg'><em>There was an error communicating with our database. Please reload or try again later.</em></p>");
+
+            sysInfo = JSON.parse(body);
+            for (i in sysInfo.systems){
+                $("#sysLoc").append(`<option value="${sysInfo.systems[i].sys_id}">${sysInfo.systems[i].alias}</option>`);
+            }
+        }
+            getSystems();
+            $("#checkall").click(function() {
+                    // var cblist = $("input[name=alterChoice]");
+                    if ($("#checkall").text()== "Select All"){
+                       $('input:checkbox').each(function(){
+                            $(this).prop('checked',true);
+                    }) 
+                    $("#checkall").text("Unselect All");
+                    } else {
+                        $('input:checkbox').each(function(){
+                            $(this).prop('checked',false);
+                    }) 
+                    $("#checkall").text("Select All");
+                    }
+                       
+                }); 
+        async function getAlter(id, token){
+        $("#fetchsplash").html('<img src="/img/svg/bubbles.svg" class="tinyimg">');
+        const response = await fetch(`https://api.apparyllis.com/v1/members/${id}`,{
+            method: "GET",
+            headers:{
+            "Authorization": token,
+            "User-Agent": "Lighthouse/Web App (www.writelighthouse.com, dee_deyes@writelighthouse.com, put here for contact if SP devs need to)"
+            }
+        });
+        if (response.status== 401){
+            // Unauthorised
+            $("#fetchsplash").html("Simply Plural returned a <strong>401</strong> error. Check your token and try again.")
+        } else if (response.status==403){
+            // Not found
+            $("#fetchsplash").html("Simply Plural returned a <strong>403</strong> error. Check your User ID and try again.")
+        } else if (response.status !== 200){
+            // Not OK.
+            $("#fetchsplash").html("Simply Plural returned an error. Please try again later.")
+        } else {
+            $("#form").slideUp("fast")
+            // Is ok
+            $("#fetchsplash").html("<h3>Lighthouse will import:</h3>")
+            const alter = await response.json();
+            $("#submitAlt").fadeIn("slow")
+            for (i in alter){
+                $('#roster')
+                    .append($(`<li><input type="checkbox" class="alterChoice" value="${alter[i].id}" id="${alter[i].id}"><label for="${alter[i].id}"><img src="${alter[i].content.avatarUrl}" class="vtinyimg"> ${alter[i].content.name}</label></li>`)
+                        .hide()
+                        .fadeIn(500)
+                    );
+            }
+        }
+        }
+        $("#fetch").click(async function(){
+            if ($("#usertoken").val()=="" || $("#userid").val()=="") return $("#fetchsplash").text("Please fill out the token and ID blanks.")
+            getAlter($("#userid").val(), $("#usertoken").val())
+        });
+        async function allAboard(){
+        // 
+        event.preventDefault();
+        if ($('.alterChoice:checkbox:checked').length == 0) return;
+        $("#screen").fadeIn("slow");
+       let chosenSystem; // This will be the ID for where the alters go.
+       let systemName;
+        if ($("#sysLoc").val() == "new"){
+            $("#systemcreate").show();
+            systemName= `a ${randomise(['brand', 'shiny', 'whole'])} new <%= cookies.system_term %>`;
+            let response = await fetch(`/system-data`, { 
+                method: "PUT",
+                headers: { 
+                  "api-lh-call": "api-lh-call",
+                  'Content-Type': 'application/json',
+                }, 
+                body: JSON.stringify({
+                  "edit": "sp-system"
+                })
+            });
+            let body = await response.text();
+            if (!response.ok) return $("#wrapper").html("<p><img src='/img/svg/ship-icon.svg' class='tinyimg'><em>There was an error communicating with our database. Please reload or try again later.</em></p>");
+            let sysInfo = JSON.parse(body);
+            if (sysInfo.code==200){
+                // We're good!
+                chosenSystem= sysInfo.sys_id;
+            }
+        } else {
+            chosenSystem=$("#sysLoc").val();
+            systemName= $("#sysLoc").children("option").filter(":selected").text();
+        }
+        $("#systemcreate").hide()
+        $("#systemDrop").text(systemName);
+        $("#importalter").show();
+        var callno= "";
+            var i = 0;
+
+            async function callLoop() {
+            setTimeout(async function() {
+                console.log($('.alterChoice:checkbox:checked')[i].id)
+                // https://api.apparyllis.com/v1/member/:systemId/:docId
+                let response = await fetch(`https://api.apparyllis.com/v1/member/${$("#userid").val()}/${$('.alterChoice:checkbox:checked')[i].id}`, { 
+                headers: { 
+                    "Authorization": $("#usertoken").val(),
+                    "User-Agent": "Lighthouse/Web App (www.writelighthouse.com, dee_deyes@writelighthouse.com, put here for contact if PK devs need to)" 
+                } 
+            });
+            let body = await response.text();
+            let sysInfo = JSON.parse(body);
+            callno++;
+            $("#callno").text(sysInfo.display_name == null ? sysInfo.name : sysInfo.display_name);
+            $("#loadbar").animate({width: (callno/($('.alterChoice:checkbox:checked').length) * 100) + "%"}, 400 );
+            // Got info from Simply Plural. Now send it to Lighthouse.
+             response = await fetch(`/system-data`, { 
+                method: "PUT",
+                headers: { 
+                  "api-lh-call": "api-lh-call",
+                  'Content-Type': 'application/json',
+                }, 
+                body: JSON.stringify({
+                  "edit": "sp-alter",
+                  "sysId": `${chosenSystem}`,
+                  "name": sysInfo.content.name,
+                  "pronouns": sysInfo.content.pronouns,
+                  "avatar": sysInfo.content.avatarUrl,
+                  "colour": sysInfo.content.color,
+                  "notes": sysInfo.content.desc
+                })
+            });
+             body = await response.text();
+             if (!response.ok) return $("#wrapper").html("<p><img src='/img/svg/ship-icon.svg' class='tinyimg'><em>There was an error communicating with our database. Please reload or try again later.</em></p>");
+             sysInfo = JSON.parse(body);
+
+                i++;                    //  increment the counter
+                if (i < $('.alterChoice:checkbox:checked').length) {           //  if the counter < length, call the loop function
+                callLoop();             //  ..  again which will trigger another 
+                } else {
+                    // We're done.
+                    // $("#screen").fadeOut("slow");
+                    $("#modal-content").empty().delay(1000).html(`<h2>${randomise(['Woo-Hoo', 'Congrats', 'Yay'])}! Your <%= cookies.system_term %> was successfully imported.</h2><p>You will be redirected in 2 seconds.</p>`);
+                    $("#pid").val("")
+                $("#pktoken").val("")
+
+                setTimeout(function(){
+                    window.location.replace(`/system/${chosenSystem}`);
+                }, 2000);
+                    
+                } 
+            }, 500); // Call every .5 seconds.
+            }
+
+            callLoop();
+    }
+    </script>
+    </body>
+</html>

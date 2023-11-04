@@ -743,6 +743,11 @@ app.get('/tutorial', (req, res) => {
 		res.render(`pages/tutorial`, { session: req.session, splash:splash, cookies:req.cookies});
 	});
 
+app.get('/simply-plural', (req, res) => {
+	if (isLoggedIn(req)){
+		res.render(`pages/sp-import`, { session: req.session, splash:splash, cookies:req.cookies });
+	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	});
 app.get('/combine/:item', (req, res) => {
 	if (isLoggedIn(req)){
 		let page;
@@ -3886,6 +3891,68 @@ app.put("/forum-data", (req,res) => {
 						altPro,
 						altBirth,
 						altAva 
+					]}, (err, result) => {
+						if (err) {
+						console.log(err.stack);
+						res.status(400);
+						} else {
+							res.status(200).json({code: 200})
+						}
+					
+					});
+				} else if (editMode=="sp-system"){
+					// Create a new system if user requests in Pluralkit import
+					var newSys= "Imported from Simply Plural";
+					client.query({text: "SELECT sys_id FROM systems WHERE sys_alias=$1 AND user_id=$2;",values: [`'${Buffer.from(newSys).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
+						if (err) {
+						  console.log(err.stack);
+						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
+						} else {
+							if (result.rows.length > 0){
+								newSys+= ` ${getRandomInt(111,999)}`;
+							}
+							// Create a new system
+						client.query({text: "INSERT INTO systems (sys_alias, user_id) VALUES ($1, $2)",values: [`'${Buffer.from(newSys).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, result) => {
+							if (err) {
+							console.log(err.stack);
+							res.status(400);
+							} else {
+								// Grab its ID.
+								client.query({text: "SELECT * FROM systems WHERE sys_alias=$1 AND user_id=$2;",values: [`'${Buffer.from(newSys).toString('base64')}'`, `${getCookies(req)['u_id']}`]}, (err, fresult) => {
+									if (err) {
+									console.log(err.stack);
+									res.status(400);
+									} else {
+										res.status(200).json({code:200, sys_id: fresult.rows[0].sys_id});
+									}
+								})
+							}
+						})
+					}
+				})
+
+				} else if(editMode=="sp-alter"){
+					/*
+					"edit": "sp-alter",
+                  "sysId": `${chosenSystem}`,
+                  "name": sysInfo.content.name,
+                  "pronouns": sysInfo.content.pronouns,
+                  "avatar": sysInfo.content.avatarUrl,
+                  "colour": sysInfo.content.color,
+                  "notes": sysInfo.content.desc
+					*/
+					// Place selected alters in database.
+					let altName= req.body.name == null ? `'${Buffer.from('New alter').toString('base64')}'`: `'${Buffer.from(req.body.name).toString('base64')}'`;
+					let altPro= req.body.pronouns == null ? null: `'${Buffer.from(req.body.pronouns).toString('base64')}'`;
+					let altBirth= req.body.birthday == null ? null: `'${Buffer.from(req.body.birthday).toString('base64')}'`;
+					let altAva= req.body.avatar == null ? `'${Buffer.from('https://www.writelighthouse.com/img/avatar-default.jpg').toString('base64')}'`: `'${Buffer.from(req.body.avatar).toString('base64')}'`;
+					client.query({text: "INSERT INTO alters (name, sys_id, pronouns, img_url, colour, notes) VALUES($1, $2, $3, $4, $5, $6);",values: [
+						altName, 
+						req.body.sysId,
+						altPro,
+						altAva,
+						req.body.colour,
+						`'${Buffer.from(req.body.notes).toString('base64')}'`
 					]}, (err, result) => {
 						if (err) {
 						console.log(err.stack);

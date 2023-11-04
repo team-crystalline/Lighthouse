@@ -34,7 +34,7 @@
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
-            <h2>Import from Pluralkit</h2>
+            <img src="https://avatars.githubusercontent.com/u/94687283?s=200&v=4" class="tinyimg" style="float:left;" alt="Pluralkit icon"><h1>Import from Pluralkit</h1>
             <p>Use Pluralkit? We can fetch your <%- pluralize(cookies.alter_term) %> and add them to your account. Importing will create a new <%- cookies.system_term %> that can be renamed on the <a href="/system">My <%- capitalise(cookies.system_term) %></a> page</a>.</p>
             <p><em>Don't know your system ID?</em> Direct message "pk;s" to Pluralkit, or type "pk;s" in a channel that Pluralkit can view.</p>
             <p>Adding your Pluralkit token is completely optional. Adding your token allows Lighthouse to fetch your private <%- pluralize(cookies.alter_term) %> as well. We do not store this token, or your <%= cookies.system_term %>'s ID. <strong>Do not share your token with anyone you do not trust.</strong></p>
@@ -58,7 +58,7 @@
                     <option value="new" selected>Create New <%- capitalise(cookies.system_term) %></option>
                 </select>
                 
-                <button onclick="allAboard()" id="import">Import System</button>
+                <button onclick="allAboard()" id="import">Import <%= capitalise(cookies.system_term) %></button>
                 <p class="splash">"Create New <%- capitalise(cookies.system_term) %>" will create a new <%- cookies.system_term %> called "Imported from Pluralkit". If you already have a <%- cookies.system_term %> named that, 3 random numbers will be appended to the end to prevent confusion. Press "rename" next to these <%- pluralize(cookies.system_term) %>' names on the "My <%- capitalise(cookies.system_term) %>" page to rename them to whatever you like.</p>
                 
             </div>
@@ -69,7 +69,7 @@
             <h2>Talking to Pluralkit. Please wait.</h2>
             <img src="/img/svg/bubbles.svg" class="medimg">
             <p><strong>Moving things over from Pluralkit can take some time.</strong> If you have a large <%= cookies.system_term %>, this may take a bit.</p>
-            <p id="systemcreate" style="display: none;" class="loading">Creating the system</p>
+            <p id="systemcreate" style="display: none;" class="loading">Creating the <%= cookies.system_term %></p>
             <p id="importalter" style="display: none;"><span class="loading">Importing <span id="callno"></span> to <span id="systemDrop">SYS</span></span></p>
             <div id="loadcontainer">
                 <div id="loadbar"></div>

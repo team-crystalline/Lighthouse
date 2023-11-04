@@ -159,6 +159,10 @@ nav {
     max-height: 6em;
 }
 
+.required::before{
+  content: "* ";
+  color: red
+}
 
 article{
     border-bottom: 1px solid black;

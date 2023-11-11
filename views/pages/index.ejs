@@ -95,6 +95,11 @@
                 } else {
                     sysTerm= "system";
                 }
+                if (cookies.subsystem_term){
+                    subsysTerm= cookies.subsystem_term;
+                } else {
+                    subsysTerm= "subsystem";
+                }
                 %>
             <hgroup style="text-align:center;">
                 <h2>Journal Together</h2></hgroup>
@@ -138,8 +143,10 @@
                 
             </div>
             <div>
-                <div><h2>Understand your <%- capitalise(pluralize(altTerm)) %> Better</h2>
-                    <p><%- capitalise(pluralize(altTerm)) %> can provide basic information on themselves, but can also address what makes them feel safe, what they would want from the <%- sysTerm %>, and what they would like accommodations for.</p></div>
+                <div><h2>Understand Your <%- capitalise(pluralize(altTerm)) %> Better</h2>
+                    <p><%- capitalise(pluralize(altTerm)) %> can provide basic information on themselves, but can also address what makes them feel safe, what they would want from the <%- sysTerm %>, and what they would like accommodations for.</p>
+                    <p>Users can also <strong>create nested <%= pluralize(subsysTerm) %>, or a second standalone <%= sysTerm %></strong>, for those with complex <%= pluralize(sysTerm) %>.</p>
+                </div>
                 
             </div>
             <div>
@@ -149,11 +156,10 @@
             </div>
             <div>
                 <div><h2>Interactive Worksheets</h2>
-                    <p>If you are a trauma-based <%= sysTerm %> or would like to use trauma worksheets, Lighthouse has a growing number of interactive pages to help process emotions, make a safety plan, or prepare for an event that you know will be stressful or triggering.</p><p>Though Lighthouse is not produced or developed by a mental health professional, these worksheets are lifted from the developer's therapy homework.*</p><p><small>*These worksheets are intended for educational and informational purposes only and should not be used as a substitute for professional mental health care.</small></p></div>
+                    <p>If you have a trauma-based <%= sysTerm %> or would like to use trauma worksheets, Lighthouse has a growing number of interactive pages to help process emotions, make a safety plan, or prepare for an event that you know will be stressful or triggering.</p><p>Though Lighthouse is not produced or developed by a mental health professional, these worksheets are lifted from the developer's therapy homework.*</p><p><small>*These worksheets are intended for educational and informational purposes only and should not be used as a substitute for professional mental health care.</small></p></div>
                 
             </div>
         </section>
-        
         <% if (donators.length > 0){ %>
             <hr>
             <section>

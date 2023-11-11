@@ -4,7 +4,7 @@ var cookieParser = require('cookie-parser');
 const session = require('cookie-session');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
-const { Pool, Client,pg } = require('pg');
+const { Pool, Client,pg, Query } = require('pg');
 const bcrypt = require("bcrypt");
 const CryptoJS = require("crypto-js");
 const request = require('request');
@@ -26,6 +26,33 @@ const langVar= require("./js/languages.js");
 const { start } = require('repl');
 
 require('dotenv').config();
+let dayNames= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// Back end Functions
+function truncate (str, n){
+	return (str.length > n) ? str.slice(0, n-1) + '...' : str;
+  };
+
+function encryptWithAES(text){
+	const passphrase = process.env.cryptkey;
+	return CryptoJS.AES.encrypt(text, passphrase).toString();
+  }
+   
+  function decryptWithAES(ciphertext){
+	const passphrase = process.env.cryptkey;
+	const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
+	const originalText = bytes.toString(CryptoJS.enc.Utf8);
+	return originalText;
+  }
+
+  const parseIp = (req) =>{
+	return req.headers['x-forwarded-for']?.split(',').shift()
+|| req.socket?.remoteAddress;
+}
+
+function capitalise(s){
+	return s[0].toUpperCase() + s.slice(1);
+}
 
 function getKeyByValue(object, value) {
 	return Object.keys(object).find(key => object[key] === value);
@@ -35,6 +62,10 @@ function getKeyByValue(object, value) {
 	return a.group - b.group;
   }
   
+  /**
+   * @param {array} array The array of objects that contain a "group" property.
+   * @returns {array} Array of objects separated by "group" property.
+   */
   const splitByGroup = (array) => {
 	const groups = {};
 	array.forEach((element) => {
@@ -47,8 +78,13 @@ function getKeyByValue(object, value) {
   
 	return Object.values(groups);
   };
-  
 
+  
+/**
+ * Generates an object containing HTTP request cookies.
+ * @param {object} req ExpressJS API request
+ * @returns {object} Collected of cookies associated by request. Retrieve with object['key'].
+ */
 const getCookies = (req) => {
  // We extract the raw cookies from the request headers
  if (!req.headers.cookie) return 'undefined';
@@ -65,11 +101,6 @@ const getCookies = (req) => {
 
 var alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Introject (Mixed)"]
 
-const api = new PKAPI({
-	base_url: "https://api.pluralkit.me", // base api url
-	version: 1, // api version
-	token: undefined // for authing requests. only set if you're using this for a single system!
-});
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -81,12 +112,31 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+/**
+ * Selects a random value from array
+ * @param {array} arr Array to randomly select from. (This can be an array of anything, including mixed values.)
+ * @returns {*} Random value from array.
+ */
+function randomise (arr){
+	return arr[Math.floor(Math.random()*arr.length)];
+}
+
+/**
+ * Creates a random integer from a specified range.
+ * @param {number} min Minimum for range
+ * @param {number} max MAximum for range
+ * @returns {number} Randomised integer
+ */
 function getRandomInt(min, max){
 	min = Math.ceil(min);
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
+/**
+ * Uses HTTP request to determine if the user is logged in.
+ * @param {object} req ExpressJS API's HTTP request
+ * @returns {boolean} true or false
+ */
 function isLoggedIn(req){
   if (!req.cookies.u_id){
 	return false;
@@ -94,29 +144,105 @@ function isLoggedIn(req){
 	return true;
   }
 }
-
+/**
+ * ** CURRENTLY UNUSED** Determines if the cookies and session user IDs match.
+ * @param {object} req 
+ * @returns {boolean} true or false
+ */
 function idCheck(req){
 	return getCookies(req)['u_id']== req.session.u_id;
 }
-
-
 var splash;
 
+/**
+ * Sorts an array of data by date. Is in ascending order. use array.reverse() for descending.
+ * @param {*} a 
+ * @param {*} b 
+ * @returns 
+ */
 function sortFunction(a,b){  
     var dateA = new Date(a.date).getTime();
     var dateB = new Date(b.date).getTime();
     return dateA > dateB ? 1 : -1;  
 }; 
 
+/**
+ * Checks if the request is specifically an internal API call, or a browser making a request.
+ * @param {object} req ExpressJS API request. 
+ * @returns {boolean} true or false
+ */
 function apiEyesOnly(req) {
 	if (req.headers['api-lh-call']) {
-	   // custom header exists, then call next() to pass to the next function
-	//    console.log("This is the API.")
 	   return true;
 	} else {
 	  return false;     
 	}
   }
+
+  /**
+   * Cuts off a string at a specified length and appends "..." to the end to indicate more information.
+   * @param {string} str String to truncate
+   * @param {number} [n=16] index in which the string is cut off (Default: 16)
+   * @returns {string} Truncated string
+   */
+  function truncate(str, n=16){
+	return (str.length > n) ? str.slice(0, n-1) + '...' : str;
+  };
+
+  /**
+   * After getting .toString(), removes any extra ' characters at the beginning and end.
+   * @param {string} str 
+   * @returns {string} "Distilled" string.
+   */
+  function distill(str){
+	if (str.charAt(0) == "\""){
+		str= str.substring(1);
+	}
+	if (str.charAt(0) == "'"){
+		str= str.substring(1);
+	}
+	if (str.charAt(str.length-1) == "\""){
+		str= str.substring(0, str.length - 1);
+	}
+	if (str.charAt(str.length-1) == "'"){
+		str= str.substring(0, str.length - 1);
+	}
+	return str
+}
+
+function getOrdinal(n) {
+	let ord;
+	switch(n){
+		case n % 10== 1:
+		case n % 100 != 11:
+			ord="st";
+			break;
+		case n%10== 2:
+		case n%100 != 12:
+			ord="nd";
+			break;
+		case n%10==3:
+		case n % 100 != 13:
+			ord= "rd";
+			break;
+		default:
+			ord="th";
+			break; 
+	}
+	return ord;
+  }
+
+/**
+ * Renders a 403 error page.
+ * @param {object} res ExpressJS API response.
+ * @param {object} req ExpressJS API request.
+ * @returns {*} An API response that serves an error 403 page.
+ */
+function forbidUser(res, req){
+	return res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
+}
+
+  // DATABASE
 if (process.env['environment']== "dev"){
 	console.log("Starting Lighthouse in SANDBOX mode.");
 	var client = new Client({
@@ -139,6 +265,28 @@ if (process.env['environment']== "dev"){
 	
 }
 
+// Database functions now that all that is declared.
+/**
+ * Run a database query. Renders a 400 error if nothing works. Use with "await".
+ * @param {object} client The database client credentials. Differs between production and dev.
+ * @param {string} customQuery The string query with $1, $2, etc.
+ * @param {array} customValues array of values for $1, $2, etc.
+ * @param {object} res The ExpressJS API response
+ * @param {object} req The ExpressJS API request
+ * @returns {array} Array of matching rows to query.
+ */
+async function query(client, customQuery, customValues, res, req) {
+	try{
+		const result= await client.query({ text: customQuery, values: customValues });
+	// console.log(result.rows)
+	return result.rows;
+	} catch(e){
+	res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
+
+	}
+	
+  }
+  
 
 client.connect();
 
@@ -168,7 +316,8 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/css")));
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/js")));
 
-
+let monthNames=["January","February","March","April","May","June","July",
+"August","September","October","November","December"];
 // App Local Variables
 app.locals.version= pjson.version;
 app.locals.siteLanguage= langVar.siteLanguage;
@@ -304,59 +453,21 @@ app.locals.moods=[
 	{name: "Distressed", positive: false, emoji: "😫"},
 	{name: "Bored", positive: false, emoji: "🥱"}
 ]
-app.locals.isLoggedIn = function (cookies){
+app.locals.isLoggedIn = function(cookies){
 	if (!cookies.u_id){
-		return false;
-	  } else {
-		return true;
-	  }
-  }
-app.locals.randomise= function (arr){
-	return arr[Math.floor(Math.random()*arr.length)];
-}
-
-app.locals.truncate= function(str, n){
-  return (str.length > n) ? str.slice(0, n-1) + '...' : str;
-};
-
-app.locals.distill= function(str){
-	if (str.charAt(0) == "\""){
-		str= str.substring(1);
+	  return false;
+	} else {
+	  return true;
 	}
-	if (str.charAt(0) == "'"){
-		str= str.substring(1);
-	}
-	if (str.charAt(str.length-1) == "\""){
-		str= str.substring(0, str.length - 1);
-	}
-	if (str.charAt(str.length-1) == "'"){
-		str= str.substring(0, str.length - 1);
-	}
-	return str
-}
-
-app.locals.getOrdinal= function (n) {
-	let ord = 'th';
-  
-	if (n % 10 == 1 && n % 100 != 11)
-	{
-	  ord = 'st';
-	}
-	else if (n % 10 == 2 && n % 100 != 12)
-	{
-	  ord = 'nd';
-	}
-	else if (n % 10 == 3 && n % 100 != 13)
-	{
-	  ord = 'rd';
-	}
-  
-	return ord;
-  }
-app.locals.monthNames= ["January","February","March","April","May","June","July",
-"August","September","October","November","December"];
-app.locals.dayNames= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
+  };
+app.locals.randomise= randomise;
+app.locals.truncate= truncate;
+app.locals.distill= distill;
+app.locals.getOrdinal= getOrdinal;
+app.locals.monthNames= monthNames;
+app.locals.dayNames= dayNames;
+app.locals.encrypt= encryptWithAES;
+app.locals.decrypt= decryptWithAES;
 
 /** 
   *@param a- The array you're paginating.
@@ -374,79 +485,42 @@ function paginate (a, n){
 	if (a.length > 0) b.push(a)
 	return b;
 }
+    
 app.locals.paginate = paginate;
-
-// Back end Functions
-function truncate (str, n){
-	return (str.length > n) ? str.slice(0, n-1) + '...' : str;
-  };
-
-function encryptWithAES(text){
-	const passphrase = process.env.cryptkey;
-	return CryptoJS.AES.encrypt(text, passphrase).toString();
-  }
-   
-  function decryptWithAES(ciphertext){
-	const passphrase = process.env.cryptkey;
-	const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
-	const originalText = bytes.toString(CryptoJS.enc.Utf8);
-	return originalText;
-  }
-
-  const parseIp = (req) =>{
-	return req.headers['x-forwarded-for']?.split(',').shift()
-|| req.socket?.remoteAddress;
-}
   
-app.locals.capitalise= function(s){
-		return s[0].toUpperCase() + s.slice(1);
-	}
+app.locals.capitalise= capitalise;
 app.locals.pluralize= pluralize;
-app.locals.possessive= function(s){
-	let doc= compromise.nlp(s);
-	console.log(doc)
-};
 
-  app.set('views', path.join(__dirname, 'views'))
-  app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs');
 
-  app.all('*', function (req, res){
+  app.all('*', async function (req, res){
 	// Loads before all other routes.
 	if (isLoggedIn(req)){
-			// Grab their IDs real quick.
-		client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, async function (err, result) {
-			if (err) {
-			console.log(err.stack);
-			// req.flash("flash", strings.account.sessionExpired);
-			res.redirect("/");
-			} else{
-				// Let's grab IDs while we're at it.
-				var userResults= await result.rows[0];
-				try{
-					req.session.u_id= userResults.id;
-					req.session.is_legacy= userResults.is_legacy;
-					req.session.username= userResults.username;
-					req.session.email= userResults.email;
-					req.session.skin= userResults.skin;
-					req.session.system_term= truncate(userResults.system_term || getCookies(req)['system_term'] || "system",16);
-					req.session.alter_term= truncate(userResults.alter_term || getCookies(req)['alter_term'] || "alter",16);
-					req.session.subsystem_term= truncate(userResults.subsystem_term || getCookies(req)['subsystem_term'] || "subsystem",16);
-					req.session.inner_worlds = userResults.inner_worlds || false;
-					req.session.innerworld_term= truncate(userResults.innerworld_term || getCookies(req)['innerworld_term'] || "inner world",16);
-					req.session.plural_term= truncate(userResults.plural_term || getCookies(req)['plural_term'] || "plural",16);
-					req.session.language= userResults.language || "en";
-					req.session.is_dev=([process.env.dev1, process.env.dev2,process.env.dev3].includes(userResults.id));
-					req.session.textsize= userResults.textsize;
-					req.session.worksheets_enabled= userResults.worksheets_enabled;
-					req.session.font= userResults.font;
-				} catch (e){
-					// They logged out!
-					console.log(`Caught error, skipped setting session. User ID might not exist.`)
-				}
-
+		// Let's only grab the database if we need to.
+			const userData= await query(client, "SELECT * FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+			let results= userData[0];
+			try{
+				req.session.u_id= results.id;
+					req.session.is_legacy= results.is_legacy;
+					req.session.username= results.username;
+					req.session.email= results.email;
+					req.session.skin= results.skin;
+					req.session.system_term= truncate(results.system_term || getCookies(req)['system_term'] || "system",16);
+					req.session.alter_term= truncate(results.alter_term || getCookies(req)['alter_term'] || "alter",16);
+					req.session.subsystem_term= truncate(results.subsystem_term || getCookies(req)['subsystem_term'] || "subsystem",16);
+					req.session.inner_worlds = results.inner_worlds || false;
+					req.session.innerworld_term= truncate(results.innerworld_term || getCookies(req)['innerworld_term'] || "inner world",16);
+					req.session.plural_term= truncate(results.plural_term || getCookies(req)['plural_term'] || "plural",16);
+					req.session.language= results.language || "en";
+					req.session.is_dev=([process.env.dev1, process.env.dev2,process.env.dev3].includes(results.id));
+					req.session.textsize= results.textsize;
+					req.session.worksheets_enabled= results.worksheets_enabled;
+					req.session.font= results.font;
+			} catch (e){
+				// They're likely logged out.
 			}
-		});
-		
+			
 
 	} else {
 		req.session.alter_term= "alter";
@@ -469,26 +543,17 @@ app.locals.possessive= function(s){
  }
   // PAGES- GET REQUEST
 
-  app.get('/', (req, res) => {
-	  client.query({text: "SELECT COUNT(id) FROM users;",values: []}, (err, result) => {
-		  if (err) {
-			console.log(err.stack);
-			res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-		} else {
-			var userCount= result.rows[0].count;
-			client.query({text: "SELECT * FROM donators;",values: []}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-			  } else {
-				var donators= result.rows;
-				res.render(`pages/index`, { session: req.session, splash:splash, userCount:userCount, cookies:req.cookies, donators:donators });
-			  }
-			});
-			
-		}
-	});
+
+
+
+  app.get('/', async function (req, res){
+	// client, customQuery, customValues, res, req
+	const count= await query(client, "SELECT COUNT(id) FROM users;", [], res, req);
+	const donators= await query(client,"SELECT * FROM donators;", [], res, req);
+	res.render(`pages/index`, { session: req.session, splash:splash, userCount:count[0].count, cookies:req.cookies, donators:donators });
   });
+
+  
   app.get('/verify/:id', (req, res)=>{
 	if (isLoggedIn(req)){
 		// Redirect them to the index.
@@ -1658,78 +1723,56 @@ app.get('/wish-d/:id', (req, res) => {
 	} else return res.status(403);
   
 });
-  app.get('/system', (req, res, next) => {
+
+  app.get('/system', async function(req, res) {
     if (isLoggedIn(req)){
-		client.query({text: "SELECT inner_worlds from USERS WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-			if (err) {
-			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-		  } else {
-			  req.session.innerworld = result.rows[0].inner_worlds || false;
-			  res.status(200).render('pages/system',{ session: req.session, splash:splash,cookies:req.cookies});
-		  }
-		});
-		
+		const innerWorlds= await query(client, "SELECT inner_worlds from USERS WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+		req.session.innerworld = innerWorlds[0].inner_worlds || false;
+		res.status(200).render('pages/system',{ session: req.session, splash:splash,cookies:req.cookies});
     } else {
-        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
+        forbidUser(res, req);
     }
   });
 
 	var alterArr;
-  app.get('/system/:id', (req, res, next) => {
+  app.get('/system/:id', async function(req, res, next){
     if (isLoggedIn(req)){
 		if (!req.session.worksheets_enabled){
 			// Quick, add that.
-			client.query({text: "SELECT worksheets_enabled FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-			  } else {
-				  req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
-			  }
-			});
+			const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+			req.session.worksheets_enabled= wsEn[0].worksheets_enabled;
 		}
-		client.query({text: "SELECT systems.sys_id, systems.subsys_id, systems.user_id, systems.sys_alias, alters.alt_id, systems.icon FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1 ORDER BY alters.name ASC;",values: [`${req.params.id}`]}, (err, result) => {
-			if (err) {
-			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-		  } else {
-			  req.session.chosenSys= result.rows[0];
-		  }
-		});
-			client.query({text: "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
-	            if (err) {
-	              console.log(err.stack);
-	              res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-	          } else {
-	              req.session.alters = [];
-	              for (i in (result.rows)){
-	                //   console.table(result.rows[i]);
-	                  (req.session.alters).push({
-						name: Buffer.from(result.rows[i].name, 'base64').toString(), 
-						id: result.rows[i].sys_id, 
-						a_id: result.rows[i].alt_id, 
-						mood: result.rows[i].mood, 
-						pronouns: result.rows[i].pronouns, 
-						is_archived: result.rows[i].is_archived, 
-						icon: result.rows[i].img_url || "aHR0cHM6Ly93d3cud3JpdGVsaWdodGhvdXNlLmNvbS9pbWcvYXZhdGFyLWRlZmF1bHQuanBn",
-						img_blob: result.rows[i].img_blob,
-						mimetype: result.rows[i].blob_mimetype,
-						colour: result.rows[i].colour
-					})
-	              }
-				  try {
-					(req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
-				  } catch (e){
-					// Weird.
-				  }
-	          }
-			  (req.session.alters).sort((a, b) => a.distance - b.distance)
-	          res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies, sys_id: req.params.id});
-	        });
+		const sysMap= await query(client, "SELECT systems.sys_id, systems.subsys_id, systems.user_id, systems.sys_alias, alters.alt_id, systems.icon FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1 ORDER BY alters.name ASC", [`${req.params.id}`], res, req);
+		req.session.chosenSys= sysMap[0];
+		if (req.session.chosenSys.subsys_id != null){
+			// There's a subsystem.
+			const subsysInf= await query(client, "SELECT sys_alias FROM systems WHERE sys_id=$1", [`${req.session.chosenSys.subsys_id}`], res, req);
+			req.session.chosenSys.subsys_alias= subsysInf[0].sys_alias;
+		}
+
+			const alters = await query(client, "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;", [`${req.params.id}`], res, req);
+			req.session.alters=[]
+			alters.forEach((alter) =>{
+				req.session.alters.push({
+					name: Buffer.from(alter.name, 'base64').toString(), 
+						id: alter.sys_id, 
+						a_id: alter.alt_id, 
+						mood: alter.mood, 
+						pronouns: alter.pronouns, 
+						is_archived: alter.is_archived, 
+						icon: alter.img_url || "aHR0cHM6Ly93d3cud3JpdGVsaWdodGhvdXNlLmNvbS9pbWcvYXZhdGFyLWRlZmF1bHQuanBn",
+						img_blob: alter.img_blob,
+						mimetype: alter.blob_mimetype,
+						colour: alter.colour
+				})
+			});
+			if (req.session.alters.length > 1){
+				(req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
+			}
+			res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters,cookies:req.cookies, sys_id: req.params.id});
 
     } else {
-        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
+		forbidUser(res, req)
     }
     splash=null;
   });

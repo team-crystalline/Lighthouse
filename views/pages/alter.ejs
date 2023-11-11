@@ -468,9 +468,9 @@ td{
         });
 
         $("#skin").change(function(){
-            $("#login").fadeTo("fast", 0,function(){
+            $("#login").fadeTo(100, 0,function(){
             $("#login").load(function () { //avoiding blinking, wait until loaded
-                $("#login").fadeTo("fast", 1);
+                $("#login").fadeTo(100, 1);
             });
             $("#login").attr("src",`/img/${$("#skin").val()}.png`);
             $("#saveSplash").text("You currently have unsaved changes.");

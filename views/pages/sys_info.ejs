@@ -64,6 +64,7 @@ var journSkin=[
         <section>
             <ul class="breadcrumb">
                 <li><a href="/system" title="Your <%= capitalise(cookies.system_term) %>"><%= capitalise(cookies.system_term) %></a></li>
+                <% if (session.chosenSys.subsys_id){ %><li><a href="/system/<%= session.chosenSys.subsys_id %>"><%= capitalise(Buffer.from(session.chosenSys.subsys_alias, "base64").toString()) %></a></li><% } %>
                 <li><%= Buffer.from(session.chosenSys.sys_alias, 'base64').toString() %></li>
             </ul>
             <div id="Wait"></div>

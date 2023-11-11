@@ -108,7 +108,7 @@
                 <textarea name="safety"><% if (chosenAlter.safe_place !== null) { %><%- Buffer.from(chosenAlter.safe_place, 'base64').toString() %><% } %></textarea>
                 <label for="acc"><%= Buffer.from(chosenAlter.name, 'base64').toString() %> would like accommodation from the <%= cookies.system_term %> for... (e.g.: Emotional regulation, memory loss)</label>       
                 <textarea name="acc"><% if (chosenAlter.acc !== null) { %><%- Buffer.from(chosenAlter.acc, 'base64').toString() %><% } %></textarea>
-                <label for="wish">A few things <%= Buffer.from(chosenAlter.name, 'base64').toString() %> wishes for (e.g. "to feel safer internally", "to communicate with other parts")</label>       
+                <label for="wish">A few things <%= Buffer.from(chosenAlter.name, 'base64').toString() %> wishes for (e.g. "to feel safer internally", "to communicate with other <%= pluralize(cookies.alter_term) %>")</label>       
                 <textarea name="wish"><% if (chosenAlter.wants !== null) { %><%- Buffer.from(chosenAlter.wants, 'base64').toString() %><% } %></textarea>
                 <label for="relationships">What are <%= Buffer.from(chosenAlter.name, 'base64').toString() %>'s relationships to other <%- pluralize(cookies.alter_term) %>?</label>       
                 <textarea name="relationships"><% if (chosenAlter.relationships !== null) { %><%- Buffer.from(chosenAlter.relationships, 'base64').toString() %><% } %></textarea>

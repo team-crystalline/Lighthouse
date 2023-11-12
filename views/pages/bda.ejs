@@ -34,6 +34,10 @@
             .planSection:last-child{
                 border: 0;
             }
+            .bda::first-letter{
+                font-weight: 900;
+                color: var(--col4);
+            }
         </style>
     </head>
     <body>
@@ -49,27 +53,27 @@
             <% } %>
             <section>
                 <h2>Before, During, After</h2>
-                <p>A <strong>Before, During, After</strong> plan is specifically for an upcoming event or trauma that you know may be stressful or even traumatic to <%- pluralize(cookies.alter_term) %> in your <%- cookies.system_term %>. The goal is to keep splitting/splintering to a minimum during a stressful event</p>
+                <p>A <strong>Before, During, After</strong> plan is specifically for an upcoming event or trauma that you know may be stressful or even traumatic to <%- pluralize(cookies.alter_term) %> in your <%- cookies.system_term %>. The goal is to keep splitting/splintering to a minimum during a stressful event.</p>
                 <form>
                     <label for ="planname">Name This Plan: </label> <input type="text" id="planname" name="planname" minlength="3">
                     <div id="bdapanel">
                       <div class="panel">
-                        <h3>Before</h3>
+                        <h3 class="bda">Before</h3>
                         <label for="planbefore">What will you and the other <%- pluralize(cookies.alter_term) %> do to be ready for this event?</label><br>
                         <textarea name="planbefore" id="planbefore" rows="10" cols="15" minlength="10"></textarea>
                     </div>
                     <div class="panel">
-                        <h3>During</h3>
+                        <h3 class="bda">During</h3>
                         <label for="planduring">How will the <%- cookies.system_term %> stay grounded during this event?</label><br>
                         <textarea name="planduring" id="planduring" rows="10" cols="15" minlength="10"></textarea>
                     </div>
                     <div class="panel">
-                        <h3>After</h3>
+                        <h3 class="bda">After</h3>
                         <label for="planafter">What can everyone do to ensure each others' safety and solace?</label><br>
                         <textarea name="planafter" id="planafter" rows="10" cols="15" minlength="10"></textarea>
                     </div>  
                     </div>
-                    <div id="clear"><center><button name="create" id="planSub">Create Plan</button> <input type="reset" value="Start Over"></center></div>
+                    <div id="clear"><center><button name="create" id="planSub">Create B-D-A Plan</button> <input type="reset" value="Start Over"></center></div>
                 </form>
                 
             </section>
@@ -112,7 +116,7 @@
     return null;
   };
         async function fetchPosts(){
-            $("#wait").show(`fast`);
+            $("#wait").show();
             $("#plans").html("");
                 let response = await fetch(`/bda`, {
             headers: {
@@ -121,7 +125,6 @@
         });
         let body = await response.text();
         let bodyInfo = JSON.parse(body);
-        
         for (i in bodyInfo.body){
             var planString= `<section class="planSection"><h2>${bodyInfo.body[i].alias}</h2><a href="/bda/edit/${bodyInfo.body[i].id}" title="Edit ${bodyInfo.body[i].alias}" id=" ${bodyInfo.body[i].id}"><i class="fa fa-pencil" aria-hidden="true"></i></a><button id="${bodyInfo.body[i].id}" name="${bodyInfo.body[i].alias}" onclick="deletePlan(this)">Remove</button> <div style="padding-left:1em"><h3>BEFORE</h3>`;
             var bArr= (bodyInfo.body[i].before).replace(/\r/gi, '').split("\n").filter(function() { return true; });
@@ -142,7 +145,7 @@
             $("#plans").append(planString);
             }
             
-        $("#wait").hide(`fast`);
+        $("#wait").hide();
         }
             
         $(document).ready(function(){

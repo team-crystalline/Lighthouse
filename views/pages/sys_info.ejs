@@ -88,12 +88,14 @@ var journSkin=[
                             <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="smallimg" style="float:left; margin-right:calc(1em);" alt="Card Icon">
                         <% } %>
                      <br>
-                     <%= truncate(alterArr[i].name, 10) %> 
+                    <%= truncate(alterArr[i].name, 13) %> 
                      <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
                      <% if (alterArr[i].pronouns){ %> 
-                        <% if (distill(alterArr[i].pronouns)){ %><br><small><%- Buffer.from(alterArr[i].pronouns, "base64").toString() %></small>
+                        <% if (distill(alterArr[i].pronouns)){ %><br><small><%- truncate(Buffer.from(alterArr[i].pronouns, "base64").toString(), 32) %></small>
                         <% } %> 
                         <% } %>
+
+                     
                         
                     </div></a> 
                     
@@ -111,11 +113,11 @@ var journSkin=[
                             <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="smallimg" style="float:left; margin-right:calc(1em);" alt="Card Icon">
                         <% } %>
                         <br>
-                        <%= alterArr[i].name %> 
+                        <%= truncate(alterArr[i].name, 13) %> 
                         <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
                         <% if (alterArr[i].pronouns){ %>
                             <% if (distill(alterArr[i].pronouns)){ %>
-                                <br><small><%- Buffer.from(alterArr[i].pronouns, "base64").toString() %></small>
+                                <br><small><%- truncate(Buffer.from(alterArr[i].pronouns, "base64").toString(), 32) %></small>
                                 <% } %>
                                 <% } %>
                     </div></a>
@@ -230,12 +232,24 @@ var journSkin=[
         }
         });
         if ($("#addAlts").length){
+            async function grabPerson() {
+                const response = await fetch("https://fakerapi.it/api/v1/persons?_quantity=1?_locale=en_GB");
+                const person = await response.json();
+                    return {
+                        name: `${person.data[0].firstname} ${person.data[0].lastname}`,
+                        gender: person.data[0].gender,
+                        img_url: person.data[0].image,
+                    }
+                }
             function randomise (arr){ return arr[Math.floor(Math.random()*arr.length)] }
             $("#addAlts").on("click", async function(){
                 var phFirst=["Stuart", "Murdoc", "Noodle", "Russel", "Ace", "Del", "Paula", "Eleanor", "Soup"]
                 var phLast=["Pot", "Niccals", "Hobbs", "Copular", "Funky", "Cracker", "Homosapien", "Shack"]
                 event.preventDefault();
+                alert("This may take a while. The page will auto reload when done.")
             for (let step = 0; step < 25; step++) {
+                var phPerson= await grabPerson();
+                
                 let response = await fetch(`/system-data`, { 
                 method: "PUT",
                 headers: { 
@@ -245,7 +259,8 @@ var journSkin=[
                 }, 
                 body: JSON.stringify({
                     "edit": "add-ph-alter",
-                    "altName": `${randomise(phFirst)} ${randomise(phLast)}`,
+                    "altName": `${phPerson.name}`,
+                    "gender": phPerson.gender,
                     "sysid": "<%- session.chosenSys.sys_id %>"
                 }) 
             });

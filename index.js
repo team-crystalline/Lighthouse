@@ -210,6 +210,11 @@ function apiEyesOnly(req) {
 	return str
 }
 
+/**
+ * Determines whether a number needs to end in "st", "nd", "rd", or "th"
+ * @param {number} n 
+ * @returns {string} suffix/ordinal of a number (number not included)
+ */
 function getOrdinal(n) {
 	let ord;
 	switch(n){
@@ -231,7 +236,22 @@ function getOrdinal(n) {
 	}
 	return ord;
   }
-
+/** 
+  *@param a- The array you're paginating.
+  *@param n- How many items per page.
+*/
+function paginate (a, n){
+	// Make a new array object that will carry the paginated results.
+	let b= new Array();
+	// Iterate 
+	for (i in a){
+		// Push an array that splices the original array from index 0 to however many items should be per page.
+		b.push(a.splice(0,n));
+	}
+	// If there's a remainder, tack it on to the end.
+	if (a.length > 0) b.push(a)
+	return b;
+}
 /**
  * Renders a 403 error page.
  * @param {object} res ExpressJS API response.
@@ -287,12 +307,11 @@ async function query(client, customQuery, customValues, res, req) {
 	
   }
   
+  
 
 client.connect();
 
-
 var app = express();
-
   app.use('/', express.static(__dirname + '/public'))
   app.use(session({
 	name: "session",
@@ -312,147 +331,19 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	next();
 	});
-
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/css")));
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/js")));
-
 let monthNames=["January","February","March","April","May","June","July",
 "August","September","October","November","December"];
 // App Local Variables
 app.locals.version= pjson.version;
 app.locals.siteLanguage= langVar.siteLanguage;
-app.locals.editorColours=[
-	{color: 'red',label: 'Red'},
-	{color: '#ff691f',label: 'Orange'},
-	{ color: '#ffc20a',label: 'Yellow'},
-	{color: 'green',label: 'Green'},
-	{color: 'teal',label: 'Teal'},
-	{color: 'blue',label: 'Blue'},
-	{color: 'purple',label: 'Purple'},
-	{color: '#ff0f83',label: 'Pink'},
-	{color:'#663c28', label: 'Brown'}, 
-	{color: 'lightgray', label: 'Silver'}, 
-	{color: 'gray', label: 'Stone'}, 
-	{color: 'black', label: 'Black'}, 
-	{color: 'white', label: "White"}
-]
-// Group 1: Default Skins.
-// Group 2: Single user skins (These users didn't make more than 2 skins)
-// Group 3: Galaxii Kingdom
-// Group 4: Constellation Collection
-// Group 5: Chaotic Troop
-// Group 6: Pax Vesania Collective
-// Group 7: Pride
-// Group 8: DivineChrysalism
-// Group 9: GOOPYGAMER9000
-app.locals.journalArr= splitByGroup([
-	{val: '1', c: "Red", group:1}, 
-	{val: '2', c: "Orange", group:1}, 
-	{val: '3', c: "Yellow", group:1}, 
-	{val: '4', c: "Green", group:1}, 
-	{val: '5', c: "Teal", group:1}, 
-	{val: '6', c: "Blue", group:1}, 
-	{val: '7', c: "Purple", group:1}, 
-	{val: '8', c: "Pink", group:1}, 
-	{val: '9', c: "White", group:1}, 
-	{val: '10', c: "Black", group:1}, 
-	{val: '23', c:"Brown", group:1},
-	{val: '11', c: "Rainbow", group:1}, 
-	{val: '12', c: "Ocean", group:1}, 
-	{val: '13', c: "Space", group:1}, 
-	{val: '14', c: "Winter", group:1}, 
-	{val: '15', c: "Autumn", group:1}, 
-	{val: '16', c: "Spring", group:1}, 
-	{val: '17', c: "Summer", group:1}, 
-	{val: '18', c: "Flowers", group:1},  // 19 is skipped bc thato's the legacy journal.	
-	{val: '20', c: "Witchy", group:1},
-	{val: '21', c: "Spraypaint", group:1},
-	{val: '22', c: "Princess", group:1},
-	{val: '24', c: "Coniferous (🎨Quantum System)", group:2},
-	{val: '25', c: "Cosmos (🎨Galaxii Kingdom)", group:3},
-	{val: '26', c: "Lunar (🎨Galaxii Kingdom)", group:3},
-	{val: '27', c: "Axolotl (🎨Galaxii Kingdom)", group:3},
-	{val: '28', c: "Fantasy (🎨Galaxii Kingdom)", group:3},
-	{val: '29', c: "Fangs (CW: Teeth) (🎨Galaxii Kingdom)", group:3},
-	{val: '30', c: "Lighthouse (🎨Galaxii Kingdom)", group:3},
-	{val: '32', c: "Fiery (🎨Galaxii Kingdom)", group:3},
-	{val: '31', c: "Constellation (🎨Constellation Collective)", group:4},
-	{val: '35', c: "Sun in Shadows (🎨 Constellation Collective)", group:4},
-	{val: '36', c: "Tangerine (🎨 Constellation Collective)", group:4},
-	{val: '33', c: "Composition Notebook (🎨 Chaotic Troop)", group:5},
-	{val: '34', c: "Spiralbound Notebook (🎨 Chaotic Troop)", group:5},
-	{val: '37', c: "Neon Galaxy (🎨 Tragicomic Troupe)", group:2},
-	{val: '38', c: "Notebook (🎨 Pax Vesania Collective)", group:6},
-	{val: '39', c: "String-bound Notebook (🎨 Pax Vesania Collective)", group:6},
-	{val: '40', c: "Spellbook (🎨 Pax Vesania Collective)", group:6},
-	{val: '41', c: "Trans Pride (🎨 Redgrave System)", group:7},
-	{val: '42', c: "Nonbinary Pride (🎨 Redgrave System)", group:7},
-	{val: '43', c: "Pan Pride (🎨 Redgrave System)", group:7},
-	{val: '44', c: "Blossoms (🎨 DivineChrysalism)", group:8},
-	{val: '45', c: "Vaporwave Sunset (🎨 DivineChrysalism)", group:8},
-	{val: '46', c: "Watermelon Sweet (🎨 DivineChrysalism)", group:8},
-	{val: '47', c: "Beholding (🎨 Calculator System)", group:2},
-	{val: '48', c: "Dreamy Paradise (🎨 DivineChrysalism)", group:8},
-	{val: '49', c: "Buried (🎨 Calculator System)", group:2},
-	{val: '50', c: "Lavender Gift (🎨 DivineChrysalism)", group:8},
-	{val: '51', c: "Teddybear Blanket (🎨 DivineChrysalism)", group:8},
-	{val: '52', c: "MISSINGTEXTURE.PNG (🎨 GOOPYGAMER9000)", group:9},
-	{val: '53', c: "Cartman's Jornal (🎨 loserraysxd)", group:2},
-	{val: '54', c: "Pink Frosted Journal (🎨 DivineChrysalism)", group:8},
-	{val: '55', c: "Journl (🎨 DivineChrysalism)", group:8},
-	{val: '56', c: "Magic Midnight Dreams (🎨 DivineChrysalism)", group:8},
-	{val: '57', c: "Melty Goo (🎨 DivineChrysalism)", group:8},
-	{val: '58', c: "Lavender Boba (🎨 DivineChrysalism)", group:8},
-	{val: '59', c: "Star Cat (🎨 GhostyStarShaker)", group:2},
-	{val: '60', c: "POISON GRADIENT (🎨 GOOPYGAMER9000)", group:9},
-	{val: '61', c: "GREEN TO BLUE (🎨 GOOPYGAMER9000)", group:9},
-	{val: '62', c: "A FUNKY LIL ALIEN GUY (🎨 GOOPYGAMER9000)", group:7},
-	{val: '63', c: "pink stars (🎨 era vulgaris)", group:2},
-	{val: '64', c: "lightshow (🎨 era vulgaris)", group:2},
-	{val: '65', c: "Retro Classic (🎨 DivineChrysalism)", group:8},
-	{val: '66', c: "Vaporwave Nightscape (🎨 DivineChrysalism)", group:8},
-	{val: '67', c: "Chained Spellbook (🎨 DivineChrysalism)", group:8},
-]);
+app.locals.editorColours=tuning.editorColours;
+app.locals.journalArr= splitByGroup(tuning.journals);
 app.locals.strings=strings;
 app.locals.apiKey= process.env.apiKey;
 app.locals.legacyJournal= {val: '19', c: "Legacy"};
-app.locals.moods=[
-    // Positive
-    {name: "Joyous", positive: true, emoji: "😄"}, // 0
-    {name: "Loved", positive: true, emoji: "🤗"}, // 1
-    {name: "Satisfied", positive: true, emoji: "🙂"}, // 2
-    {name: "Content", positive: true, emoji: "😌"}, // 3
-    {name: "Interested", positive: true, emoji: "😮"}, //4
-    {name: "Amused", positive: true, emoji: "😆"}, // 5
-    {name: "Happy", positive: true, emoji: "😀"}, // 6
-    {name: "Serene", positive: true, emoji: "😊"}, // 7
-    {name: "Awestruck", positive: true, emoji: "🤩"}, // 8
-    {name: "Sleepy", positive: true, emoji: "😴"}, // 9
-    {name: "Afraid", positive: false, emoji: "😨"}, // 10
-    {name: "Frustrated", positive: false, emoji: "😖"}, // 11
-    {name: "Overwhelmed", positive: false, emoji: "😖"}, // 12
-    {name: "Dazed", positive: false, emoji: "😵"}, // 13
-    {name: "Confused", positive: false, emoji: "🤨"}, // 14
-    {name: "Angry", positive: false, emoji: "😡"}, // 15
-    {name: "Enraged", positive: false, emoji: "🤬"}, // 16
-    {name: "Disgusted", positive: false, emoji: "🤢"}, // 17
-    {name: "Sad", positive: false, emoji: "🙁"}, // 18
-    {name: "Lonely", positive: false, emoji: "😢"}, // 19
-    {name: "Upset", positive: false, emoji: "😭"}, // 20
-    {name: "Melancholy", positive: false, emoji: "😔"}, // 21
-    {name: "Annoyed", positive: false, emoji: "😒"}, // 22
-    {name: "Tired", positive: false, emoji: "🥱"}, // 23
-    {name: "Stressed", positive: false, emoji: "😖"}, // 24
-	{name: "Dissociated", positive: false, emoji: `😵`},
-	{name: "Blank", positive: false, emoji: "😐"},
-	{name: "Unsure", positive: false, emoji: "❓"},
-	{name: "Unwell", positive: false, emoji: "😷"},
-	{name: "Hurt", postive: false, emoji: "😢"},
-	{name: "Affectionate", positive: true, emoji: "💖"},
-	{name: "Unreal", positive: false, emoji: "😶‍🌫️"},
-	{name: "Distressed", positive: false, emoji: "😫"},
-	{name: "Bored", positive: false, emoji: "🥱"}
-]
+app.locals.moods=tuning.moods;
 app.locals.isLoggedIn = function(cookies){
 	if (!cookies.u_id){
 	  return false;
@@ -468,33 +359,14 @@ app.locals.monthNames= monthNames;
 app.locals.dayNames= dayNames;
 app.locals.encrypt= encryptWithAES;
 app.locals.decrypt= decryptWithAES;
-
-/** 
-  *@param a- The array you're paginating.
-  *@param n- How many items per page.
-*/
-function paginate (a, n){
-	// Make a new array object that will carry the paginated results.
-	let b= new Array();
-	// Iterate 
-	for (i in a){
-		// Push an array that splices the original array from index 0 to however many items should be per page.
-		b.push(a.splice(0,n));
-	}
-	// If there's a remainder, tack it on to the end.
-	if (a.length > 0) b.push(a)
-	return b;
-}
-    
 app.locals.paginate = paginate;
-  
 app.locals.capitalise= capitalise;
 app.locals.pluralize= pluralize;
-
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs');
 
-  app.all('*', async function (req, res){
+// Middleware...?
+app.all('*', async function (req, res){
 	// Loads before all other routes.
 	if (isLoggedIn(req)){
 		// Let's only grab the database if we need to.
@@ -545,7 +417,7 @@ app.set('view engine', 'ejs');
 
 
 
-
+// Refactored!
   app.get('/', async function (req, res){
 	// client, customQuery, customValues, res, req
 	const count= await query(client, "SELECT COUNT(id) FROM users;", [], res, req);
@@ -553,296 +425,221 @@ app.set('view engine', 'ejs');
 	res.render(`pages/index`, { session: req.session, splash:splash, userCount:count[0].count, cookies:req.cookies, donators:donators });
   });
 
-  
-  app.get('/verify/:id', (req, res)=>{
-	if (isLoggedIn(req)){
-		// Redirect them to the index.
-		res.redirect("/")
-	} else {
-		client.query({text:'SELECT * FROM WHERE id=$1;', values: [req.params.id]}, (err, aresult) => {
-			if (err) {
-			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-		  } else {
-			req.session.alter_term= aresult.rows[0].alter_term;
-			req.session.system_term= aresult.rows[0].system_term;
-			req.session.subsystem_term= aresult.rows[0].subsystem_term;
-			req.session.loggedin = true;
-			req.session.u_id= aresult.rows[0].id;
-			req.session.username = Buffer.from(aresult.rows[0].username, 'base64').toString();
-			req.session.is_legacy= aresult.rows[0].is_legacy;
-			 // Add to cookies
-			 res
-			 .cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('username',  Buffer.from(aresult.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('u_id', aresult.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('alter_term', aresult.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('system_term', aresult.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('subsystem_term', aresult.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('is_legacy', aresult.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-			 .cookie('skin', aresult.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
-			if (aresult.rows[0].verified == false){
-				console.log("They aren't verified. Fixing this now.");
-				client.query({text:'UPDATE users SET verified=true WHERE id=$1;', values: [aresult.rows[0].id]}, (err) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-				  } else {
-					res.render('pages/verify',{ session: req.session,splash:splash, cookies:req.cookies });
-				  }
-				});
-			} else {
-				req.flash("flash", strings.account.alreadyVerified);
-				res.redirect("/")
-			}
+  // Refactored!
+  app.get('/verify/:id', async function (req, res){
+		const userData= await query(client, "SELECT * FROM users WHERE id=$1;", [req.params.id], res,req);
+		console.log(userData[0])
+		req.session.alter_term= userData[0].alter_term;
+		req.session.system_term= userData[0].system_term;
+		req.session.subsystem_term= userData[0].subsystem_term;
+		req.session.loggedin = true;
+		req.session.u_id= userData[0].id;
+		req.session.username = Buffer.from(userData[0].username, 'base64').toString();
+		req.session.is_legacy= userData[0].is_legacy;
+		// Add to cookies
+		res
+		.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('username',  Buffer.from(userData[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('u_id', userData[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('alter_term', userData[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('system_term', userData[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('subsystem_term', userData[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('is_legacy', userData[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+		.cookie('skin', userData[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+
+		if (userData[0].verified == false){
+			console.log("They aren't verified. Fixing this now.");
+			const updateAcc=  query(client, "UPDATE users SET verified=true WHERE id=$1", [userData[0].id], res, req);
+			updateAcc.then(response=>{
+				res.render('pages/verify',{ session: req.session,splash:splash, cookies:req.cookies });
+			})
 			
-		  }
-		});
-		
-	}
-	
+		} else {
+			req.flash("flash", strings.account.alreadyVerified);
+			res.redirect("/")
+		}
   });
-  app.get('/safety-plan', (req, res) => {
+
+  // Refactored!
+  app.get('/safety-plan', async function(req, res){
 	if (isLoggedIn(req)){
 		if(apiEyesOnly(req)){
-			client.query({text:'SELECT * FROM safetyplans WHERE u_id=$1;', values: [getCookies(req)['u_id']]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-			  } else {
-				var user={
-					id: req.headers.user,
-					name: getCookies(req)['username'],
-					symptoms: decryptWithAES(result.rows[0].symptoms),
-					safepeople: decryptWithAES(result.rows[0].safepeople),
-					distractions: decryptWithAES(result.rows[0].distractions),
-					keepsafe: decryptWithAES(result.rows[0].keepsafe),
-					gethelp: decryptWithAES(result.rows[0].gethelp),
-					grounding: decryptWithAES(result.rows[0].grounding)
-				}
-				// Read HTML Template
-				ejs.renderFile(path.join(__dirname, './views/pages/', "safetyplan-pdf.ejs"), {user: user}, (err, data) => {
-					if (err) {
-						  return res.json({code: 404, msg: `Render File: ${err}`});
-					} else {
-						let options = {
-							childProcessOptions: {
-								env: {
-								  OPENSSL_CONF: '/dev/null',
-								},
-							  },
-							"height": "11in",
-							"width": "8.5in",
-							"header": {
-								"height": "0in"
-							},
-							"footer": {
-								"height": "0in",
-							},
-						};
-						pdf.create(data, options).toFile(path.join(__dirname, './public/pdfs', `${req.headers.user}.pdf`), function (err, data) {
-							if (err) {
-								return res.json({code: 404, msg: `Generating: ${err}`});
-							} else {
-								return res.json({code: 200, download: `${req.headers.user}.pdf`});
-							}
-						});
+			const safetyPlan= await query(client, "SELECT * FROM safetyplans WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
+			var user={
+						id: safetyPlan[0].user,
+						name: getCookies(req)['username'],
+						symptoms: decryptWithAES(safetyPlan[0].symptoms),
+						safepeople: decryptWithAES(safetyPlan[0].safepeople),
+						distractions: decryptWithAES(safetyPlan[0].distractions),
+						keepsafe: decryptWithAES(safetyPlan[0].keepsafe),
+						gethelp: decryptWithAES(safetyPlan[0].gethelp),
+						grounding: decryptWithAES(safetyPlan[0].grounding)
 					}
-				});
-			  }
-			  
+			// Read HTML Template
+			let pdfType= req.headers.colour== "colour" ? "safetyplan-pdf-col.ejs" : "safetyplan-pdf-bw.ejs";
+			ejs.renderFile(path.join(__dirname, './views/pages/', pdfType), {user: user}, (err, data) => {
+				if (err) {
+						return res.json({code: 404, msg: `Render File: ${err}`});
+				} else {
+					let dimensions= (req.headers.dimensions).split(",")
+					let options = {
+						childProcessOptions: {
+							env: {
+								OPENSSL_CONF: '/dev/null',
+							},
+							},
+						"height": dimensions[0],
+						"width": dimensions[1],
+					};
+					pdf.create(data, options).toFile(path.join(__dirname, './public/pdfs', `${req.headers.user}.pdf`), function (err, data) {
+						if (err) {
+							return res.json({code: 404, msg: `Generating: ${err}`});
+						} else {
+							return res.json({code: 200, download: `${req.headers.user}.pdf`});
+						}
+					});
+				}
 			});
-			
 			
 		} else {
 			if (!req.session.worksheets_enabled){
 				// Make sure they have worksheets enabled.
-				client.query({text: "SELECT worksheets_enabled FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-				  } else {
-					req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
-					if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
-					var plans;
-
-					client.query({text:'SELECT * FROM safetyplans WHERE u_id=$1;', values: [getCookies(req)['u_id']]}, (err, result) => {
-						if (err) {
-						console.log(err.stack);
-						res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-					} else {
-						if (result.rows.length > 0){
-							// Plan found
-							try{
-									plans= {
-									symptoms: decryptWithAES(result.rows[0].symptoms),
-									safepeople: decryptWithAES(result.rows[0].safepeople),
-									distractions: decryptWithAES(result.rows[0].distractions),
-									keepsafe: decryptWithAES(result.rows[0].keepsafe),
-									gethelp: decryptWithAES(result.rows[0].gethelp),
-									grounding: decryptWithAES(result.rows[0].grounding)
-								}
-							} catch (e){
-								plans= null;
-							}
-							
-							
-						} else {
-							// No plan. Make plan.
-							client.query({text:'INSERT INTO safetyplans (u_id) VALUES ($1);', values: [getCookies(req)['u_id']]}, (err, result) => {
-								if (err) {
-								console.log(err.stack);
-								res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-							} else {
-								plans = null;
-							}
-							});
-						}
-						
-					}
-					res.render(`pages/safetyplan`, { session: req.session, splash:splash, cookies:req.cookies, safetyplan: plans});
-					});
-
-				  }
-			  });
+				const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+				req.session.worksheets_enabled= wsEn[0].worksheets_enabled;
+				if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
 			}
-			
-		}
-		
-		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
-	
-});
-app.get('/safety-plan/edit', (req, res) => {
-	if (isLoggedIn(req)){
-		client.query({text:'SELECT * FROM safetyplans WHERE u_id=$1;', values: [getCookies(req)['u_id']]}, (err, result) => {
-			if (err) {
-			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-		  } else {
-			
-			if (result.rows.length== 0){
-				// Uh oh! Create a plan.
-				client.query({text:'INSERT INTO safetyplans (u_id) VALUES($1);', values: [getCookies(req)['u_id']]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-				  } else {
-					 //Select again.
-					 client.query({text:'SELECT * FROM safetyplans WHERE u_id=$1;', values: [getCookies(req)['u_id']]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-					  } else {
-						var plans= {
-							symptoms: decryptWithAES(result.rows[0].symptoms),
-							safepeople: decryptWithAES(result.rows[0].safepeople),
-							distractions: decryptWithAES(result.rows[0].distractions),
-							keepsafe: decryptWithAES(result.rows[0].keepsafe),
-							gethelp: decryptWithAES(result.rows[0].gethelp),
-							grounding: decryptWithAES(result.rows[0].grounding)
+				var plans;
+
+				const safetyPlan= await query(client, "SELECT * FROM safetyplans WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
+				if (safetyPlan.length != 0){
+					// Plan found
+					try{
+							plans= {
+							symptoms: decryptWithAES(safetyPlan[0].symptoms),
+							safepeople: decryptWithAES(safetyPlan[0].safepeople),
+							distractions: decryptWithAES(safetyPlan[0].distractions),
+							keepsafe: decryptWithAES(safetyPlan[0].keepsafe),
+							gethelp: decryptWithAES(safetyPlan[0].gethelp),
+							grounding: decryptWithAES(safetyPlan[0].grounding)
 						}
-					  }
-					});
-				  }
-				});
-			} else {
-				try{
-							var plans= {
-							symptoms: decryptWithAES(result.rows[0].symptoms),
-							safepeople: decryptWithAES(result.rows[0].safepeople),
-							distractions: decryptWithAES(result.rows[0].distractions),
-							keepsafe: decryptWithAES(result.rows[0].keepsafe),
-							gethelp: decryptWithAES(result.rows[0].gethelp),
-							grounding: decryptWithAES(result.rows[0].grounding)
-						}
-				} catch (e){
-					var plans= {
-						symptoms: "",
-						safepeople: "",
-						distractions: "",
-						keepsafe: "",
-						gethelp: "",
-						grounding: ""
+					} catch (e){
+						plans= null;
 					}
+				} else {
+					// No plan. Make a plan.
+					const planMake= await query(client, "INSERT INTO safetyplans (u_id) VALUES ($1);", [getCookies(req)['u_id']], res, req);
+					plans=null;
 				}
-				
+				res.render(`pages/safetyplan`, { session: req.session, splash:splash, cookies:req.cookies, safetyplan: plans});
+			}	
+	} else {forbidUser(res,req)}
+	
+});
+
+// Refactored!
+app.get('/safety-plan/edit', async function (req, res){
+	if (isLoggedIn(req)){
+		let plans;
+		// Grab their safety plan
+		const safetyPlan= await query(client, "SELECT * FROM safetyplans WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
+		
+		if (safetyPlan.length ==0){
+			// No plan. Make plan.
+			const makePlan= await query(client, "INSERT INTO safetyplans (u_id) VALUES($1);", [getCookies(req)['u_id']], res, req);
+
+			// Now grab the new one. This will execute AFTER the insert statement.
+			const newPlan= await query(client, "SELECT * FROM safetyplans WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
+			// Generate the new plan.
+			plans= {
+				symptoms: decryptWithAES(newPlan[0].symptoms),
+				safepeople: decryptWithAES(newPlan[0].safepeople),
+				distractions: decryptWithAES(newPlan[0].distractions),
+				keepsafe: decryptWithAES(newPlan[0].keepsafe),
+				gethelp: decryptWithAES(newPlan[0].gethelp),
+				grounding: decryptWithAES(newPlan[0].grounding)
 			}
-			
-			res.render(`pages/edit-safetyplan`, { session: req.session, splash:splash, cookies:req.cookies, safetyplan: plans});
-		  }
-		});
-		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+		} else {
+			// They got a plan!
+			try{
+				plans= {
+				symptoms: decryptWithAES(safetyPlan[0].symptoms),
+				safepeople: decryptWithAES(safetyPlan[0].safepeople),
+				distractions: decryptWithAES(safetyPlan[0].distractions),
+				keepsafe: decryptWithAES(safetyPlan[0].keepsafe),
+				gethelp: decryptWithAES(safetyPlan[0].gethelp),
+				grounding: decryptWithAES(safetyPlan[0].grounding)
+			}
+			} catch (e){
+				// If for WHATEVER reason we can't generate a plan.
+				plans= {
+					symptoms: "",
+					safepeople: "",
+					distractions: "",
+					keepsafe: "",
+					gethelp: "",
+					grounding: ""
+				}
+			}
+		}
+		res.render(`pages/edit-safetyplan`, { session: req.session, splash:splash, cookies:req.cookies, safetyplan: plans});	
+	} else {forbidUser(res,req)}
 	
 });
-  app.get('/DES', (req, res) => {
+
+// Refactored!
+  app.get('/DES', async function (req, res){
 	if (isLoggedIn(req)){
-		if (!req.session.worksheets_enabled){
-			// Make sure they have worksheets enabled.
-			client.query({text: "SELECT worksheets_enabled FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-			  } else {
-				req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
-				if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
-				res.render(`pages/des`, { session: req.session, splash:splash, cookies:req.cookies});
-			  }
-		  });
-		}
-		
-	splash=null;
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	if (!req.session.worksheets_enabled){
+		// Make sure they have worksheets enabled.
+		const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+		req.session.worksheets_enabled = wsEn[0].worksheets_enabled;
+		if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
+	}
+	res.render(`pages/des`, { session: req.session, splash:splash, cookies:req.cookies});
+	} else {forbidUser(res, req)}
 	
 });
-app.get('/coaxing', (req, res) => {
+
+// Refactored!
+app.get('/coaxing', async function (req, res){
 	if (isLoggedIn(req)){
 		if (!req.session.worksheets_enabled){
-			// Make sure they have worksheets enabled.
-			client.query({text: "SELECT worksheets_enabled FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-			  } else {
-				req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
-				if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
-				res.render(`pages/coax-alters`, { session: req.session, splash:splash, cookies:req.cookies });
-			  }
-		  });
-		}
-		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+		// Make sure they have worksheets enabled.
+		const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+		req.session.worksheets_enabled = wsEn[0].worksheets_enabled;
+		if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
+	}
+	res.render(`pages/coax-alters`, { session: req.session, splash:splash, cookies:req.cookies });	
+	} else {forbidUser(res,req)}
 	
 })
-app.get('/bottle-letters', (req, res) => {
+
+// Refactored!
+app.get('/bottle-letters',async function (req, res){
 	if (isLoggedIn(req)){
 		if (!req.session.worksheets_enabled){
-			// Make sure they have worksheets enabled.
-			client.query({text: "SELECT worksheets_enabled FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-			  } else {
-				req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
-				if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
-				res.render(`pages/void-letters`, { session: req.session, splash:splash, cookies:req.cookies });
-			  }
-		  });
-		}
-		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+		// Make sure they have worksheets enabled.
+		const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+		req.session.worksheets_enabled = wsEn[0].worksheets_enabled;
+		if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
+	}
+	res.render(`pages/void-letters`, { session: req.session, splash:splash, cookies:req.cookies });	
+	} else {forbidUser(res,req)}
 	
 })
+ // No need to refactor
 app.get('/tutorial', (req, res) => {
 		res.render(`pages/tutorial`, { session: req.session, splash:splash, cookies:req.cookies});
 	});
 
+	// No need to refactor
 app.get('/simply-plural', (req, res) => {
 	if (isLoggedIn(req)){
 		res.render(`pages/sp-import`, { session: req.session, splash:splash, cookies:req.cookies });
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	} else {forbidUser(res,req)}
 	});
+
+	// No need to refactor
 app.get('/combine/:item', (req, res) => {
 	if (isLoggedIn(req)){
 		let page;
@@ -858,44 +655,40 @@ app.get('/combine/:item', (req, res) => {
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 
-app.get('/worksheets', (req, res) => {
+	// Refactored!
+app.get('/worksheets', async function (req, res){
 	if (isLoggedIn(req)){
-		client.query({text: "SELECT * FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-			if (err) {
-			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-		  } else {
-			req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
-			if (req.session.worksheets_enabled == false) return res.render('pages/worksheetsdisabled', { session: req.session, splash:splash, cookies:req.cookies });
-			res.render(`pages/worksheets`, { session: req.session, splash:splash, cookies:req.cookies });
-		  }
-		});
+		if (isLoggedIn(req)){
+			if (!req.session.worksheets_enabled){
+			// Make sure they have worksheets enabled.
+			const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+			req.session.worksheets_enabled = wsEn[0].worksheets_enabled;
+			if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
+		}
+		res.render(`pages/worksheets`, { session: req.session, splash:splash, cookies:req.cookies });	
+		} else {forbidUser(res,req)}
 		
 	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
   });
 
-  app.get('/forum/:id/new', (req, res) => {
+  // Refactored!
+  app.get('/forum/:id/new', async function(req, res){
 	if (isLoggedIn(req)){
-		client.query({text: "SELECT * FROM forums WHERE u_id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-			if (err) {
-			  console.log(err.stack);
-			  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-		  } else {
-			let forumList= new Array();
-			for (i in result.rows){
-				forumList.push({
-					id: result.rows[i].id, 
-					name: decryptWithAES(result.rows[i].topic)
-				})
-			}
-			res.render(`pages/create_topic`, { session: req.session, splash:splash, cookies:req.cookies, forumLisT: forumList });
-		  }
+		const forumData= await query(client, "SELECT * FROM forums WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
+		let forumList= new Array();
+		forumData.forEach(element=>{
+			forumList.push({
+				id: element.id,
+				name: decryptWithAES(element.topic)
+			})
 		});
+		res.render(`pages/create_topic`, { session: req.session, splash:splash, cookies:req.cookies, forumLisT: forumList });
 		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
+	} else {forbidUser(res, req)}
 	
   });
 
+  
   app.get('/inner-world/:id', (req, res) => {
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT * FROM inner_worlds WHERE u_id=$1 AND id=$2;",values: [getCookies(req)['u_id'], req.params.id]}, (err, result) => {
@@ -1177,38 +970,28 @@ app.get('/worksheets', (req, res) => {
 	}
 	
   });
-  app.get('/bda', (req, res) => {
+  app.get('/bda', async function (req, res){
 	if (isLoggedIn(req)){
 		if (apiEyesOnly(req)){
-			// This is an API Call.
-			client.query({text: "SELECT * FROM bda_plans WHERE u_id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-				if (err) {
-				  console.log(err.stack);
-				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-			  } else {
-				let bdaArr= new Array();
-				// Object { id: "sdfsdf", before: "sdfsdf", during: "sdfsdf", after: "sdfsdf", is_active: true, alias: "adasd", timestamp: "2023-06-03T23:36:59.412Z" }
-				for (i in result.rows){
-					bdaArr.push({id: result.rows[i].id, before: decryptWithAES(result.rows[i].before), during: decryptWithAES(result.rows[i].during), after: decryptWithAES(result.rows[i].after), is_active:result.rows[i].is_active, alias: decryptWithAES(result.rows[i].alias), timestamp: result.rows[i].timestamp})
-				}
-				  return res.status(200).json({code:200, body: bdaArr})
-			  }
-		  });
+			try{
+				const bdaPlans= await query(client, "SELECT * FROM bda_plans WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
+				const planArr= new Array();
+				bdaPlans.forEach(element=>{
+					planArr.push({id: element.id, before: decryptWithAES(element.before), during: decryptWithAES(element.during), after: decryptWithAES(element.after), is_active:element.is_active, alias: decryptWithAES(element.alias), timestamp: element.timestamp});
+				});
+				return res.status(200).json({code:200, body: planArr});
+			} catch (e){
+				console.log(e)
+				return res.status(400).json({code:400})
+			}
 		} else {
 			if (!req.session.worksheets_enabled){
-				// Make sure they have worksheets enabled.
-				client.query({text: "SELECT worksheets_enabled FROM users WHERE id=$1;",values: [getCookies(req)['u_id']]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash, cookies:req.cookies });
-				  } else {
-					req.session.worksheets_enabled= result.rows[0].worksheets_enabled;
+					// Make sure they have worksheets enabled.
+					const wsEn= await query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
+					req.session.worksheets_enabled = wsEn[0].worksheets_enabled;
 					if (req.session.worksheets_enabled== false) return res.render(`pages/worksheetsdisabled`, { session: req.session, splash:splash, cookies:req.cookies });
-
-					res.render(`pages/bda`, { session: req.session, splash:splash, cookies:req.cookies });
-				  }
-			  });
-			}
+				}
+			res.render(`pages/bda`, { session: req.session, splash:splash, cookies:req.cookies });
 			
 		}
 		
@@ -1724,6 +1507,7 @@ app.get('/wish-d/:id', (req, res) => {
   
 });
 
+// Refactored!
   app.get('/system', async function(req, res) {
     if (isLoggedIn(req)){
 		const innerWorlds= await query(client, "SELECT inner_worlds from USERS WHERE id=$1;", [getCookies(req)['u_id']], res, req);
@@ -1735,6 +1519,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
 	var alterArr;
+	// Refactored!
   app.get('/system/:id', async function(req, res, next){
     if (isLoggedIn(req)){
 		if (!req.session.worksheets_enabled){
@@ -4046,10 +3831,11 @@ app.put("/forum-data", (req,res) => {
 				} else if(editMode=="add-ph-alter"){
 					// Place placeholder alters in database.
 					let iconNo= "https://www.writelighthouse.com/img/" + getRandomInt(1,42) + ".png";
-					client.query({text: "INSERT INTO alters (name, sys_id, img_url) VALUES($1, $2, $3);",values: [
+					client.query({text: "INSERT INTO alters (name, sys_id, img_url, gender) VALUES($1, $2, $3, $4);",values: [
 						`'${Buffer.from(req.body.altName).toString('base64')}'`, 
 						req.body.sysid,
-						`'${Buffer.from(iconNo).toString('base64')}'`
+						`'${Buffer.from(iconNo).toString('base64')}'`,
+						`'${Buffer.from(req.body.gender).toString('base64')}'`
 					]}, (err, result) => {
 						if (err) {
 						console.log(err.stack);

@@ -14,6 +14,9 @@
                 text-indent: 0;
                 padding-left: 1em;
             }
+            .generation{
+                display: block;
+            }
         </style>
     </head>
     <body>
@@ -30,13 +33,33 @@
                 <h2>Your Safety Plan</h2>
                     <p>Each user has one safety plan. This is for when you or your <%- cookies.system_term %> are experiencing a mental health crisis.</p>
                     <p>Some areas have information already added in for you.</p>
+                    <div class="generation">
                     <a href="/safety-plan/edit" class="linkbutton"><% if (safetyplan){ %>Edit<% } else { %>Create<% } %> Your Plan</a>
                     <% if (safetyplan){ %>
-                    <a class="linkbutton" name="download"  id="download" onclick="makePDF()">Generate Plan PDF</a>
-                    <a class="linkbutton" style="display:none;" id="pdf" download>Download Plan PDF</a><br>
-                    <span id="pdfdisclaimer"></span>
-                        <% } %>
-                    
+                    <div>
+                        
+                        
+                        <a class="linkbutton" name="download"  id="download" onclick="makePDF()">Generate Plan PDF</a>
+                        <a class="linkbutton" style="display:none;" id="pdf" download>Download Plan PDF</a><br>
+                        <span id="pdfdisclaimer"></span>
+                        
+                    </div>
+
+                    <div id="printOpt">
+                      <label for="dimensions">PDF dimensions: </label>
+                    <select name="dimensions" id="dimensions">
+                        <!-- height,width -->
+                        <option value="11in,8.5in" selected>US Letter (8.5" x 11")</option>
+                        <option value="14in,8.5in">US Legal (8.5" x 14")</option>
+                        <option value="29.7cm,21cm">A4 (21cm x 29.7cm)</option>
+                        <option value="42cm,29.7cm">A3 (29.7cm x 42cm)</option>
+                    </select><br><br>
+                    <label for="colour">Colour Options</label>
+                    <input type="radio" id="colour" name="colour" value="colour"> Colour
+                    <input type="radio" id="black" name="colour" value="black" checked> Black & White
+                    </div>
+                    <% } %>
+                    </div>
                     <hr>
             <% if (safetyplan){ %>
                 <section>
@@ -87,12 +110,15 @@
                             "api-lh-call": "api-lh-call",
                             'Accept': 'application/json',
                              'Content-Type': 'application/json',
-                             "user" :  "<%- cookies.u_id %>"
+                             "user" :  "<%- cookies.u_id %>",
+                             "dimensions": $("#dimensions").val(),
+                             "colour": $("input[name='colour']:checked").val()
                         }
             });
             let body = await response.text();
             let sysInfo = JSON.parse(body);
             $("#download").hide();
+            $("#printOpt").slideUp("fast");
             $("#pdf").show();
             $("#pdf").attr({
                     href  : "pdfs/" + sysInfo.download});

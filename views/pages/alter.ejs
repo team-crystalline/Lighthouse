@@ -44,7 +44,7 @@ td{
 </head>
 <body>
 
-    <% var skinGroups=["Default", "Misc. User Skins", "Galaxii Kingdom", "Constellation Collection", "Chaotic Troop", "Pax Vesania Collective", "Pride", "DivineChrysalism", "GOOPYGAMER9000"] %>
+    <% var skinGroups=["Default", "Misc. User Skins", "Galaxii Kingdom", "Constellation Collection", "Chaotic Troop", "Pax Vesania Collective", "Pride", "DivineChrysalism", "GOOPYGAMER9000", "Era vulgaris"] %>
     <%- include ("../partials/nav.ejs") %>
                   <!-- The Modal -->
                   <div id="myModal" class="modal">
@@ -353,6 +353,7 @@ td{
             <% } else { %>
                 <h2>Uh oh!</h2> <p><%= Buffer.from(alterInfo.name, 'base64').toString() %> has no journal. Make one down below. (You can change this journal's skin later)</p>
                 <form method="post" autocomplete="off">
+                    <h3 style="border-bottom: 1px solid var(--col1)">Starter Journal Skins</h3>
                     <input type="hidden" name="sys_id" value="<%- alterInfo.sys_id %>">
                     <div class="parent" style="height: auto;margin:auto;">
                     <% for (let i=0; i < 11; i++){ %>

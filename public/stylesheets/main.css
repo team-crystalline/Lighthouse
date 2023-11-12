@@ -567,10 +567,10 @@ ul.breadcrumb {
 
 .polaroid {
     padding-top: calc(.5em);
-    padding-bottom: 1em;
+    padding-bottom: calc(.5em);
     background: var(--polar);
     text-align: center;
-    height: 9em;
+    height: 10em;
     width: 7em;
     filter: drop-shadow(0 0 1px rgba(0,0,0,.5));
     flex: 1 0 21%;
@@ -579,6 +579,10 @@ ul.breadcrumb {
     text-decoration: none;
     scroll-margin-top: 0;
     transition: .5s;
+    font-size: .85em;
+    line-height: .9;
+    display:table-cell;
+    vertical-align:middle;
 }
 
 .polaroid:hover{

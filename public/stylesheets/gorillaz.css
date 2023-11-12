@@ -56,17 +56,7 @@ h1,h2,h3,h4{
     font-family: 'Gochi Hand', cursive;
     text-transform: uppercase;
 }
-@media only screen and (max-width: 800px) {
-    #menubg{
-        background: url("/img/gorillaz.jpg");
-        background-size: cover;
-        background-position: 90% 85%;
-    }
-    #menubg:after{
-        width: 100%;
-        background: none;
-    }
-}
+
 #logo{
     display: inline-block; 
     margin-left: 30px; width:100%;
@@ -78,4 +68,20 @@ h1,h2,h3,h4{
 hr{
     height:3em;
     background-image:url('../img/svg/horizontal_rule_gorillaz.svg');
+}
+@media only screen and (max-width: 800px) {
+    #menubg{
+        /* background-size: cover; */
+        background-position:80% 10%;
+        top: -2em;
+    }
+    #menubg:after{
+        width: 100%;
+        background: none;
+    }
+    #logo{
+        display: inline-block; 
+        margin-left: 30px; width:100%;
+        text-shadow: 0px 0px 5px #000000, 0px 0px 5px #000000, 0px 0px 5px #000000;
+    }
 }

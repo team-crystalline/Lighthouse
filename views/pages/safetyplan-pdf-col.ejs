@@ -3,15 +3,26 @@
     <head>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Roboto+Slab:wght@500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Roboto+Slab&display=swap" rel="stylesheet">
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Lexend:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Slab:wght@500&display=swap');
+            @font-face {
+                font-family: "Lexend";
+                src: url("../fonts/Lexend.ttf");
+            }
+            @font-face {
+                font-family: "Berkshire Swash";
+                src: url("../fonts/BerkshireSwash.ttf");
+            }
+            @font-face {
+                font-family: "Roboto Slab";
+                src: url("../fonts/RobotoSlab.ttf");
+            }
             html{
                 background: transparent;
                 zoom: 0.55;
             }
             *{
-                font-family: "verdana",sans-serif;
+                font-family: "Lexend","verdana",sans-serif;
             }
             
             .tinyimg{
@@ -19,11 +30,13 @@
                 height: auto;
             }
             h1, h2, h3, h4{
-                font-family: "Georgia",serif;
+                color: #911111;
+                font-family: "Roboto Slab", Georgia, 'Times New Roman', Times, serif;
                 margin-bottom: -.5em;
                 margin-top: 1em;
             }
             h1{
+                font-family: "Berkshire Swash","Georgia",serif;
                 font-size: 2.5em;
                 margin-bottom: 0;
             }
@@ -50,14 +63,10 @@
             .lhprovided{
                 padding: .5em;
             }
-            img {
-            -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-            filter: grayscale(100%);
-            margin: .2em
-            }
+           
             a, a:visited, a:active, a:link{
                 text-decoration: none;
-                color: grey;
+                color: rgb(79, 120, 255);
             }
         </style>
         <link rel="stylesheet" type="text/css" href="/stylesheets/slate.css" />

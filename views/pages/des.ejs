@@ -8,8 +8,8 @@
                 padding: .3em .3em .5em .3em;
             }
             .slider {
-                -webkit-appearance: none;
-                width: 80%;
+                /* -webkit-appearance: none; */
+                width: 90%;
                 height: 15px;
                 border-radius: 5px;  
                 background: linear-gradient(90deg, rgba(60,136,0,1) 0%, rgba(104,186,40,1) 10%, rgba(255,219,25,1) 50%, rgba(250,8,8,1) 85%, rgba(170,3,3,1) 100%);
@@ -18,20 +18,39 @@
                 -webkit-transition: .2s;
                 transition: opacity .2s;
                 border: 2px solid var(--col1);
+                flex-grow:1;
                 }
             .slider::-moz-range-thumb {
-            width: 23px;
+            width: 16px;
             height: 25px;
-            border: 1px solid var(--col1);
-            background: url('https://www.writelighthouse.com/img/svg/life-ring.svg') var(--col2);
+            border: 2px solid var(--col1);
+            background: gainsboro;
             cursor: pointer;
 
             }
             .section{
+                /* background: yellow; */
                 display:flex;
-                align-items: stretch;
+                flex-wrap:wrap;
+                justify-content: space-between;
+                align-items: center;
             }
-            .section> p{
+            .label-con{
+                display: flex;
+                flex-grow: 1;
+                align-items: center;
+                vertical-align: middle;
+                margin-bottom: .5em;
+            }
+            .left,.right{
+                display:inline-block;
+                font-size: .75em;
+                flex-grow:0;
+                width:100%;
+            }
+            .right{
+                text-align: right;
+                position: inherit;
             }
         </style>
     </head>
@@ -46,10 +65,10 @@
             <% if (locals.messages.flash) { %>
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
-            <section>
+            <section id="test">
                 <h2>DES-II</h2>
                 <p><strong>This is not a diagnostic tool, nor is this written by a professional.</strong> Please consult a professional regarding any mental health concerns you may have. The purpose of this test is to help people gauge or track the severity of their dissociative symptoms, if present.</p>
-                <p>For each question, answer each question with a percentage of how much that question applies, in a general sense from minimal (left) to constant (right).</p>
+                <p>For each question, answer each question with a percentage of how much that question applies, in a general sense from minimal (left, green) to constant (right, red).</p>
                 <hr>
                 <!-- DES Questions-->
 
@@ -168,43 +187,14 @@
                    
                 
                 <!-- End DES -->
-                <hr>
-                <h3>Your Score</h3>
-                <p>You scored: <strong><span id="desScore"></span></strong></p>
-                <p>A score of 30-45 indicates a high level of dissociative symptoms, and scores past 45 are considered very high with a lower chance of a false positive. <strong>This is not a formal diagnostic test.</strong> Higher scores may indicate a need to address these symptoms to a professional.</p>
-                <h3>General Scores</h3>
-                <p><sup>Source: traumadissociation.com</sup></p>
-                <table style="width:80%; margin:auto;">
-                    <tr>
-                       <th>Population</th>
-                        <th>Score</th> 
-                    </tr>
-                    <tr>
-                        <td>General Adult Population</td>
-                        <td>5.4</td>
-                    </tr>
-                    <tr>
-                        <td style="background: rgba(242, 40, 0,0.1);">Anxiety Disorders</td>
-                        <td style="background: rgba(242, 40, 0,0.1);">7</td>
-                    </tr>
-                    <tr></tr>
-                        <td style="background: rgba(242, 40, 0,0.2);">Schizophrenia</td>
-                        <td style="background: rgba(242, 40, 0,0.2);">15.4</td>
-                    </tr>
-                    <tr></tr>
-                        <td style="background: rgba(242, 40, 0, 0.3)">Post-Traumatic Stress Disorder</td>
-                        <td style="background: rgba(242, 40, 0, 0.3)">31</td>
-                    </tr>
-                    <tr></tr>
-                        <td style="background: rgba(242, 40, 0,0.4)">OSDD, DDNOS</td>
-                        <td style="background: rgba(242, 40, 0,0.4)">36</td>
-                    </tr>
-                    <tr></tr>
-                        <td style="background: rgba(242, 40, 0,0.5)">Dissociative Identity Disorder</td>
-                        <td style="background: rgba(242, 40, 0,0.5)">48</td>
-                    </tr>
-                    
-                </table>
+                <div id="end" style="display:none;">
+                    <hr>
+                    <h3>Your Score</h3>
+                    <p>You scored: <strong><span id="desScore"></span></strong></p>
+                <p id="levelSplash"></p><p><strong>This is not a formal diagnostic test.</strong> Higher scores may indicate a need to address these symptoms to a professional. The DES-II is not a diagnostic tool; it is a screener for if dissociative symptoms need to be further addressed.</p>
+                </div>
+                
+                
             </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
@@ -213,11 +203,14 @@
         function between(x, min, max) {
         return x >= min && x <= max;
         }
+        
+        $(".section").each(function(){
+            $(this).prepend("<div class='label-con'><span class='left' aria-hidden='true'>Rarely</span><span class='right' aria-hidden='true'>Constantly</span></div>")
+        });
+
         $(document).on('input', 'input[name=desQuestion]', function() {
                 // $('#slider_value').html( $(this).val() );
-                $(this).next().text(`${$(this).val()}%`);
-
-
+                $(this).next().html(`<br>${$(this).val()}%`);
                 // Go add up and calculate DES score
                 // console.log($('input[name=desQuestion]').val())
                 var finalScore=0;
@@ -228,18 +221,26 @@
                 var desScore= (finalScore/28).toPrecision(2);
                 $("#desScore").text(`${desScore}`);
                 var indication;
+                var levelSplash;
                 if (desScore < 10){
                     indication= "Very Little";
+                    levelSplash="Your level of dissociation symptoms are considered to be about the same as the general population. The average adult population tends to score a 5-6, while the average for adults with depression or anxiety is 7-9.";
                 } else if (between(desScore,10, 20)){
                     indication= "Mild";
+                    levelSplash="Your level of dissociation symptoms are considered to be slightly higher the general population. The average adult population tends to score a 5-6, while people ages 18-24 in transitional periods (going to college, moving out, etc) and those with schizophrenia tend to score closer to 16-17.";
                 } else if(between(desScore, 20, 30)){
                     indication= "Moderate";
+                    levelSplash="Your level of dissociation symptoms are notably higher the general population. The average adult population tends to score a 5-6, while those with Borderline Personality Disorder tend to score around 19.";
                 } else if(between(desScore, 30, 45)){
                     indication= "Heavy";
+                    levelSplash="Your level of dissociation symptoms are significantly higher the general population. The average adult population tends to score a 5-6, while those with Post-Traumatic Stress Disorder (PTSD) and Dissociative Disorder Not Otherwise Specified (DDNOS) tend to score between 31-36.";
                 } else {
                     indiction= "Very Heavy";
+                    levelSplash="Your level of dissociation symptoms are considerably higher the general population. The average adult population tends to score a 5-6, while those with Dissociative Identity Disorder (DID) tend to score between 31-36. However, a high DES-II score does not mean you have DID.";
                 }
+                $("#end").show();
                 $("#desScore").append(`- ${indication || "Very Heavy"} Levels of Dissociation`);
+                $("#levelSplash").text(levelSplash);
             });
     </script>
     </body>

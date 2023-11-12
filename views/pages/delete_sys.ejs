@@ -15,7 +15,14 @@
         <section>
             <h2>Delete <%=  Buffer.from(alt.sys_alias, 'base64').toString() %>?</h2>
             <h3 class="warningtext">Warning: This cannot be undone!</h3>
-            <p>Any <%= pluralize(cookies.alter_term) %> under this <%= cookies.system_term %> will be deleted, as well as their journals. Are you absolutely sure this is what you want to do? Press the "delete" button if so.</p>
+            <p>Are you absolutely sure this is what you want to do? The following will be deleted <strong>permanently</strong>:
+            <ul>
+                <li>All <%= pluralize(cookies.alter_term) %> associated with this <%= cookies.system_term %></li>
+                <li>All journals and journal entries created by <%= pluralize(cookies.alter_term) %> associated with this <%= cookies.system_term %></li>
+                <li>Any <%= pluralize(cookies.subsystem_term) %> attached to this <%= cookies.system_term %></li>
+                <li>All forum threads and thread replies made by <%= pluralize(cookies.alter_term) %> associated with this <%= cookies.system_term %> or any of its <%= pluralize(cookies.subsystem_term) %></li>
+            </ul></p>
+            <a class="linkbutton" href="/system/<%= alt.sys_id %>">Go back</a>
             <form method="post">
                 <input class="warningbutton" type="submit" value="Delete <%=  Buffer.from(alt.sys_alias, 'base64').toString() %> forever" name="delete">
             </form>

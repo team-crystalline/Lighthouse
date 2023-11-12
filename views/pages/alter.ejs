@@ -318,17 +318,11 @@ td{
                         <input type="submit" value="Change <%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Password" name="changePass">
                     </form>
                 </div>
-                <% 
-                    if ((altJournal[0].skin).match(/undefined/gi) ){
-                        var skin= "1";
-                    } else {
-                        var skin= (altJournal[0].skin).replace(/'/g, "");
-                    }
-                %>
+                <% console.log(skin) %>
                 <% if (altJournal[0].is_private == true){ %>
-                    <img class= "pixelart" src="/img/<%= skin %>.png" width="400px" id="login" onclick="blogPopup()" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal.">
+                    <img class= "pixelart" src="/img/<%- skin.val %>.<%- skin.ext %>" width="400px" id="login" onclick="blogPopup()" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal.">
                 <% } else { %>
-                    <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%= skin %>.png" width="400px" id="login" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal."></a>
+                    <a href="/journal/<%- (altJournal[0].alt_id) %>"><img class="pixelart" src="/img/<%- skin.val %>.<%- skin.ext %>" width="400px" id="login" alt="<%= Buffer.from(alterInfo.name, 'base64').toString() %>'s Journal."></a>
                 <% } %>
                 <section><span id="saveSplash"></span>
             <form method="post" name="changejournal" id="changejournal">
@@ -337,7 +331,7 @@ td{
                 <% for (i in journalArr) { %>
                     <optgroup label="<%= skinGroups[i] %>">
                       <% for (n in journalArr[i]){ %> 
-                        <option value="<%= journalArr[i][n].val %>" <% if (parseInt((altJournal[0].skin).replace("'", "")) == parseInt(journalArr[i][n].val)){ %>selected<% } %>><%= journalArr[i][n].c %></option>
+                        <option value="<%= journalArr[i][n].val %>,<%= journalArr[i][n].ext %>" <% if (parseInt((altJournal[0].skin).replace("'", "")) == parseInt(journalArr[i][n].val)){ %>selected<% } %>><%= journalArr[i][n].c %></option>
                       <% } %>  
                     </optgroup>
                 <% } %>
@@ -473,7 +467,9 @@ td{
             $("#login").load(function () { //avoiding blinking, wait until loaded
                 $("#login").fadeTo(100, 1);
             });
-            $("#login").attr("src",`/img/${$("#skin").val()}.png`);
+            
+            var newSkin= ($("#skin").val()).split(",")
+            $("#login").attr("src",`/img/${newSkin[0]}.${newSkin[1]}`);
             $("#saveSplash").text("You currently have unsaved changes.");
             $("#newSkin").addClass("glow");
         });

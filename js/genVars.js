@@ -118,7 +118,7 @@ var journals=[
 	{val: '59', c: "Star Cat (🎨 GhostyStarShaker)", group:2, ext:"png"},
 	{val: '60', c: "POISON GRADIENT (🎨 GOOPYGAMER9000)", group:9, ext:"png"},
 	{val: '61', c: "GREEN TO BLUE (🎨 GOOPYGAMER9000)", group:9, ext:"png"},
-	{val: '62', c: "A FUNKY LIL ALIEN GUY (🎨 GOOPYGAMER9000)", group:7, ext:"png"},
+	{val: '62', c: "A FUNKY LIL ALIEN GUY (🎨 GOOPYGAMER9000)", group:9, ext:"png"},
 	{val: '63', c: "pink stars (🎨 era vulgaris)", group:2, ext:"png"},
 	{val: '64', c: "lightshow (🎨 era vulgaris)", group:2, ext:"png"},
 	{val: '65', c: "Retro Classic (🎨 DivineChrysalism)", group:8, ext:"png"},

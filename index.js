@@ -153,6 +153,14 @@ function idCheck(req){
 	return getCookies(req)['u_id']== req.session.u_id;
 }
 var splash;
+/**
+ * Removes all HTML from a string
+ * @param {string} str 
+ * @returns {string} HTML-less string
+ */
+function stripHTML(str) {
+	return str.replace(/<[^>]*>/g, '');
+  }
 
 /**
  * Sorts an array of data by date. Is in ascending order. use array.reverse() for descending.
@@ -340,6 +348,7 @@ app.locals.version= pjson.version;
 app.locals.siteLanguage= langVar.siteLanguage;
 app.locals.editorColours=tuning.editorColours;
 app.locals.journalArr= splitByGroup(tuning.journals);
+app.locals.journals= tuning.journals;
 app.locals.strings=strings;
 app.locals.apiKey= process.env.apiKey;
 app.locals.legacyJournal= {val: '19', c: "Legacy"};
@@ -362,6 +371,7 @@ app.locals.decrypt= decryptWithAES;
 app.locals.paginate = paginate;
 app.locals.capitalise= capitalise;
 app.locals.pluralize= pluralize;
+app.locals.boil= stripHTML;
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs');
 
@@ -1591,6 +1601,17 @@ app.get('/wish-d/:id', (req, res) => {
 				  return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 			   } else {
 				   var altJournal = nresult.rows;
+				   
+				if (altJournal.length==0){
+					var skin= {
+					   val: "1",
+					   c: "Red",
+					   group: 1,
+					   ext: "png"
+					};
+				} else {
+					var skin= (tuning.journals).filter(jn => jn.val == (altJournal[0].skin).replace(/'/g, ""));
+				}
 			   }
  
 				 client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
@@ -1626,7 +1647,8 @@ app.get('/wish-d/:id', (req, res) => {
 				}
 					
 				   } else {
-					res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo, altJournal:altJournal });
+					
+					res.render(`pages/alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes, alterInfo:alterInfo, altJournal:altJournal, skin: skin[0] });
 				   }
 
 				 }
@@ -2847,7 +2869,8 @@ app.get('/wish-d/:id', (req, res) => {
 				  });
 				} else if (req.body.newjournalSkin){
 					// Change journal skin.
-					client.query({text: "UPDATE journals SET skin=$1 WHERE alt_id=$2;",values: [req.body.skin, req.params.id]}, (err, result) => {
+					let newskin= req.body.skin.split(",");
+					client.query({text: "UPDATE journals SET skin=$1 WHERE alt_id=$2;",values: [newskin[0], req.params.id]}, (err, result) => {
 						if (err) {
 						  console.log(err.stack);
 						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -3145,7 +3168,7 @@ app.get('/wish-d/:id', (req, res) => {
 									  console.log(err.stack);
 									  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
 								  }
-								  client.query({text: "DELETE FROM systems WHERE sys_id=$1;",values: [`${req.params.alt}`]}, (err, result) => {
+								  client.query({text: "DELETE FROM systems WHERE sys_id=$1::uuid OR subsys_id=$1::text;",values: [`${req.params.alt}`]}, (err, result) => {
 									  if (err){
 										  console.log(err.stack);
 										  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });

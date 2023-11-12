@@ -60,7 +60,7 @@
                 padding-left: 1em;
             }
             .lhprovided{
-                padding: .5em;
+                padding-left: .5em;
             }
             img {
             -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
@@ -70,6 +70,22 @@
             a, a:visited, a:active, a:link{
                 text-decoration: none;
                 color: grey;
+            }
+            #columns{
+                text-align: center;
+            }
+            #columns > div:first-child{
+                border-right: 1px solid grey;
+            }
+            #columns > div{
+                float: left;
+                width: 48%;
+                margin: auto;
+            }
+            #columns::after {
+            content: "";
+            display: table;
+            clear: both;
             }
         </style>
         <link rel="stylesheet" type="text/css" href="/stylesheets/slate.css" />
@@ -99,40 +115,51 @@ function getOrdinal(n) {
     </head>
     <body>
         <section id="wrapper">
-            
+        
           <h1><img src="https://www.writelighthouse.com/img/logo.png" style="width: 2em;float:left;">Safety Plan for <%- (user.name).replace(/%20/g, " ") %></h1>
           <p>Below is your safety plan as of <strong><%- dayNames[new Date().getDay()] %>, <%- monthNames[new Date().getMonth()] %> <%- new Date().getDate() %><%- getOrdinal(new Date().getDate()) %> <%- new Date().getFullYear() %></strong>. Generated on Lighthouse.<br><a href="https://www.writelighthouse.com/" target="_blank"><sup>www.writelighthouse.com</sup></a></p>
           <hr>
-          <h2>Warning signs of a crisis</h2>
-          <p>Your warning signs of a mental health crisis is as follows:</p>
-          <p><%- (user.symptoms).replace(/\n/g, "<br>") %></p>
-          <h2>Who to reach out to</h2>
-          <p><%- (user.safepeople).replace(/\n/g, "<br>") %></p>
-          <h2>How to distract from the crisis</h2>
-          <p><%- (user.distractions).replace(/\n/g, "<br>") %></p>
-          <h2>Keeping yourself safe</h2>
-          <p>Here's how you can keep yourself safe, and prevent yourself from acting on any self-destructive behaviours.</p>
-          <p><%- (user.keepsafe).replace(/\n/g, "<br>") %></p>
-          <h2>Grounding</h2>
-          <p>Here's how you can keep yourself grounded in the present.</p>
-          <div class="lhprovided">
-            <p>Lighthouse's suggestions:</p>
-            <ul>
-                <li><strong>5-4-3-2-1:</strong> In your surroundings, count 5 things you can see, 4 things you can feel, 3 things you can hear, 2 things you can smell (or two scents you like), and 1 positive thing about yourself.</li>
-                <li><strong>Re-Orientation:</strong> Bring yourself back to the present by stating simple facts about it. "(x) is today's date", "The current season is (x)", "The current year is (x)".</li>
-                <li><strong>Movement:</strong> Squeeze a pillow or something soft, rub your palms, clap, or clench your fists. Pay extra attention to the tactile feeling of these things.</li>
-                <li><strong>Sensory:</strong> Sniff a scented candle, run cool or warm water over your hands, or feel the weight of objects around you in your hands.</li>
-                <li><strong>Then and Now:</strong> On a piece of paper, draw a line vertically down the middle. On the left side, write basic facts that applied during the time you're currently recounting in your head. On the right side, write down how those facts have changed in the present.</li>
-            </ul>
+          <!-- START COLUMNS -->
+          <div id="columns">
+            <!-- Column A -->
+            <div>
+                <h2>Warning signs of a crisis</h2>
+                <p>Your warning signs of a mental health crisis is as follows:</p>
+                <p><%- (user.symptoms).replace(/\n/g, "<br>") %></p>
+                <h2>Who to reach out to</h2>
+                <p><%- (user.safepeople).replace(/\n/g, "<br>") %></p>
+                <h2>How to distract from the crisis</h2>
+                <p><%- (user.distractions).replace(/\n/g, "<br>") %></p>
+                <h2>Keeping yourself safe</h2>
+                <p>Here's how you can keep yourself safe, and prevent yourself from acting on any self-destructive behaviours.</p>
+                <p><%- (user.keepsafe).replace(/\n/g, "<br>") %></p>
+            </div>
+            <!-- Column B -->
+            <div>
+                <h2>Grounding</h2>
+              <p>Here's how you can keep yourself grounded in the present.</p>
+              <div class="lhprovided">
+                <p>Lighthouse's suggestions:</p>
+                <ul>
+                    <li><strong>5-4-3-2-1:</strong> In your surroundings, count 5 things you can see, 4 things you can feel, 3 things you can hear, 2 things you can smell (or two scents you like), and 1 positive thing about yourself.</li>
+                    <li><strong>Re-Orientation:</strong> Bring yourself back to the present by stating simple facts about it. "(x) is today's date", "The current season is (x)", "The current year is (x)".</li>
+                    <li><strong>Movement:</strong> Squeeze a pillow or something soft, rub your palms, clap, or clench your fists. Pay extra attention to the tactile feeling of these things.</li>
+                    <li><strong>Sensory:</strong> Sniff a scented candle, run cool or warm water over your hands, or feel the weight of objects around you in your hands.</li>
+                    <li><strong>Then and Now:</strong> On a piece of paper, draw a line vertically down the middle. On the left side, write basic facts that applied during the time you're currently recounting in your head. On the right side, write down how those facts have changed in the present.</li>
+                </ul>
+              </div>
+              <h4>Your grounding skills:</h4>
+              <p><%- (user.grounding).replace(/\n/g, "<br>") %></p>
+              <h2>Getting help</h2>
+              <p>To help you, here's lifelines or other numbers you've listed to contact.</p>
+              <p><%- (user.gethelp).replace(/\n/g, "<br>") %></p>
+              <p><small>Lighthouse does not recommend calling 911 for a mental health emergency, unless if your area dispatches social services instead of the police.</small></p>
+            </div>
           </div>
-          <h4>Your grounding skills:</h4>
-          <p><%- (user.grounding).replace(/\n/g, "<br>") %></p>
-          <h2>Getting help</h2>
-          <p>To help you, here's lifelines or other numbers you've listed to contact.</p>
-          <p><%- (user.gethelp).replace(/\n/g, "<br>") %></p>
-          <p><small>Lighthouse does not recommend calling 911 for a mental health emergency, unless if your area dispatches social services instead of the police.</small></p>
           <hr>
           <p>You are not alone. If you find that you're experiencing the signs of a mental health crisis, please do not hesitate to act on this plan. The world is a better place with you in it. ♥</p>
+          
+          
         </section>
     </div>
     </body>

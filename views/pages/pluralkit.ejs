@@ -232,7 +232,7 @@
             $("#callno").text(sysInfo.display_name == null ? sysInfo.name : sysInfo.display_name);
             $("#loadbar").animate({width: (callno/($('.alterChoice:checkbox:checked').length) * 100) + "%"}, 400 );
             // Got info from Pluralkit. Now send it to Lighthouse.
-             response = await fetch(`/system-data`, { 
+             const lhresponse = await fetch(`/system-data`, { 
                 method: "PUT",
                 headers: { 
                   "api-lh-call": "api-lh-call",
@@ -250,8 +250,8 @@
              body = await response.text();
              if (!response.ok) return $("#wrapper").html("<p><img src='/img/svg/ship-icon.svg' class='tinyimg'><em>There was an error communicating with our database. Please reload or try again later.</em></p>");
              sysInfo = JSON.parse(body);
-
-                i++;                    //  increment the counter
+                // If SP's response was ok, increment. Otherwise, don't and try again in a moment.
+                if (response.ok) i++;                    //  increment the counter
                 if (i < $('.alterChoice:checkbox:checked').length) {           //  if the counter < length, call the loop function
                 callLoop();             //  ..  again which will trigger another 
                 } else {

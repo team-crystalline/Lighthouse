@@ -3722,13 +3722,14 @@ app.put("/forum-data", (req,res) => {
 					let altPro= req.body.pronouns == null ? null: `'${Buffer.from(req.body.pronouns).toString('base64')}'`;
 					let altBirth= req.body.birthday == null ? null: `'${Buffer.from(req.body.birthday).toString('base64')}'`;
 					let altAva= req.body.avatar == null ? `'${Buffer.from('https://www.writelighthouse.com/img/avatar-default.jpg').toString('base64')}'`: `'${Buffer.from(req.body.avatar).toString('base64')}'`;
+					let altNotes= req.body.notes == null ? null : `'${Buffer.from(req.body.notes).toString('base64')}'`;
 					client.query({text: "INSERT INTO alters (name, sys_id, pronouns, img_url, colour, notes) VALUES($1, $2, $3, $4, $5, $6);",values: [
 						altName, 
 						req.body.sysId,
 						altPro,
 						altAva,
 						req.body.colour,
-						`'${Buffer.from(req.body.notes).toString('base64')}'`
+						altNotes,
 					]}, (err, result) => {
 						if (err) {
 						console.log(err.stack);

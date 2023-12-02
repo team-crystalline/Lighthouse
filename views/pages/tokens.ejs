@@ -161,17 +161,18 @@
                 <p>All API requests will start with <code>https://www.writelighthouse.com/api/</code></p>
                 <p>Every call <em>must</em> include the token in the request header, under 'usertoken'. Example below in JS:<br>
                 <pre class="language-javascript"><code class="language-javascript">
-async function getMembers(){
-    const call = await fetch(`https://www.writelighthouse.com/api/members/USER-ID`, { 
+async function getMembers() {
+    const call = await fetch(`https://www.writelighthouse.com/api/members/USER-ID`, {
         method: "GET",
-        headers: { 
-            'Content-Type': 'application/json',
-            'usertoken': 'TOKEN-HERE'
+        headers: {
+        'Content-Type': 'application/json',
+        'usertoken': 'TOKEN-HERE'
         }
     });
-    return await call.text();
-}
-getMembers();
+    const reply = await call.text();
+    console.log(reply)
+    }
+    getMembers();
                 </code></pre>
 </p>
 

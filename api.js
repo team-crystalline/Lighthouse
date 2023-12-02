@@ -136,7 +136,7 @@ router.get('/members/:id', async function (req, res){
   });
 // Grab user's systems by user ID and token. If the token is not provided, reject them. The token should not be in the URL
 router.get('/systems/:id', async function (req, res){
-  if (apiEyesOnly(req)){
+
     let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
     let matched= false;
     // Using a for loop bc I can easily break out of it.
@@ -164,14 +164,12 @@ router.get('/systems/:id', async function (req, res){
     } else {
       return res.status(401).send("Not Authorised")
     }
-  } else {
-    return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
-  }
+  
 });
 
 // Grab user's systems by user ID and token. If the token is not provided, reject them. The token should not be in the URL
 router.get('/journals/:id', async function (req, res){
-  if (apiEyesOnly(req)){
+
     let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
     let matched= false;
     // Using a for loop bc I can easily break out of it.
@@ -204,9 +202,7 @@ router.get('/journals/:id', async function (req, res){
     } else {
       return res.status(401).send("Not Authorised")
     }
-  } else {
-    return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
-  }
+
 });
 
 

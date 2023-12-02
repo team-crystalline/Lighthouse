@@ -71,12 +71,9 @@ function generateToken(n) {
 
 */
 router.get("/test", async function(req, res){
-  if (process.env['environment']== "dev"){
     return res.status(200).render('pages/apitest',{ session: req.session, cookies:req.cookies });
-  } else {
-    return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
-  }
 });
+
 // Grab user's members by user ID and token. If the token is not provided, reject them. The token should not be in the URL
 router.get('/members/:id', async function (req, res){
     if (apiEyesOnly(req)){
@@ -97,7 +94,7 @@ router.get('/members/:id', async function (req, res){
         let altArr= new Array();
         alters.forEach((alter)=>{
           altArr.push({
-            alt_id: alter.alt_id,
+            id: alter.alt_id,
             sys_id: alter.sys_id,
             sys_alias: alter.sys_alias != null ? Buffer.from(alter.sys_alias, "base64").toString() : "",
             name: alter.name != null ? Buffer.from(alter.name, "base64").toString() : "",
@@ -137,6 +134,81 @@ router.get('/members/:id', async function (req, res){
       return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
     }
   });
+// Grab user's systems by user ID and token. If the token is not provided, reject them. The token should not be in the URL
+router.get('/systems/:id', async function (req, res){
+  if (apiEyesOnly(req)){
+    let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
+    let matched= false;
+    // Using a for loop bc I can easily break out of it.
+    for (i in userCheck){
+      let compareTok= decryptWithAES(userCheck[i].name);
+      if (compareTok == req.headers.usertoken){
+        // Matches. Read and Alter perms?
+        if (userCheck[i].read == false || userCheck[i].systems == false) return res.status(401).send("Not Authorised")
+        matched= true;
+        break;
+      }
+    }
+    if (matched == true){
+      let systems= await db.query(client, "SELECT * FROM systems WHERE user_id=$1", [req.params.id], res, req);
+      let sysArr= new Array();
+      systems.forEach((system)=>{
+        sysArr.push({
+          id: system.sys_id,
+          name: Buffer.from(system.sys_alias, "base64").toString(),
+          icon: system.icon,
+          parent_sys: system.subsys_id
+        })
+      })
+      return res.status(200).json(sysArr);
+    } else {
+      return res.status(401).send("Not Authorised")
+    }
+  } else {
+    return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
+  }
+});
+
+// Grab user's systems by user ID and token. If the token is not provided, reject them. The token should not be in the URL
+router.get('/journals/:id', async function (req, res){
+  if (apiEyesOnly(req)){
+    let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
+    let matched= false;
+    // Using a for loop bc I can easily break out of it.
+    for (i in userCheck){
+      let compareTok= decryptWithAES(userCheck[i].name);
+      if (compareTok == req.headers.usertoken){
+        // Matches. Read and Alter perms?
+        if (userCheck[i].read == false || userCheck[i].journals == false) return res.status(401).send("Not Authorised")
+        matched= true;
+        break;
+      }
+    }
+    if (matched == true){
+      let journals= await db.query(client, "SELECT journals.*, posts.* FROM journals INNER JOIN systems ON systems.sys_id= journals.sys_id INNER JOIN posts ON posts.j_id= journals.j_id WHERE user_id=$1", [req.params.id], res, req);
+      let jArr= new Array();
+      journals.forEach((j)=>{
+        jArr.push({
+          id: j.j_id,
+          alt_id: j.alt_id,
+          private_journal: j.is_private,
+          is_pinned: j.is_pinned,
+          skin: j.skin,
+          sys_id: j.sys_id,
+          created_on: j.created_on,
+          title: j.title != null ? decryptWithAES(j.title) : "",
+          body: j.body != null ? decryptWithAES(j.body) : ""
+        })
+      })
+      return res.status(200).json(jArr);
+    } else {
+      return res.status(401).send("Not Authorised")
+    }
+  } else {
+    return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
+  }
+});
+
 
   router.get("/user/auth", async function(req, res){
     // Grab user info. This is for logging in.

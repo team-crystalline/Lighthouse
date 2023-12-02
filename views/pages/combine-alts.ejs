@@ -109,7 +109,7 @@ select{
                     $("#alters").append(`
                 <div class="radio-toolbar child">
                             <input type="checkbox" id="${alter.alt_id}" name="alter" value="${alter.name}" class="checkAlt">
-                            <label for="${alter.alt_id}">$<img class="smallimg" src='data:${alter.blob_mimetype};base64,${Buffer.from(alterArr[i].img_blob).toString("base64")}'>${alter.name}</label>
+                            <label for="${alter.alt_id}"><img class="smallimg" src='data:${alter.blob_mimetype};base64,${alter.img_blob}'>${alter.name}</label>
                         </div>
                 `)
                 } else if(distill(alter.img_url)){

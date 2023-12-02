@@ -163,3 +163,4 @@ var editorColours=[
 exports.journals= journals;
 exports.moods= moods;
 exports.editorColours= editorColours;
+console.log("Ee")

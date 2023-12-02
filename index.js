@@ -1318,7 +1318,7 @@ app.get('/wish-d/:id', (req, res) => {
 		res.redirect('/system');
   });
 
-  app.get('/system-data', (req, res, next) => {
+  app.get('/system-data', async function (req, res, next){
 	if (isLoggedIn(req)){
 		if (apiEyesOnly(req)){
 			if (req.headers.grab== "comm-posts"){
@@ -1365,47 +1365,40 @@ app.get('/wish-d/:id', (req, res) => {
 				});
 			} else if (req.headers.grab == "alters"){
 				// Fetch alters
-				client.query({text: "SELECT * FROM alters INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE systems.user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  splash =req.flash("Our database hit an error.");
-					  res.status(400).json({code: 400});
-				  } else {
-					var resArr= new Array();
-					for (i in result.rows){
-						resArr.push({
-							alt_id: result.rows[i].alt_id, 
-							sys_id: result.rows[i].sys_id, 
-							name: (result.rows[i].name != null ? Buffer.from(result.rows[i].name, "base64").toString() : null), 
-							acc: (result.rows[i].acc != null ? Buffer.from(result.rows[i].acc, "base64").toString() : null), 
-							agetext: (result.rows[i].agetext != null ? Buffer.from(result.rows[i].agetext, "base64").toString() : null), 
-							birthday: (result.rows[i].birthday != null ? Buffer.from(result.rows[i].birthday, "base64").toString() : null), 
-							dislikes: (result.rows[i].dislikes != null ? Buffer.from(result.rows[i].dislikes, "base64").toString() : null), 
-							first_noted: (result.rows[i].first_noted != null ? Buffer.from(result.rows[i].first_noted, "base64").toString() : null), 
-							fronttells: (result.rows[i].fronttells != null ? Buffer.from(result.rows[i].fronttells, "base64").toString() : null), 
-							gender:(result.rows[i].gender != null ? Buffer.from(result.rows[i].gender, "base64").toString() : null), 
-							img_url: (result.rows[i].img_url != null ? Buffer.from(result.rows[i].img_url, "base64").toString() : null), 
-							job: (result.rows[i].job != null ? Buffer.from(result.rows[i].job, "base64").toString() : null), 
-							likes: (result.rows[i].likes != null ? Buffer.from(result.rows[i].likes, "base64").toString() : null), 
-							sexuality:(result.rows[i].sexuality != null ? Buffer.from(result.rows[i].sexuality, "base64").toString() : null), 
-							source: (result.rows[i].source != null ? Buffer.from(result.rows[i].source, "base64").toString() : null), 
-							sys_alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), 
-							triggers_neg: (result.rows[i].triggers_neg != null ? Buffer.from(result.rows[i].triggers_neg, "base64").toString() : null), 
-							triggers_pos: (result.rows[i].triggers_pos != null ? Buffer.from(result.rows[i].triggers_pos, "base64").toString() : null), 
-							type: result.rows[i].type, 
-							wants: (result.rows[i].wants != null ? Buffer.from(result.rows[i].wants, "base64").toString() : null), 
-							pronouns: (result.rows[i].pronouns != null ? Buffer.from(result.rows[i].pronouns,"base64").toString() : null),
-							relationships: (result.rows[i].relationships != null ? Buffer.from(result.rows[i].relationships,"base64").toString() : null),
-							notes: (result.rows[i].notes != null ? Buffer.from(result.rows[i].notes,"base64").toString() : null),
-							safe_place: (result.rows[i].safe_place != null ? Buffer.from(result.rows[i].safe_place,"base64").toString() : null),
-							is_archived: result.rows[i].is_archived,
-							img_blob: result.rows[i].img_blob,
-							blob_mimetype: result.rows[i].blob_mimetype
-						});
-					}
-					res.status(200).json({code: 200, search: resArr});
-				  }
+				let altInfo = await db.query(client, "SELECT * FROM alters INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE systems.user_id=$1;", [`${getCookies(req)['u_id']}`], res, req);
+				let resArr= new Array();
+				altInfo.forEach((alt)=>{
+					resArr.push({
+						alt_id: alt.alt_id, 
+						sys_id: alt.sys_id, 
+						name: (alt.name != null ? Buffer.from(alt.name, "base64").toString() : null), 
+						acc: (alt.acc != null ? Buffer.from(alt.acc, "base64").toString() : null), 
+						agetext: (alt.agetext != null ? Buffer.from(alt.agetext, "base64").toString() : null), 
+						birthday: (alt.birthday != null ? Buffer.from(alt.birthday, "base64").toString() : null), 
+						dislikes: (alt.dislikes != null ? Buffer.from(alt.dislikes, "base64").toString() : null), 
+						first_noted: (alt.first_noted != null ? Buffer.from(alt.first_noted, "base64").toString() : null), 
+						fronttells: (alt.fronttells != null ? Buffer.from(alt.fronttells, "base64").toString() : null), 
+						gender:(alt.gender != null ? Buffer.from(alt.gender, "base64").toString() : null), 
+						img_url: (alt.img_url != null ? Buffer.from(alt.img_url, "base64").toString() : null), 
+						job: (alt.job != null ? Buffer.from(alt.job, "base64").toString() : null), 
+						likes: (alt.likes != null ? Buffer.from(alt.likes, "base64").toString() : null), 
+						sexuality:(alt.sexuality != null ? Buffer.from(alt.sexuality, "base64").toString() : null), 
+						source: (alt.source != null ? Buffer.from(alt.source, "base64").toString() : null), 
+						sys_alias: Buffer.from(alt.sys_alias, "base64").toString(), 
+						triggers_neg: (alt.triggers_neg != null ? Buffer.from(alt.triggers_neg, "base64").toString() : null), 
+						triggers_pos: (alt.triggers_pos != null ? Buffer.from(alt.triggers_pos, "base64").toString() : null), 
+						type: alt.type, 
+						wants: (alt.wants != null ? Buffer.from(alt.wants, "base64").toString() : null), 
+						pronouns: (alt.pronouns != null ? Buffer.from(alt.pronouns,"base64").toString() : null),
+						relationships: (alt.relationships != null ? Buffer.from(alt.relationships,"base64").toString() : null),
+						notes: (alt.notes != null ? Buffer.from(alt.notes,"base64").toString() : null),
+						safe_place: (alt.safe_place != null ? Buffer.from(alt.safe_place,"base64").toString() : null),
+						is_archived: alt.is_archived,
+						img_blob: alt.img_blob != null ? Buffer.from(alt.img_blob).toString("base64") : null,
+						blob_mimetype: alt.blob_mimetype
+					});
 				});
+				res.status(200).json({code: 200, search: resArr});
 			} else if (req.headers.grab== "journals"){
 				client.query({text: "SELECT systems.sys_id, alters.name, alters.is_archived, journals.j_id FROM alters INNER JOIN systems ON systems.sys_id= alters.sys_id INNER JOIN journals ON journals.alt_id = alters.alt_id WHERE systems.user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, aresult) => {
 					if (err) {

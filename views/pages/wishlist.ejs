@@ -26,6 +26,7 @@
             <h3>Posted Wishes</h3>
                 <ul>
                 <% for (i in wishArr){ %>
+                    <% console.log(wishArr[i]) %>
                         <li><%- wishArr[i].text %> <a title="Grant Wish!" href="/wish/<%- wishArr[i].uuid %>"><span class="material-symbols-outlined" style="cursor: pointer; color: #D9B23D">
                             magic_button
                             </span></a><a title="Delete Wish" href="/wish-d/<%- wishArr[i].uuid %>"><span class="material-symbols-outlined" style="cursor:pointer; color:#911111;">
@@ -38,7 +39,9 @@
                   <h3>Fulfilled Wishes</h3>
                 <ul>
                 <% for (i in filledWishes){ %>
-                    <li style="color: green;"><%- filledWishes[i].text %></li>
+                    <li style="color: green;"><%- filledWishes[i].text %> <a title="Delete Wish" href="/wish-d/<%- filledWishes[i].uuid %>"><span class="material-symbols-outlined" style="cursor:pointer; color:#911111;">
+                        delete_forever
+                        </span></a></li>
                 <% } %>
             </ul>  
             <% } %>

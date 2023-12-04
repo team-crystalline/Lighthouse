@@ -1531,10 +1531,8 @@ app.get('/wish-d/:id', (req, res) => {
 				default:
 				  numUp=15;
 			  }
+			(req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
 			req.session.alters= paginate(req.session.alters, numUp)
-			req.session.alters.forEach((alt)=>{
-				(alt).sort((a, b) => a.name.localeCompare(b.name))
-			})
 			res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters[req.params.pg -1 || 0],cookies:req.cookies, sys_id: req.params.id, pgCount: req.session.alters.length, altCount: altCount, curPage: req.params.pg || 1});
 
     } else {

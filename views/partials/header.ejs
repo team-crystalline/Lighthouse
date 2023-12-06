@@ -70,7 +70,15 @@
 <meta property="og:description" content="Lighthouse is a self-help website for people who are plural (have Dissociative Identity Disorder/DID, Otherwise Specified Dissociative Disorder/OSDD, or other situations). Keep track of day-to-day life, alters' feelings, and start building internal communication.">
 <meta property="og:title" content="Lighthouse">
 
-<script>0</script>
+<style type="text/css">
+  .hidden {display:none;}
+</style>
+<script type="text/javascript">
+  $('html').addClass('hidden');
+  $(document).ready(function() {    // EDIT: From Adam Zerner's comment below: Rather use load: $(window).on('load', function () {...});
+    $('html').show();  // EDIT: Can also use $('html').removeClass('hidden'); 
+   });  
+ </script>
 
 <script>
   

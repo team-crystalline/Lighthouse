@@ -14,12 +14,14 @@
                 <form method="post">
                     <label for="keytitle">Name</label>
                     <input type="text" id="keytitle" name="keytitle" value="<%= iw.title %>"><br>
-                    <label for="valuebody">Description</label><br>
-                    <textarea name="valuebody" id="valuebody" rows="20" cols="25"><%= iw.body %></textarea><br>
+                    <label for="editor">Description</label><br>
+                    <div id="editor"><%- iw.body %></div><br>
+                    <textarea name="valuebody" id="hidden-text" style="display:none;"></textarea>
                     <input type="submit" name="edit" value="Edit Entry"><input type="reset" value="Start Over">
                 </form>
             </section>
     </div>
+    <%- include ("../partials/quill.ejs") %>
     <%- include ("../partials/footer.ejs") %>
     </body>
 </html>

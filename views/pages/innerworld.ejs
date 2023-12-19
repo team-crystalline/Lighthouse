@@ -30,7 +30,8 @@
                     <label for="key">Name</label><br/>
                     <input type="text" name="key" required><br/>
                     <label for="value" id="DescLabel">Description (Be as descriptive as you'd like)</label><br/>
-                    <textarea name="value" required></textarea>
+                    <div id="editor"></div>
+                    <textarea id="hidden-text" name="value" style="display:none"></textarea>
                     <br/>
                     <input type="submit" name="create" value="Add">
                     <input type="reset" value="Start Over">
@@ -51,6 +52,7 @@
                 
             </section>
         </div>
+        <%- include ("../partials/quill.ejs") %>
         <%- include ("../partials/scripts.ejs") %>
         <%- include ("../partials/footer.ejs") %>
 

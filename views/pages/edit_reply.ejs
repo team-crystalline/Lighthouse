@@ -13,49 +13,21 @@
                 <h2>Edit Reply</h2>
                 <form method="post" id="editReply">
                     <input type="hidden" name="threadid" value="<%= chosenReply.thread_id %>">
-                    <label for="editor3">Reply Body</label>
-                    <textarea id="editor3" name="editor3">
+                    <label for="editor">Reply Body</label>
+                    <div id="editor" autocomplete="off" cols="60" rows="15">
                         <%- chosenReply.body %>
-                    </textarea><br>
+                    </div>
+                    <textarea name="editor3" id="hidden-text" style="display:none;">
+                    </textarea>
                     <br><label for="replyauthor">Reply Author</label>
                     <select name="replyauthor" id="replyauthor" required>
                     </select>
                     <br><input type="submit" name="editreply" value="Edit Reply">
                 </form>
-                <script>ClassicEditor
-                .create( document.querySelector( '#editor3' ), {
-                    licenseKey: '',
-                    fontColor: {
-                            colors: [
-                                {color: 'red',label: 'Red'},
-                                {color: '#ff691f',label: 'Orange'},
-                                { color: '#ffc20a',label: 'Yellow'},
-                                {color: 'green',label: 'Green'},
-                                {color: 'teal',label: 'Teal'},
-                                {color: 'blue',label: 'Blue'},
-                                {color: 'purple',label: 'Purple'},
-                                {color: '#ff0f83',label: 'Pink'},
-                                {color:'#663c28', label: 'Brown'}, 
-                                {color: 'lightgray', label: 'Silver'}, 
-                                {color: 'gray', label: 'Stone'}, 
-                                {color: 'black', label: 'Black'}, 
-                                {color: 'white', label: "White"}
-                            ]
-                        }
-                } )
-                .then( editor => {
-                    window.editor = editor;
-                } )
-                .catch( error => {
-                    console.error( 'Oops, something went wrong!' );
-                    console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                    console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
-                    console.error( error );
-                } );
-            </script>
             </form>
             </section>
     </div>
+    <%- include ("../partials/quill.ejs") %>
     <%- include ("../partials/footer.ejs") %>
     <script>
                 async function getAlters(){

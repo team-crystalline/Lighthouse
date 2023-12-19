@@ -78,6 +78,15 @@
     color: var(--text);
     word-wrap: break-word;
 }
+.ql-toolbar{
+  filter: drop-shadow(-0.25px 0 0 var(--col3))
+          drop-shadow(0.25px 0 0 var(--col3))
+          drop-shadow(0 -0.25px 0 var(--col3))
+          drop-shadow(0 0.25px 0 var(--col3));
+}
+.ql-picker-label, .ql-picker-item{
+  color: var(--col1);
+}
 hr {
     display:block;
     border:0px;
@@ -103,6 +112,7 @@ html{
 
 body{
     padding-top:1em;
+    overflow-x: hidden;
     /* background:var(--col7); */
 }
 td {
@@ -125,7 +135,7 @@ input, textarea{
     background: var(--input);
     border: 1px solid var(--col1);
     color: var(--col1);
-
+    font-size: 1em;
 }
 
 dt{
@@ -1071,7 +1081,7 @@ img.emoji {
         transform:rotate(360deg);
     }
 }
-  .image > img{
+  img{
     max-width: 100%;
   }
 
@@ -1130,3 +1140,7 @@ img.emoji {
     background: rgb(121, 131, 99);
     color: ghostwhite !important;
   }
+
+#hidden-text{
+  display:none;
+}

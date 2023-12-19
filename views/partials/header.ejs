@@ -1,7 +1,7 @@
 <title><%= siteLanguage[session.language || "en"].title %><% if (process.env.environment == "dev"){ %> (SANDBOX) <% } %></title>
 <script src="/prism.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<link rel="stylesheet" href="/stylesheets/main.css?v=1.5.11">
+<link rel="stylesheet" href="/stylesheets/main.css?v=1.5.12">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js"></script>
 <% var fontLink = "/stylesheets/" + session.font + ".css?v=1.0.7"; %>
     <link rel="stylesheet" href="<%= fontLink %>">
@@ -67,7 +67,7 @@
 <meta name="description" content="Lighthouse is a self-help website for people who are plural (have Dissociative Identity Disorder/DID, Otherwise Specified Dissociative Disorder/OSDD, or other situations). Keep track of day-to-day life, alters' feelings, and start building internal communication.">
 <meta name="keywords" content="DID, Dissociative Identity Disorder, OSDD, diary, journal, otherwise specified dissociative disorder, ddnos, multiplicity, plural, plurality, dissociative disorder not otherwise specified, journal app, diary app">
 <meta name="author" content="The Lighthouse System">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 <meta name="twitter:title" content="Lighthouse">
 <meta property="og:image" content="/img/logo.png">
 <link rel="apple-touch-icon" sizes="128x128" href="/img/logo.png">
@@ -101,3 +101,5 @@ options.timeZoneName = "short";
 // console.log(new Date().toLocaleDateString("en-US", options));
 
 </script>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>

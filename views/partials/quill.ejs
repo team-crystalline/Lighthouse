@@ -1,0 +1,43 @@
+<script>
+    var myToolbar= [
+    [{ header: [1, 2, false] }],
+    ['bold', 'italic', 'underline', 'strike'],       
+    ['blockquote', 'code-block'],
+
+    [{ 'color': [] }],         
+    [{ 'font': [] }],
+    [{ 'align': [] }],
+
+    ['clean'],                                        
+    ['image'] //add image here
+];
+
+
+    var quill = new Quill('#editor', {
+      modules: {
+        toolbar: {
+            container: myToolbar,
+            handlers: {
+                image: imageHandler
+            }
+        }
+      },
+      theme: 'snow'  // or 'bubble'
+    });
+    function imageHandler() {
+    var range = this.quill.getSelection();
+    var value = prompt('please copy paste the image url here.');
+    if(value){
+        this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+    }
+}
+$("#editor").on("paste change keyup keydown input", function(){
+$("#hidden-text").text($(".ql-editor").html())
+});
+$('input[type=submit]').click(function(){
+    // JUST in case.
+    $("#hidden-text").text($(".ql-editor").html())
+})
+
+
+</script>

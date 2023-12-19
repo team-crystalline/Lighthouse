@@ -35,8 +35,9 @@
                                                     <label for="newtitle">Topic Title</label>
                                                     <input type="text" id="newtitle" name="newtitle" value="<%= originalPost.title %>"><br>
                                                     <label for="editor2">Topic Post Body</label>
-                                                    <textarea id="editor2" name="newbody">
-                                                        <%- originalPost.body %>
+                                                    <div id="opeditor"><%- originalPost.body %></div>
+                                                    <textarea id="ophidden-text" name="newbody" style="display:none;">
+                                                        
                                                     </textarea><br>
                                                     <label for="topicforum">Topic Forum Location: </label>
                                                     <select id="topicforum" name="topicforum"> 
@@ -53,37 +54,50 @@
                                                     </select>
                                                     <br><input type="submit" name="editop" value="Edit Topic">
                                                 </form>
-                                              <script>ClassicEditor
-                                                .create( document.querySelector( '#editor2' ), {
-                                                  licenseKey: '',
-                                                  fontColor: {
-                                                          colors: [
-                                                              {color: 'red',label: 'Red'},
-                                                              {color: '#ff691f',label: 'Orange'},
-                                                              { color: '#ffc20a',label: 'Yellow'},
-                                                              {color: 'green',label: 'Green'},
-                                                              {color: 'teal',label: 'Teal'},
-                                                              {color: 'blue',label: 'Blue'},
-                                                              {color: 'purple',label: 'Purple'},
-                                                              {color: '#ff0f83',label: 'Pink'},
-                                                              {color:'#663c28', label: 'Brown'}, 
-                                                              {color: 'lightgray', label: 'Silver'}, 
-                                                              {color: 'gray', label: 'Stone'}, 
-                                                              {color: 'black', label: 'Black'}, 
-                                                              {color: 'white', label: "White"}
-                                                            ]
-                                                        }
-                                                } )
-                                                .then( editor => {
-                                                  window.editor = editor;
-                                                } )
-                                                .catch( error => {
-                                                  console.error( 'Oops, something went wrong!' );
-                                                  console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                                                  console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
-                                                  console.error( error );
-                                                } );
-                                            </script>
+                                                <script>
+                                                  var myToolbar= [
+                                                  [{ header: [1, 2, false] }],
+                                                  ['bold', 'italic', 'underline', 'strike'],       
+                                                  ['blockquote', 'code-block'],
+                                              
+                                                  [{ 'color': [] }],         
+                                                  [{ 'font': [] }],
+                                                  [{ 'align': [] }],
+                                              
+                                                  ['clean'],                                        
+                                                  ['image'] //add image here
+                                              ];
+                                              
+                                              
+                                                  var quill = new Quill('#opeditor', {
+                                                    modules: {
+                                                      toolbar: {
+                                                          container: myToolbar,
+                                                          handlers: {
+                                                              image: imageHandler
+                                                          }
+                                                      }
+                                                    },
+                                                    placeholder: 'Write your post here.',
+                                                    theme: 'snow'  // or 'bubble'
+                                                  });
+                                                  function imageHandler() {
+                                                  var range = this.quill.getSelection();
+                                                  var value = prompt('please copy paste the image url here.');
+                                                  if(value){
+                                                      this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+                                                  }
+                                              }
+                                              $("#opeditor").on("paste change keyup keydown input", function(){
+                                              $("#ophidden-text").text($(".ql-editor").html())
+                                              });
+                                              $('input[type=submit]').click(function(){
+                                                  // JUST in case.
+                                                  $("#ophidden-text").text($(".ql-editor").html())
+                                              })
+                                              
+                                              
+                                              </script>
                                           </form>
                                         </div>
                                       </div>
@@ -192,10 +206,10 @@
                         <% } %>
                             <br>
                             <% if (alterArr[i].sys_alias){ %><small><%= capitalise(cookies.system_term) %>: <%= alterArr[i].sys_alias %><br></small><% } %>
-                            <% if (alterArr[i].pronouns){ %>Pronouns: <%= alterArr[i].pronouns %><br><% } %>
-                            <% if (alterArr[i].type){ %>Type: <%= alterArr[i].type %><% } %>
+                            <% if (alterArr[i].pronouns){ %><small>Pronouns: <%= alterArr[i].pronouns %></small><br><% } %>
+                            <% if (alterArr[i].type){ %><small>Type: <%= alterArr[i].type %></small><br><% } %>
                             <% var replyAuthor= alterArr[i].name %>
-                            <% if (alterArr[i].mood){ %><small>Mood: <%= moods[alterArr[i].mood].name %> <%= moods[alterArr[i].mood].emoji %><% if (alterArr[i].reason){ %>- (<%= alterArr[i].reason %>)<% } %></small><br><% } %>
+                            <% if (alterArr[i].mood){ %><small>Mood: <%= moods[alterArr[i].mood].name %> <%= moods[alterArr[i].mood].emoji %></small><br><% } %>
                         <% break; } %>
                       <% } %>
                     <% } %>
@@ -238,40 +252,11 @@
                         <option value="blur">Blurry</option>
                     </select><br>
                     <label for="editor">Type Reply Below</label><br>
-                    <textarea name="reply" id="editor" autocomplete="off" cols="60" rows="15"></textarea><br/>
+                    <div id="editor" autocomplete="off" cols="60" rows="15"></div><br/>
+                    <textarea name="reply" id="hidden-text" style="display:none"></textarea>
                       <input type="submit" name="newtop" value="Submit Reply">
                     </form>
-                      <script>ClassicEditor
-                        .create( document.querySelector( '#editor' ), {
-                          licenseKey: '',
-                          fontColor: {
-                                  colors: [
-                                      {color: 'red',label: 'Red'},
-                                      {color: '#ff691f',label: 'Orange'},
-                                      { color: '#ffc20a',label: 'Yellow'},
-                                      {color: 'green',label: 'Green'},
-                                      {color: 'teal',label: 'Teal'},
-                                      {color: 'blue',label: 'Blue'},
-                                      {color: 'purple',label: 'Purple'},
-                                      {color: '#ff0f83',label: 'Pink'},
-                                      {color:'#663c28', label: 'Brown'}, 
-                                      {color: 'lightgray', label: 'Silver'}, 
-                                      {color: 'gray', label: 'Stone'}, 
-                                      {color: 'black', label: 'Black'}, 
-                                      {color: 'white', label: "White"}
-                                    ]
-                                }
-                        } )
-                        .then( editor => {
-                          window.editor = editor;
-                        } )
-                        .catch( error => {
-                          console.error( 'Oops, something went wrong!' );
-                          console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                          console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
-                          console.error( error );
-                        } );
-                    </script>
+                      <%- include ("../partials/quill.ejs") %>
                 <% } else { %>
                   <h2>This thread has been locked. <i class="fa fa-lock" aria-hidden="true"></i></h2>
                   <p>No more replies can be made until the thread is unlocked.</p>
@@ -283,20 +268,22 @@
         var btn = document.getElementById("tbutton");
         var span = document.getElementById("closetopic");
         btn.onclick = function() {
-          
+          $('html, body').css({
+    overflow: 'hidden',
+    height: '100%'
+});
           $("#myModal").fadeIn("fast");
         }
         span.onclick = function() {
           // modal.style.display = "none";
+          $('html, body').css({
+    overflow: 'auto',
+    height: 'auto'
+});
           $("#myModal").fadeOut("fast");
         }
 
-        // window.onclick = function(event) {
-        //   if (event.target == modal) {
-        //     // modal.style.display = "none";
-        //     $("#myModal").fadeOut("fast");
-        //   }
-        // }
+
 
         async function deleteTopic(name, id){
           if (confirm(`Do you actually want to delete ${name}? All replies under this thread will also be deleted.`)){

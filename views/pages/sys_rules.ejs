@@ -30,15 +30,15 @@
         <section>
             <h2>Rules for Your <%= capitalise(cookies.system_term) %></h2>
             <p>Rules are typically an honour-system thing to establish boundaries within your <%= cookies.system_term %>. Example: "Do not spend copious amounts of money at once without asking other <%= pluralize(cookies.alter_term) %>." Remember: rules in a <%= cookies.system_term %> don't work like rules in a house or at work. If  <%= pluralize(cookies.alter_term) %> violate a rule, there should not be external or internal punishment at any point. <%= capitalise(pluralize(cookies.alter_term)) %> who would continue to violate rules should be discussed with a trusted, qualified professional.</p>
-            <p>To delete a rule, press the <i class="fa fa-trash" aria-hidden="true"></i> button.</p>
+            <p>To delete a rule, press the <i class="fa fa-trash" aria-hidden="true"></i> button. To edit a rule, tap the</p>
             <form method="post">
-              <label for="rule">New Rule: </label>
-              <input type="text" name="rule" required minlength="8"><br/>
+              <label for="rule">New Rule: </label><br>
+              <textarea name="rule" required minlength="8"></textarea><br/>
               <input type="submit" value="Add New Rule" name="create">
             </form>
             <ul id="rules">
               <% for (i in session.sys_rules){ %>
-                <li id="<%= session.sys_rules[i].id %>"><%= Buffer.from(session.sys_rules[i].rule, 'base64').toString() %> <form method="post" style="display: inline;"><button type="submit" name="<%= session.sys_rules[i].id %>" value="Remove" class="textless" onclick="deleteWarn('<%= Buffer.from(session.sys_rules[i].rule, 'base64').toString() %>')"><i class="fa fa-trash" aria-hidden="true"></i>
+                <li id="<%= session.sys_rules[i].id %>"><%- (Buffer.from(session.sys_rules[i].rule, 'base64').toString()).replace(/\n/g, "<br>") %> <form method="post" style="display: inline;"><button type="submit" name="<%= session.sys_rules[i].id %>" value="Remove" class="textless" onclick="deleteWarn('<%= Buffer.from(session.sys_rules[i].rule, 'base64').toString() %>')"><i class="fa fa-trash" aria-hidden="true"></i>
                 </button></form></li>
               <% } %>
             </ul>
@@ -53,7 +53,8 @@
                     </span>
                     <h2>Edit Rule</h2>
                   <form method="post">
-                    <label for="edit">New Rule: </label><input type="text" id="edit" name="edit"><br>
+                    <label for="edit">New Rule: </label><br>
+                    <textarea id="edit" name="edit"></textarea><br>
                     <input type="hidden" id="ruleid" name="ruleid">
                     <input type="submit" value="Edit Rule">
                   </form>
@@ -96,13 +97,6 @@ var modal = document.getElementById("myModal");
           span.onclick = function() {
             // modal.style.display = "none";
             $("#myModal").fadeOut("fast");
-          }
-          // When the user clicks anywhere outside of the modal, close it
-          window.onclick = function(event) {
-            if (event.target == modal) {
-              // modal.style.display = "none";
-              $("#myModal").fadeOut("fast");
-            }
           }
 </script>
 

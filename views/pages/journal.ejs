@@ -38,26 +38,10 @@
                 <label for="j_title">Journal title</label><br/>
                 <input type="text" name="j_title" autocomplete="off"><br/>
                 <label for="j_body">Journal Body</label><br/>
-                <textarea name="j_body" autocomplete="off" cols="60" rows="15" id="editor"></textarea><br/>
+                <div id="editor"></div>
+                <textarea name="j_body" id="hidden-text"></textarea><br/>
                 <input type="submit" name="submit" value="Write post">
                 <input type="reset" name="reset" value="Start Over">
-                <script>ClassicEditor
-                    .create( document.querySelector( '#editor' ), {
-                        fontColor: {
-        colors: [
-            {color: 'red',label: 'Red'},{color: '#ff691f',label: 'Orange'},{ color: '#ffc20a',label: 'Yellow'},{color: 'green',label: 'Green'},{color: 'teal',label: 'Teal'},{color: 'blue',label: 'Blue'},{color: 'purple',label: 'Purple'},{color: '#ff0f83',label: 'Pink'},{color:'#663c28', label: 'Brown'}, {color: 'lightgray', label: 'Silver'}, {color: 'gray', label: 'Stone'}, {color: 'black', label: 'Black'}, {color: 'white', label: "White"}
-        ]}
-                    } )
-                    .then( editor => {
-                      window.editor = editor;
-                    } )
-                    .catch( error => {
-                      console.error( 'Oops, something went wrong!' );
-                      console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                      console.warn( 'Build id: c0gefhhqxz8y-2hxzvv2htugp' );
-                      console.error( error );
-                    } );
-                </script>
             </form>
         </section>
         <hr/>
@@ -67,6 +51,7 @@
 
         </section>
     </div>
+    <%- include ("../partials/quill.ejs") %>
     <%- include ("../partials/footer.ejs") %>
 </body>
 <script>

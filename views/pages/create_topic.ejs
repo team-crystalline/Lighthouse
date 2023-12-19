@@ -19,42 +19,13 @@
                     <label for="fTitle">Topic Title </label>
                     <input type="text" name="fTitle" id="fTitle" required minlength="3"><br>
                     <label for="editor">Topic Body </label><br>
-                    <textarea name="topicBody" id="editor" autocomplete="off" cols="60" rows="15"></textarea><br/>
+                    <div id="editor"></div>
+                    <textarea name="topicBody" id="hidden-text"></textarea><br/>
                       <input type="submit" name="newtop" value="Create Topic">
-                      <script>ClassicEditor
-                        .create( document.querySelector( '#editor' ), {
-                          licenseKey: '',
-                          fontColor: {
-                                  colors: [
-                                      {color: 'red',label: 'Red'},
-                                      {color: '#ff691f',label: 'Orange'},
-                                      { color: '#ffc20a',label: 'Yellow'},
-                                      {color: 'green',label: 'Green'},
-                                      {color: 'teal',label: 'Teal'},
-                                      {color: 'blue',label: 'Blue'},
-                                      {color: 'purple',label: 'Purple'},
-                                      {color: '#ff0f83',label: 'Pink'},
-                                      {color:'#663c28', label: 'Brown'}, 
-                                      {color: 'lightgray', label: 'Silver'}, 
-                                      {color: 'gray', label: 'Stone'}, 
-                                      {color: 'black', label: 'Black'}, 
-                                      {color: 'white', label: "White"}
-                                    ]
-                                }
-                        } )
-                        .then( editor => {
-                          window.editor = editor;
-                        } )
-                        .catch( error => {
-                          console.error( 'Oops, something went wrong!' );
-                          console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                          console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
-                          console.error( error );
-                        } );
-                    </script>
                   </form>
             </section>
     </div>
+    <%- include ("../partials/quill.ejs") %>
     <%- include ("../partials/footer.ejs") %>
     <script>
                 async function getAlters(){

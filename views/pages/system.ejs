@@ -18,6 +18,7 @@
           </style>
     </head>
     <body>
+      <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
         <%- include ("../partials/nav.ejs") %>
 
         <div id="wrapper">
@@ -76,45 +77,15 @@
                 <form method="post">
                     <label for="cTitle">Post Title</label><br/>
                     <input type="text" name="cTitle" autocomplete="off"><br/>
-                    <textarea name="cBody" id="editor" autocomplete="off" cols="60" rows="15"></textarea><br/>
-                    <!-- <input type="text" name="cBody" id="editor"><br/> -->
+                    <div id="editor" autocomplete="off" cols="60" rows="15"></div><br/>
                     <input type="submit" name="post">
                     <input type="reset" name="reset" value="Start Over">
-                    <script>ClassicEditor
-                      .create( document.querySelector( '#editor' ), {
-                        licenseKey: '',
-                        fontColor: {
-                                colors: [
-                                    {color: 'red',label: 'Red'},
-                                    {color: '#ff691f',label: 'Orange'},
-                                    { color: '#ffc20a',label: 'Yellow'},
-                                    {color: 'green',label: 'Green'},
-                                    {color: 'teal',label: 'Teal'},
-                                    {color: 'blue',label: 'Blue'},
-                                    {color: 'purple',label: 'Purple'},
-                                    {color: '#ff0f83',label: 'Pink'},
-                                    {color:'#663c28', label: 'Brown'}, 
-                                    {color: 'lightgray', label: 'Silver'}, 
-                                    {color: 'gray', label: 'Stone'}, 
-                                    {color: 'black', label: 'Black'}, 
-                                    {color: 'white', label: "White"}
-                                  ]
-                              }
-                      } )
-                      .then( editor => {
-                        window.editor = editor;
-                      } )
-                      .catch( error => {
-                        console.error( 'Oops, something went wrong!' );
-                        console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                        console.warn( 'Build id: 7x5cosrncqsm-gncdo1e4b9nh' );
-                        console.error( error );
-                      } );
-                  </script>
+                    <textarea name="cBody" id="hidden-text" style="display:none;">
+                    </textarea>
+                    <%- include ("../partials/quill.ejs") %>
                 </form>
                 <div id="Wait"></div>
                 <div id="journalPosts">
-
                 </div>
             </section>
         </div>

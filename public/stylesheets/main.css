@@ -1083,3 +1083,30 @@ blockquote:before {
 blockquote p {
   display: inline;
 }
+
+.ql-editor, .ql-toolbar, .selectize-input .items .not-full .has-options  {
+  background-color: var(--col7) !important;
+}
+
+
+button .ql-stroke,
+.ql-picker-label .ql-stroke {
+  fill: none;
+  stroke: var(--text) !important;
+}
+
+.ql-active .ql-stroke {
+  fill: none;
+  stroke: var(--text) !important;
+}
+
+button .ql-fill,
+.ql-picker-label .ql-fill {
+  fill: var(--text) !important;
+  stroke: none;
+}
+
+.ql-active .ql-fill {
+  fill: var(--text) !important;
+  stroke: none;
+}

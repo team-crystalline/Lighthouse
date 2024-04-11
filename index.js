@@ -1971,9 +1971,10 @@ app.get('/wish-d/:id', (req, res) => {
 	app.get('/forum-data', (req, res, next) => {
 		if (apiEyesOnly(req)){
 			// No browser access.
+			var blurry= Buffer.from("Blurry").toString("base64")
 			if (req.headers.get== "latestPost"){
 				// Get the latest post from a forum.
-				client.query({text: `SELECT threads.*,alters.* FROM threads INNER JOIN alters ON threads.alt_id = alters.alt_id WHERE threads.topic_id=$1 ORDER BY created_on DESC LIMIT 1;`,values: [req.headers.forumid]}, (err, result) => {
+				client.query({text: `SELECT threads.*, alters.* FROM threads LEFT JOIN alters ON threads.alt_id = alters.alt_id WHERE threads.topic_id = $1 ORDER BY created_on DESC LIMIT 1;`,values: [req.headers.forumid]}, (err, result) => {
 				if (err) {
 				   console.log(err.stack);
 				   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
@@ -1983,7 +1984,7 @@ app.get('/wish-d/:id', (req, res) => {
 					code:200,
 					thread_id: result.rows[0].id,
 					alt_id: result.rows[0].alt_id,
-					name: Buffer.from(result.rows[0].name, "base64").toString(),
+					name: Buffer.from(result.rows[0].name || blurry, "base64").toString(),
 					title: decryptWithAES(result.rows[0].title),
 					date: result.rows[0].created_on
 				})

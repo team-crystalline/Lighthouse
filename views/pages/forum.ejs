@@ -265,11 +265,15 @@ var catModal = document.getElementById("editCat");
             });
             let body = await response.text();
             let forumPosts = JSON.parse(body);
-            // Object { code: 200, thread_id: "8b199ae2-d445-43c6-9b7d-5b0e04fa0196", alt_id: "a4f31a99-8a88-4c6e-98cd-7604950c4b19", name: "Link", title: "Test", date: "2023-08-18T04:22:07.002Z" }
             if (forumPosts.code== 200){
               let postDate= (forumPosts.date).substr(0,10).split("-");
               let monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-              $(this).html(`<a href="/topic/${forumPosts.thread_id}">${forumPosts.title}</a> by <a href="/alter/${forumPosts.alt_id}">${forumPosts.name}</a><br/><small>On ${postDate[2]} ${monthNames[parseInt(postDate[1])-1]} ${postDate[0]}</small>`);
+              if (forumPosts.alt_id == null){
+                $(this).html(`<a href="/topic/${forumPosts.thread_id}">${forumPosts.title}</a> by ${forumPosts.name}<br/><small>On ${postDate[2]} ${monthNames[parseInt(postDate[1])-1]} ${postDate[0]}</small>`);
+              } else {
+                $(this).html(`<a href="/topic/${forumPosts.thread_id}">${forumPosts.title}</a> by <a href="/alter/${forumPosts.alt_id}">${forumPosts.name}</a><br/><small>On ${postDate[2]} ${monthNames[parseInt(postDate[1])-1]} ${postDate[0]}</small>`);
+              }
+              
             } else {
               $(this).html(`<span>No posts yet.</span>`);
             }

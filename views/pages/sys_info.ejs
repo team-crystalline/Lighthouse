@@ -95,7 +95,7 @@ var journSkin=[
             <% if (parseInt(altCount) > 0){ %>
                 <a class="linkbutton" href="/search"><i class="fa fa-search"></i> <%= capitalise(cookies.alter_term) %> Search</a>
                 <p><%= capitalise(pluralize(cookies.alter_term)) %>: <strong><%= parseInt(altCount).toLocaleString() %></strong></p>
-                <p class="dyn">Showing you <%= numup %> [[ALTERS]] per page.</p>
+                <p class="dyn">Showing you <%= numup %> [[ALTERS]] per page. [[ALTERSCAP]] marked with a ✦ have their primary [[SYSTEM]] listed differently.</p>
             <div class="grid" id="sysContainer">
                 <% for ( i in alterArr) {
                     if (alterArr[i].is_archived== false){
@@ -109,7 +109,9 @@ var journSkin=[
                             <img src="https://i.ibb.co/vkwmWjF/avatar-default.jpg" class="smallimg" style="float:left; margin-right:calc(1em);" alt="Card Icon">
                         <% } %>
                      <br>
+                    
                     <%= truncate(boil(alterArr[i].name), 13) %> 
+                    <% if (alterArr[i].id !== currentSys){ %>✦<% } %>
                      <% if (alterArr[i].mood) { %><%- moods[alterArr[i].mood].emoji %><% } %>
                      <% if (alterArr[i].pronouns){ %> 
                         <% if (distill(alterArr[i].pronouns)){ %><br><small><%= truncate(boil(Buffer.from(alterArr[i].pronouns, "base64").toString()), 32) %></small>

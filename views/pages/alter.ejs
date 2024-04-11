@@ -113,7 +113,6 @@ td{
               <input type="submit" name="modify" value="Update">
             </form>
             <section class="clearfix">
-                <!-- For adding alter info. -->
                 <div style="display:block;">
                    <a title="Edit <%= Buffer.from(alterInfo.name, 'base64').toString() %>" href="/edit-alter/<%= alterInfo.alt_id %>" class="editbtn" style="width: fit-content;margin-bottom: calc(.5em);display:inline-block;">Edit <%= Buffer.from(alterInfo.name, 'base64').toString() %></a>
 
@@ -137,7 +136,12 @@ td{
                             <% } %>
                             <% } %>
                        
-                      
+                            <% if (alterInfo.species) { %>
+                             <% if (distill(alterInfo.species)) { %>
+                                <tr><td>Perceived Species:</td>
+                                <td><%- decode(alterInfo.species).replace(/\n/g, "<br>") %></td></tr>
+                            <% } %>
+                            <% } %>
                       
                       
                         <% if (alterInfo.appearance) { %>
@@ -300,8 +304,30 @@ td{
                             <td><%- (Buffer.from(alterInfo.relationships, 'base64').toString()).replace(/\n/g, "<br>") %></td></tr>
                         <% } %>
                             <% } %>
-    
-                      
+                        
+                        <% if (alterInfo.pk_id) { %>
+                        <% if (distill(alterInfo.pk_id)) { %>
+                            <tr><td>Pluralkit ID:</td>
+                            <td><%- decrypt(alterInfo.pk_id) %></td></tr>
+                        <% } %>
+                            <% } %>
+
+                        <% if (alterInfo.sp_id) { %>
+                        <% if (distill(alterInfo.sp_id)) { %>
+                            <tr><td>Simply Plural ID:</td>
+                            <td><%- decrypt(alterInfo.sp_id) %></td></tr>
+                        <% } %>
+                            <% } %>
+                      <% 
+                      if ([alterInfo.subsys_id1, alterInfo.subsys_id2, alterInfo.subsys_id3, alterInfo.subsys_id4, alterInfo.subsys_id5].some(value => value !== null)) { 
+                        const theirList = [alterInfo.subsys_id1, alterInfo.subsys_id2, alterInfo.subsys_id3, alterInfo.subsys_id4, alterInfo.subsys_id5].filter(c => c !== null);
+                        const joinedEntries = session.sysList.filter(sessionEntry => theirList.includes(sessionEntry.sys_id));
+                        const groupNames = joinedEntries.map(entry => `<a href="/system/${entry.sys_id}">${decode(entry.sys_alias)}</a>`).join(", ");
+                        %>
+                        <tr><td>Also present in:</td>
+                            <td><%- groupNames %></td></tr>
+                      <%  } %>
+
                     </tbody>
                     </table>
                     
@@ -461,7 +487,6 @@ td{
             $( "#passhint" ).hide("fast");
         });            
         } catch (e){
-            // console.log(e);
         }
 
         function showPass(){

@@ -74,6 +74,10 @@
                 <input type="text" name="nickname" <% if (chosenAlter.nickname){ %> value="<%= Buffer.from(chosenAlter.nickname, "base64").toString() %>" <% } %>>
                 <label for="pronouns" >Pronouns</label>
                 <input type="text" name="pronouns" <% if (chosenAlter.pronouns){ %> value="<%= Buffer.from(chosenAlter.pronouns, "base64").toString() %>" <% } %>>
+
+                <label for="pronouns" >Perceived Species</label>
+                <input type="text" name="species" <% if (chosenAlter.species){ %> value="<%= decode(chosenAlter.species, "base64") %>" <% } %>>
+
                 <label for="gender" >Gender</label>
                 <input type="text" name="gender" <% if (chosenAlter.gender){ %> value="<%= Buffer.from(chosenAlter.gender, "base64").toString() %>" <% } %>>
                 <label for="sexuality" >Romantic/Sexual Orientation</label>
@@ -117,6 +121,10 @@
                 <textarea name="relationships"><% if (chosenAlter.relationships !== null) { %><%- Buffer.from(chosenAlter.relationships, 'base64').toString() %><% } %></textarea>
                 <label for="notes">Other notes</label>       
                 <textarea name="notes"><% if (chosenAlter.notes !== null) { %><%- Buffer.from(chosenAlter.notes, 'base64').toString() %><% } %></textarea>
+
+                
+
+
                 <label for="appearance">Internal Appearance</label>       
                 <textarea name="appearance"><% if (chosenAlter.appearance !== null) { %><%- Buffer.from(chosenAlter.appearance, 'base64').toString() %><% } %></textarea>
                 <label for="colour">Name Colour </label><input type="color" id="colour" name="colour" value="<%= chosenAlter.colour %>">
@@ -130,7 +138,38 @@
                 <p id="discordwarning"></p>
             </div>
             <p>Uploaded images take priority over Image URLs.</p>
-            <!-- onclick="return verifyUp()"  -->
+            <div>
+                <h2>Advanced Section</h2>
+                <div class="column">
+                    <label for="spid">Simply Plural ID (if applicable): </label>
+                    <input type="text" name="spid" id="spid" value="<% if (chosenAlter.sp_id !== null) { %><%- decrypt(chosenAlter.sp_id) %><% } %>">
+                    <label for="pkid">Pluralkit ID (if applicable): </label>
+                    <input type="text" name="pkid" id="pkid" maxlength="5" value="<% if (chosenAlter.pk_id !== null) { %><%- decrypt(chosenAlter.pk_id) %><% } %>">
+                </div>
+                <div class="column">
+                    <label class="dyn">Other [[SYSTEMS]] that <%- decode(chosenAlter.name) %> is in (up to 5):</label>
+                    <% 
+                        sysInfo.forEach((sys)=>{ 
+                            if (sys.sys_id !== chosenAlter.sys_id){ %>
+                        <div style="display: flex;">
+                            
+                            <input 
+                            type="checkbox" 
+                            name="othersys"
+                            onclick="handleCheckboxChange()"
+                            <% if ([chosenAlter.subsys_id1, chosenAlter.subsys_id2, chosenAlter.subsys_id3, chosenAlter.subsys_id4, chosenAlter.subsys_id5].includes(sys.sys_id)){ %>
+                                checked 
+                            <% } %>
+                            value="<%- sys.sys_id %>"
+                        > <%= decode(sys.sys_alias) %>
+                            </div>
+                    <%
+                        } 
+                    }) 
+                    %>
+                </div>
+            </div>
+                
                 <input type="submit" value="Update <%= decode(chosenAlter.name) %>" id="submit"><input type="reset" value="Start Over">
             </form>
         </section>
@@ -153,6 +192,22 @@
     </div>
     <%- include ("../partials/footer.ejs") %>
     <script>
+        const checkboxes = document.querySelectorAll(".selectable"); // Select all checkboxes
+const maxSelections = 5; // Define your maximum allowed selections
+
+function handleCheckboxChange(event) {
+  const selectedCount = document.querySelectorAll(".selectable:checked").length;
+  console.log(selectedCount)
+  if (selectedCount > maxSelections) {
+    event.target.checked = false; // Deselect the latest checkbox
+    alert("You can only select a maximum of " + maxSelections + " options.");
+  }
+}
+
+// Add event listener to all checkboxes
+checkboxes.forEach(checkbox => checkbox.addEventListener("change", handleCheckboxChange));
+
+
         function checkURL(){
            if ($("#imgurl").val().match(/cdn.discordapp.com/g)){
             // They have a discord icon.

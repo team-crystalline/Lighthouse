@@ -395,6 +395,19 @@ function truncateAndStringify(array, maxLength) {
 	// Call the recursive function on the root items (parent === null)
 	return data.filter(item => item.parent === null).map(renderItem).join('\n');
   }
+
+  /**
+ * Grabs all systems regstered under a user's account.
+ * @param {*} userID The user's ID
+ * @param {Object} res The ExpressJS response.
+ * @param {Object} req The ExpressJS HTTP request.
+ * @returns {Object} Array of systems.
+ */
+async function getSystems(userID, res, req){
+	let systems= await db.query(client, "SELECT * FROM systems WHERE user_id=$1", [userID], res, req);
+	return systems;
+}
+
   
   const apiRouter = require('./api');
   const systemRouter = require('./system');
@@ -1676,7 +1689,7 @@ app.get('/wish-d/:id', (req, res) => {
 		}
 			const numUp= await db.query(client, "SELECT altupnum FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
 
-			const alters = await db.query(client, "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id=$1;", [`${req.params.id}`], res, req);
+			const alters = await db.query(client, "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id = $1 OR (alters.subsys_id1 = $1::text OR alters.subsys_id2 = $1::text OR alters.subsys_id3 = $1::text OR alters.subsys_id4 = $1::text OR alters.subsys_id5 = $1::text) ORDER BY alters.name ASC;", [`${req.params.id}`], res, req);
 			req.session.alters=[]
 			alters.forEach((alter) =>{
 				req.session.alters.push({
@@ -1695,7 +1708,7 @@ app.get('/wish-d/:id', (req, res) => {
 			let altCount= req.session.alters.length;
 			(req.session.alters).sort((a, b) => a.name.localeCompare(b.name))
 			req.session.alters= paginate(req.session.alters, Number(numUp[0].altupnum))
-			res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters[req.params.pg -1 || 0],cookies:req.cookies, sys_id: req.params.id, pgCount: req.session.alters.length, altCount: altCount, curPage: req.params.pg || 1, numup: Number(numUp[0].altupnum)});
+			res.render(`pages/sys_info`, { session: req.session, splash:splash, alterArr: req.session.alters[req.params.pg -1 || 0],cookies:req.cookies, sys_id: req.params.id, pgCount: req.session.alters.length, altCount: altCount, curPage: req.params.pg || 1, numup: Number(numUp[0].altupnum), currentSys: req.params.id});
 
     } else {
 		forbidUser(res, req)
@@ -1789,10 +1802,11 @@ app.get('/wish-d/:id', (req, res) => {
   app.get("/edit-alter/:id", async function (req, res, next){
 
 	if (isLoggedIn(req)){
+		let sysInfo= await getSystems(getCookies(req)['u_id'], res, req)
 		let altInfo= await db.query(client, "SELECT alters.*, systems.sys_alias, systems.user_id FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1", [`${req.params.id}`], res, req);
 		let chosenAlter= altInfo[0];
 		if (!idCheck(req, chosenAlter.user_id)) return res.status(404).render(`pages/404`, { session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
-		res.render(`pages/edit_alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes,chosenAlter:chosenAlter });
+		res.render(`pages/edit_alter`, { session: req.session, splash:splash,cookies:req.cookies, alterTypes:alterTypes,chosenAlter:chosenAlter, sysInfo: sysInfo });
 
 	} else {
 		res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
@@ -3079,14 +3093,12 @@ app.get('/wish-d/:id', (req, res) => {
 				res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 			}
 	});
-	app.post("/edit-alter/:id", (req, res, next)=>{
+	app.post("/edit-alter/:id", async (req, res, next)=>{
 		if (isLoggedIn(req)){
 
 			if (req.files){
 				// They've uploaded a thing.
-				// console.log("Caught an upload.")
-				client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, img_blob=$25, blob_mimetype=$26, colour=$27, nickname=$28 WHERE alt_id=$1",values: [
-					`${req.params.id}`,
+				await db.query(client, "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, img_blob=$25, blob_mimetype=$26, colour=$27, nickname=$28, species=$29, pk_id= $30, sp_id=$31 WHERE alt_id=$1", [`${req.params.id}`,
 					`'${Buffer.from(req.body.name).toString('base64')}'`,
 					`'${Buffer.from(req.body.postr).toString('base64')}'`,
 					`'${Buffer.from(req.body.negtr).toString('base64')}'`,
@@ -3114,20 +3126,14 @@ app.get('/wish-d/:id', (req, res) => {
 					req.body.clear ? null : req.files.imgupload.mimetype,
 					req.body.colour,
 					`'${Buffer.from(req.body.nickname).toString('base64')}'`,
-				]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-				  } else {
-					req.flash("flash","Page updated!");
-					res.redirect(`/alter/${req.params.id}`);
-				  }
-				});
+					`'${Buffer.from(req.body.species).toString("base64")}'`,
+					`${encryptWithAES(req.body.pkid)}`,
+					`${encryptWithAES(req.body.spid)}`,], res, req);
 
 			} else {
 				// No upload was made.
 				// console.log("No upload.");
-				client.query({text: "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, colour=$25, nickname=$26 WHERE alt_id=$1",values: [
+				await db.query(client, "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, colour=$25, nickname=$26, species=$27, pk_id=$28, sp_id=$29 WHERE alt_id=$1", [
 					`${req.params.id}`,
 					`'${Buffer.from(req.body.name).toString('base64')}'`,
 					`'${Buffer.from(req.body.postr).toString('base64')}'`,
@@ -3154,29 +3160,36 @@ app.get('/wish-d/:id', (req, res) => {
 					`'${Buffer.from(req.body.appearance).toString('base64')}'`,
 					req.body.colour,
 					`'${Buffer.from(req.body.nickname).toString('base64')}'`,
-				]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-				  } else {
-					if (req.body.clear){
-						client.query({text: "UPDATE alters SET  img_blob=null, blob_mimetype=null WHERE alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					  }
-					  req.flash("flash","Page updated!");
-					res.redirect(`/alter/${req.params.id}`);
-				  });
-					} else {
-						req.flash("flash","Page updated!");
-					res.redirect(`/alter/${req.params.id}`);
-					}
-					
-					
-				  }
-				});
+					`'${Buffer.from(req.body.species).toString("base64")}'`,
+					`${encryptWithAES(req.body.pkid)}`,
+					`${encryptWithAES(req.body.spid)}`,
+				], res, req);
+				if (req.body.clear){
+					await db.query(client, "UPDATE alters SET  img_blob=null, blob_mimetype=null WHERE alt_id=$1", [`${req.params.id}`], res, req);
+				}
 			}
+
+			let otherSystems;
+			if (typeof req.body.othersys == "string"){
+				// Make an array
+				otherSystems = new Array(req.body.othersys);
+			} else {
+				otherSystems= req.body.othersys
+			}
+			
+			let totalLength = otherSystems.length <= 6 ? otherSystems.length : 6;
+			const finalSystem = otherSystems.slice(0, 6).concat(Array(6 - totalLength ).fill(null));
+
+			// Let's update their systems if need be
+			for (let i = 1; i < 6; i++) {
+				if (finalSystem[i-1] !== null){
+					await db.query(client, `UPDATE alters SET subsys_id${i}=$2 WHERE alt_id=$1`, [`${req.params.id}`, finalSystem[i-1]], res, req);
+				}
+				
+			}
+			
+			req.flash("flash","Page updated!");
+			res.redirect(`/alter/${req.params.id}`);
 			
 		} else {
 			res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });

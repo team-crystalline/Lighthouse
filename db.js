@@ -46,6 +46,7 @@ async function query(client, customQuery, customValues, res, req) {
 	}
 	
   }
+
 client.connect();
 
 // MODULE EXPORTS

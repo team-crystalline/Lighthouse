@@ -306,6 +306,11 @@ function paginate (a, n){
 function forbidUser(res, req){
 	return res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });
 }
+
+function lostPage(res, req){
+	return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
+}
+
 /**
  * Turns a string to base64 (This isn't to save space; it's just to obfuscate)
  * @param {string} str The string
@@ -568,7 +573,7 @@ app.all('*', async function (req, res){
 
   // Refactored!
   app.get('/verify/:id', async function (req, res){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 		const userData= await db.query(client, "SELECT * FROM users WHERE id=$1;", [req.params.id], res,req);
 		req.session.alter_term= userData[0].alter_term;
 		req.session.system_term= userData[0].system_term;
@@ -847,7 +852,7 @@ app.get('/worksheets', async function (req, res){
 
   // Refactored!
   app.get('/forum/:id/new', async function(req, res){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		const forumData= await db.query(client, "SELECT * FROM forums WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
 		let forumList= new Array();
@@ -865,7 +870,7 @@ app.get('/worksheets', async function (req, res){
 
   
   app.get('/inner-world/:id', (req, res) => {
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT * FROM inner_worlds WHERE u_id=$1 AND id=$2;",values: [getCookies(req)['u_id'], req.params.id]}, (err, result) => {
 			if (err) {
@@ -935,7 +940,7 @@ app.get('/worksheets', async function (req, res){
 	
   });
   app.get('/topic/:id/:pg?', (req, res)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT threads.*, forums.topic FROM threads INNER JOIN forums ON threads.topic_id= forums.id WHERE threads.u_id=$1 AND threads.id=$2;",values: [getCookies(req)['u_id'], req.params.id]}, (err, result) => {
 			if (err) {
@@ -1035,7 +1040,7 @@ app.get('/worksheets', async function (req, res){
   });
 
   app.get('/reply/:id', async function (req, res){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		let threadInfo = await db.query(client, "SELECT thread_posts.*, threads.u_id FROM thread_posts INNER JOIN threads ON thread_posts.thread_id = threads.id WHERE thread_posts.id=$1", [`${req.params.id}`], res, req);
 		if (!idCheck(req, threadInfo[0].u_id)) return res.status(404).render(`pages/404`, { session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
@@ -1047,7 +1052,7 @@ app.get('/worksheets', async function (req, res){
   });
   
   app.get('/forum/:id/:pg?', async function (req, res) {
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		try{
 			// Get Forum Name
@@ -1170,7 +1175,7 @@ app.get('/worksheets', async function (req, res){
   });
 
   app.get('/bda/edit/:id', (req, res) => {
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT * FROM bda_plans WHERE id=$1",values: [req.params.id]}, (err, result) => {
 			if (err) {
@@ -1337,7 +1342,7 @@ app.get('/privacypolicy', (req, res) => {
 
 
   app.get('/reset/:id', (req, res)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
      res.render("pages/new_pass", {session: req.session, splash:splash, cookies:req.cookies});
 
   });
@@ -1373,7 +1378,7 @@ app.get('/privacypolicy', (req, res) => {
 });
 
 app.get('/wish/:id', (req, res) => {
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text:'UPDATE wishlist SET is_filled=true WHERE uuid=$1', values: [`${req.params.id}`]}, (err, result)=>{
 			if (err){
@@ -1388,7 +1393,7 @@ app.get('/wish/:id', (req, res) => {
 });
 
 app.get('/wish-d/:id', (req, res) => {
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text:'DELETE FROM wishlist WHERE uuid=$1', values: [`${req.params.id}`]}, (err, result)=>{
 			if (err){
@@ -1444,7 +1449,7 @@ app.get('/wish-d/:id', (req, res) => {
 
 	
 	app.get('/inner-world/delete/:id', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "DELETE FROM inner_worlds WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				if (err) {
@@ -1691,7 +1696,7 @@ app.get('/wish-d/:id', (req, res) => {
 	var alterArr;
 	// Refactored!
   app.get('/system/:id/:pg?', async function(req, res, next){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
     if (isLoggedIn(req)){
 		if (!req.session.worksheets_enabled){
 			// Quick, add that.
@@ -1737,7 +1742,7 @@ app.get('/wish-d/:id', (req, res) => {
 
   // Refactored!
   app.get("/alter/:id", async function(req, res, next){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	 if (isLoggedIn(req)){
 		// Get Alter.
 		const altInfo= await db.query(client, `SELECT alter_moods.*, alters.*, systems.sys_alias, systems.user_id, systems.subsys_id AS "parentsys" FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.alt_id=$1`, [`${req.params.id}`], res, req);
@@ -1803,7 +1808,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
   app.get("/archive-alter/:id", (req, res, next)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT alters.* FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
@@ -1820,7 +1825,7 @@ app.get('/wish-d/:id', (req, res) => {
  });
 
   app.get("/edit-alter/:id", async function (req, res, next){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		let sysInfo= await getSystems(getCookies(req)['u_id'], res, req)
 		let altInfo= await db.query(client, "SELECT alters.*, systems.sys_alias, systems.user_id FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1", [`${req.params.id}`], res, req);
@@ -1833,7 +1838,7 @@ app.get('/wish-d/:id', (req, res) => {
 	}
  });
  app.get("/mood/:id", (req, res, next)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT alters.name, alters.alt_id, alters.sys_id, alter_moods.* FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
@@ -1852,7 +1857,7 @@ app.get('/wish-d/:id', (req, res) => {
 	}
  });
  app.get("/del-mood/:id", (req, res, next)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "DELETE FROM alter_moods WHERE alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			if (err) {
@@ -1867,10 +1872,9 @@ app.get('/wish-d/:id', (req, res) => {
 });
 
   app.get('/journal/:id', async (req, res)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	 if (isLoggedIn(req)){
 		const journalDat = await db.query(client, "SELECT journals.*, alters.*, systems.sys_alias, systems.user_id FROM journals INNER JOIN alters ON journals.alt_id= alters.alt_id INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE alters.alt_id=$1;", [`${req.params.id}`], res, req);
-		if (!checkUUID(req.params.id)) return;
 		if ( journalDat.length < 1 || journalDat[0].user_id !== getCookies(req)['u_id'] ){
 			return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
 		}
@@ -1888,7 +1892,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
   app.get('/journal/:id/delete', (req, res)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	  if (isLoggedIn(req)){
 		  client.query({text: "SELECT * FROM posts WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
@@ -1910,7 +1914,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
   app.get('/journal/:id/edit', (req, res)=>{
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	  if (isLoggedIn(req)){
 		  client.query({text: "SELECT posts.*, journals.alt_id FROM posts INNER JOIN journals ON posts.j_id= journals.j_id WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 			 if (err) {
@@ -1928,7 +1932,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
   app.get('/comm/:id/edit', async function (req, res){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		const sysCheck = await db.query(client, "SELECT id FROM comm_posts WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
 		const sysList = sysCheck.map(obj => obj.id);
@@ -1944,7 +1948,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
   app.get('/comm/:id/delete', async function (req, res){
-	if (!checkUUID(req.params.id)) return;
+	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)){
 		client.query({text: "SELECT * FROM comm_posts WHERE id=$1;",values: [`${req.params.id}`]}, async function (err, result) {
 		   if (err) {
@@ -1970,7 +1974,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
 	app.get('/alter/:id/delete', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "SELECT alters.*, systems.sys_id, systems.user_id FROM alters INNER JOIN systems on alters.sys_id=systems.sys_id WHERE alters.alt_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				 if (err) {
@@ -2141,7 +2145,7 @@ app.get('/wish-d/:id', (req, res) => {
 	*/
 	
 	app.post('/forum/:id/new', (req, res) => {
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			let postAuth= req.body.author== "blur" ? null : req.body.author;
 			client.query({text: "INSERT INTO threads (u_id, topic_id, title, body, alt_id) VALUES ($1, $2, $3, $4, $5);",values: [getCookies(req)['u_id'], req.params.id, `${encryptWithAES(req.body.fTitle)}`, `${encryptWithAES(req.body.topicBody)}`, postAuth]}, (err, result) => {
@@ -2166,7 +2170,7 @@ app.get('/wish-d/:id', (req, res) => {
 		}
 	});
 	app.post('/inner-world/:id', (req, res) => {
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "UPDATE inner_worlds SET key=$3, value=$4 WHERE u_id=$1 AND id=$2;",
 			values: [
@@ -2188,7 +2192,7 @@ app.get('/wish-d/:id', (req, res) => {
 		}
 	});
 	app.post("/archive-alter/:id", (req, res, next)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "UPDATE alters SET is_archived= NOT is_archived WHERE alt_id=$1",values: [`${req.params.id}`]}, (err, result) => {
 				if (err) {
@@ -2210,7 +2214,7 @@ app.get('/wish-d/:id', (req, res) => {
 	 });
 
 	app.post('/reply/:id', (req, res) => {
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			let postAuth= req.body.replyauthor== "blur" ? null : req.body.replyauthor;
 			client.query({text: "UPDATE thread_posts SET body=$2, alt_id=$3 WHERE id=$1;",values: [`${req.params.id}`, `${encryptWithAES(req.body.editor3)}`, postAuth]}, (err, result) => {
@@ -2228,7 +2232,7 @@ app.get('/wish-d/:id', (req, res) => {
 	  });
 
 	app.post('/topic/:id/:pg?', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (req.body.newtop){
 			let postAuth= req.body.replyauthor== "blur" ? null : req.body.replyauthor;
 			client.query({text: "INSERT INTO thread_posts (alt_id, body, thread_id) VALUES ($1, $2, $3)",values: [postAuth, `${encryptWithAES(req.body.reply)}`, req.params.id]}, (err, result) => {
@@ -2263,7 +2267,7 @@ app.get('/wish-d/:id', (req, res) => {
 		
 	});
 	app.post('/forum/:id', (req, res) => {
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			if (req.body.newtop){
 				client.query({text: "INSERT INTO threads (u_id, topic_id, title, body, alt_id) VALUES ($1, $2, $3, $4, $5);",values: [getCookies(req)['u_id'], req.params.id, `${encryptWithAES(req.body.fTitle)}`, `${encryptWithAES(req.body.topicBody)}`, req.body.author]}, (err, result) => {
@@ -2443,7 +2447,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post('/bda/edit/:id', (req, res) => {
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			if (req.body.planname){
 				client.query({text: "UPDATE bda_plans SET alias=$2,before=$3,during=$4,after=$5 WHERE id=$1;",values: [`${req.params.id}`, `${encryptWithAES(req.body.planname)}`,`${encryptWithAES(req.body.planbefore)}`,`${encryptWithAES(req.body.planduring)}`,`${encryptWithAES(req.body.planafter)}`]}, (err, result) => {
@@ -2458,7 +2462,7 @@ app.get('/wish-d/:id', (req, res) => {
 		} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", splash:splash,cookies:req.cookies });}
 	});
 	app.post('/mood/:alt', function(req, res){
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		var now = new Date();
 		client.query({text: "SELECT * FROM alter_moods WHERE alt_id=$1",values: [`${req.params.alt}`]}, (err, result) => {
 			if (err) {
@@ -2752,7 +2756,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 	
 	app.post('/reset/:id', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		// Reset password
 		client.query({text: 'SELECT * FROM users WHERE email_link=$1', values: [`'${req.params.id}'`]}, (err, result)=>{
 		  if (err) {
@@ -2848,7 +2852,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post('/alter/:id/delete', async function (req, res){
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			let chosenAlt= await db.query(client, "SELECT alters.*, systems.sys_id, systems.user_id FROM alters INNER JOIN systems on alters.sys_id=systems.sys_id WHERE alters.alt_id=$1", [req.params.id], res, req);
 			if (!idCheck(req, chosenAlt[0].user_id)) return res.status(404).send("Not found");
@@ -2882,7 +2886,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post('/comm/:id/delete', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "DELETE FROM comm_posts WHERE id=$1; ",values: [`${req.params.id}`]}, (err, result) => {
 			   if (err) {
@@ -2904,7 +2908,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post('/comm/:id/edit', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "UPDATE comm_posts SET title=$1, body=$2, created_on=$4 WHERE id=$3; ",
 			values: [
@@ -2932,7 +2936,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post('/journal/:id/edit', (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "UPDATE posts SET title=$1, body=$2 WHERE p_id=$3; ",values: [`${encryptWithAES(req.body.jTitle)}`, `${encryptWithAES(req.body.jBody)}`, `${req.params.id}`]}, (err, result) => {
  			   if (err) {
@@ -2977,7 +2981,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post("/journal/:id", (req, res)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			if (req.body.submit){
 			client.query({text: "INSERT INTO posts (j_id, created_on, body, title) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4);",values: [`${req.body.j_id}`, `${Date.now()}`, `${encryptWithAES(req.body.j_body)}`, `${encryptWithAES(req.body.j_title)}`]}, (err, result) => {
@@ -3007,7 +3011,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 
 	app.post("/alter/:id", async function(req, res){
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 			let pass= req.body.jPass || null;
 			if (isLoggedIn(req)){
 				let chosenAlt= await db.query(client, "SELECT alters.*, systems.sys_id, systems.user_id FROM alters INNER JOIN systems on alters.sys_id=systems.sys_id WHERE alters.alt_id=$1", [req.params.id], res, req);
@@ -3102,7 +3106,7 @@ app.get('/wish-d/:id', (req, res) => {
 			}
 	});
 	app.post("/edit-alter/:id", async (req, res, next)=>{
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			let pkId= req.body.pkid ? `${encryptWithAES(req.body.pkid)}` : null;
 			let spId= req.body.spid ? `${encryptWithAES(req.body.spid)}` : null;
@@ -3338,7 +3342,7 @@ app.get('/wish-d/:id', (req, res) => {
   });
 
 	app.post('/deletesys/:alt', async function(req, res){
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		const sysData = await db.query(client, "SELECT * FROM systems WHERE sys_id=$1", [`${req.params.alt}`], res, req);
 		if (getCookies(req)['u_id']= sysData[0].user_id){
 			await db.query(client, "DELETE FROM systems WHERE sys_id=$1", [`${req.params.alt}`], res, req);
@@ -4216,7 +4220,7 @@ if (process.env["environment"]== "dev"){
 		}
 	  });
 	  app.get('/inbox/messages/:id', async function(req, res){
-		if (!checkUUID(req.params.id)) return;
+		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			// Before going any further-- Check that the alter's user ID and the actual requester's user ID matches.		
 			const msgTest= await db.query(client, "SELECT DISTINCT alters.alt_id, systems.user_id FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id INNER JOIN messages ON messages.recipient = alters.alt_id OR messages.sender = alters.alt_id WHERE messages.id=$1", [`${req.params.id}`], res, req);

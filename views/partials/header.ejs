@@ -23,52 +23,6 @@
     }
   
   %>
-  // Replace bracketed terms
-  if ($(".dyn")[0]){
-        // Replace html
-        $(".dyn").each(function(){
-          
-          $(this).html($(this).html()
-          // Systems
-          .replace(/\[\[SYSTEMCAP\]\]/g, "<%= capitalise(cookies.system_term || session.system_term || "system") %>")
-          .replace(/\[\[SYSTEMS\]\]/g, "<%= pluralize(cookies.system_term || session.system_term || "system") %>")
-          .replace(/\[\[SYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.system_term || session.system_term || "system")) %>")
-          .replace(/\[\[SYSTEM\]\]/g, "<%= cookies.system_term  || capitalise(session.system_term)|| "system" %>")
-          // Subsystems
-          .replace(/\[\[SUBSYSTEMCAP\]\]/g, "<%= capitalise(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
-          .replace(/\[\[SUBSYSTEMS\]\]/g, "<%= pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
-          .replace(/\[\[SUBSYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem")) %>")
-          .replace(/\[\[SUBSYSTEM\]\]/g, "<%= cookies.subsystem_term || capitalise(session.subsystem_term) || "subsystem" %>")
-          // Alters
-          .replace(/\[\[ALTERCAP\]\]/g, "<%= capitalise(cookies.alter_term || session.alter_term || "alter") %>")
-          .replace(/\[\[ALTERS\]\]/g, "<%= pluralize(cookies.alter_term || session.alter_term || "alter") %>")
-          .replace(/\[\[ALTERSCAP\]\]/g, "<%= capitalise(pluralize(cookies.alter_term || session.alter_term || "alter")) %>")
-          .replace(/\[\[ALTER\]\]/g, "<%= cookies.alter_term || session.alter_term || "alter" %>")
-          // Other terms
-          .replace(/\[\[PLURAL\]\]/g, "<%= cookies.plural_term || session.plural_term || "plural" %>")
-        )
-        $(this).prop('title', $(this).prop('title')
-          // Systems
-          .replace(/\[\[SYSTEMCAP\]\]/g, "<%= capitalise(cookies.system_term || session.system_term || "system") %>")
-          .replace(/\[\[SYSTEMS\]\]/g, "<%= pluralize(cookies.system_term || session.system_term || "system") %>")
-          .replace(/\[\[SYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.system_term || session.system_term || "system")) %>")
-          .replace(/\[\[SYSTEM\]\]/g, "<%= cookies.system_term  || capitalise(session.system_term)|| "system" %>")
-          // Subsystems
-          .replace(/\[\[SUBSYSTEMCAP\]\]/g, "<%= capitalise(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
-          .replace(/\[\[SUBSYSTEMS\]\]/g, "<%= pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
-          .replace(/\[\[SUBSYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem")) %>")
-          .replace(/\[\[SUBSYSTEM\]\]/g, "<%= cookies.subsystem_term || capitalise(session.subsystem_term) || "subsystem" %>")
-          // Alters
-          .replace(/\[\[ALTERCAP\]\]/g, "<%= capitalise(cookies.alter_term || session.alter_term || "alter") %>")
-          .replace(/\[\[ALTERS\]\]/g, "<%= pluralize(cookies.alter_term || session.alter_term || "alter") %>")
-          .replace(/\[\[ALTERSCAP\]\]/g, "<%= capitalise(pluralize(cookies.alter_term || session.alter_term || "alter")) %>")
-          .replace(/\[\[ALTER\]\]/g, "<%= cookies.alter_term || session.alter_term || "alter" %>")
-          // Other terms
-          .replace(/\[\[PLURAL\]\]/g, "<%= cookies.plural_term || session.plural_term || "plural" %>")
-        )
-        })
-      }
-
   // Set language direction if applicable
   <% if (session.language == "ar") { %>
     document.documentElement.setAttribute('lang', 'AR');
@@ -116,3 +70,51 @@ options.timeZoneName = "short";
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+<script>
+  $(document).ready(function(){
+  if ($(".dyn")[0]){
+        // Replace html
+        $(".dyn").each(function(){
+          $(this).html($(this).html()
+          // Systems
+          .replace(/\[\[SYSTEMCAP\]\]/g, "<%= capitalise(cookies.system_term || session.system_term || "system") %>")
+          .replace(/\[\[SYSTEMS\]\]/g, "<%= pluralize(cookies.system_term || session.system_term || "system") %>")
+          .replace(/\[\[SYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.system_term || session.system_term || "system")) %>")
+          .replace(/\[\[SYSTEM\]\]/g, "<%= cookies.system_term  || capitalise(session.system_term)|| "system" %>")
+          // Subsystems
+          .replace(/\[\[SUBSYSTEMCAP\]\]/g, "<%= capitalise(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
+          .replace(/\[\[SUBSYSTEMS\]\]/g, "<%= pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
+          .replace(/\[\[SUBSYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem")) %>")
+          .replace(/\[\[SUBSYSTEM\]\]/g, "<%= cookies.subsystem_term || capitalise(session.subsystem_term) || "subsystem" %>")
+          // Alters
+          .replace(/\[\[ALTERCAP\]\]/g, "<%= capitalise(cookies.alter_term || session.alter_term || "alter") %>")
+          .replace(/\[\[ALTERS\]\]/g, "<%= pluralize(cookies.alter_term || session.alter_term || "alter") %>")
+          .replace(/\[\[ALTERSCAP\]\]/g, "<%= capitalise(pluralize(cookies.alter_term || session.alter_term || "alter")) %>")
+          .replace(/\[\[ALTER\]\]/g, "<%= cookies.alter_term || session.alter_term || "alter" %>")
+          // Other terms
+          .replace(/\[\[PLURAL\]\]/g, "<%= cookies.plural_term || session.plural_term || "plural" %>")
+        )
+        $(this).prop('title', $(this).prop('title')
+          // Systems
+          .replace(/\[\[SYSTEMCAP\]\]/g, "<%= capitalise(cookies.system_term || session.system_term || "system") %>")
+          .replace(/\[\[SYSTEMS\]\]/g, "<%= pluralize(cookies.system_term || session.system_term || "system") %>")
+          .replace(/\[\[SYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.system_term || session.system_term || "system")) %>")
+          .replace(/\[\[SYSTEM\]\]/g, "<%= cookies.system_term  || capitalise(session.system_term)|| "system" %>")
+          // Subsystems
+          .replace(/\[\[SUBSYSTEMCAP\]\]/g, "<%= capitalise(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
+          .replace(/\[\[SUBSYSTEMS\]\]/g, "<%= pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem") %>")
+          .replace(/\[\[SUBSYSTEMSCAP\]\]/g, "<%= capitalise(pluralize(cookies.subsystem_term  || capitalise(session.subsystem_term)|| "subsystem")) %>")
+          .replace(/\[\[SUBSYSTEM\]\]/g, "<%= cookies.subsystem_term || capitalise(session.subsystem_term) || "subsystem" %>")
+          // Alters
+          .replace(/\[\[ALTERCAP\]\]/g, "<%= capitalise(cookies.alter_term || session.alter_term || "alter") %>")
+          .replace(/\[\[ALTERS\]\]/g, "<%= pluralize(cookies.alter_term || session.alter_term || "alter") %>")
+          .replace(/\[\[ALTERSCAP\]\]/g, "<%= capitalise(pluralize(cookies.alter_term || session.alter_term || "alter")) %>")
+          .replace(/\[\[ALTER\]\]/g, "<%= cookies.alter_term || session.alter_term || "alter" %>")
+          // Other terms
+          .replace(/\[\[PLURAL\]\]/g, "<%= cookies.plural_term || session.plural_term || "plural" %>")
+        )
+        })
+      }
+  })
+</script>

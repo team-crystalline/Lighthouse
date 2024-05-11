@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Zeyada';
+    src: url('../fonts/Zeyada-Regular.ttf');
+  }
+
+
+  *{
+    font-family: 'Zeyada', cursive;
+}

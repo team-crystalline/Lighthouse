@@ -93,49 +93,50 @@
     Set the font-family content used for the HTML content.
     *****************************************************/
     .ql-font-arial {
-      font-family: 'Arial';
+      font-family: 'Arial' !important;
     }
     
     .ql-font-times-new-roman {
-      font-family: 'Times New Roman';
+      font-family: 'Times New Roman' !important;
     }
     .ql-font-monospace {
-      font-family: 'Courier New', Courier, monospace;
+      font-family: 'Courier New', Courier, monospace !important;
     }
     .ql-font-cursive {
-      font-family: cursive;
+      font-family: cursive !important;
     }
     .ql-font-times-new-roman {
-      font-family: 'Times New Roman';
+      font-family: 'Times New Roman' !important;
     }
     .ql-font-creepster {
-      font-family: 'creepster', cursive;
+      font-family: 'creepster', cursive !important;
     }
     .ql-font-homemade-apple {
-      font-family: 'Homemade Apple', cursive;
+      font-family: 'Homemade Apple', cursive !important;
     }
     .ql-font-marker {
-      font-family: 'Permanent Marker', cursive;
+      font-family: 'Permanent Marker', cursive !important;
     }
     .ql-font-redacted {
-      font-family: 'Redacted Script', cursive;
+      font-family: 'Redacted Script', cursive !important;
     }
     .ql-font-shadows {
-      font-family: 'Shadows Into Light', cursive;
+      font-family: 'Shadows Into Light', cursive !important;
     }
     .ql-font-rubik {
-      font-family: 'Rubik', serif;
+      font-family: 'Rubik', serif !important;
       direction: rtl !important;
     }
     .ql-font-notojp {
-      font-family: 'Noto Serif JP', serif;
+      font-family: 'Noto Serif JP', serif !important;
     }
     .ql-font-notokr {
-        font-family: 'Noto Serif KR', serif;
+        font-family: 'Noto Serif KR', serif !important;
     }
 </style>
 
 <script>
+  
 
 let Font = Quill.import('formats/font');
     Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr'];
@@ -163,7 +164,7 @@ let Font = Quill.import('formats/font');
             handlers: {
                 image: imageHandler
             }
-        },
+        }
       },
       formats : [
             "background",
@@ -178,9 +179,9 @@ let Font = Quill.import('formats/font');
             "script",
             "underline", 
             "blockquote", 
-            // "header",
+            "header",
             "indent", 
-            // "list", <-- commented-out to suppress auto bullets
+            "list", // <== Needed this in the list.
             "align", 
             "direction", 
             "code-block", 
@@ -197,6 +198,9 @@ let Font = Quill.import('formats/font');
         this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
     }
 }
+quill.formatLine(4, 'list', 'ordered');
+
+// quill.format("list", "ordered");
 $("#editor").on("paste change keyup keydown input", function(){
 $("#hidden-text").text($(".ql-editor").html())
 });

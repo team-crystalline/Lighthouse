@@ -144,7 +144,7 @@
                     <label for="spid">Simply Plural ID (if applicable): </label>
                     <input type="text" name="spid" id="spid" value="<% if (chosenAlter.sp_id !== null) { %><%- decrypt(chosenAlter.sp_id) %><% } %>">
                     <label for="pkid">Pluralkit ID (if applicable): </label>
-                    <input type="text" name="pkid" id="pkid" maxlength="5" value="<% if (chosenAlter.pk_id !== null) { %><%- decrypt(chosenAlter.pk_id) %><% } %>">
+                    <input type="text" name="pkid" id="pkid" maxlength="7" value="<% if (chosenAlter.pk_id !== null) { %><%- decrypt(chosenAlter.pk_id) %><% } %>">
                 </div>
                 <div class="column">
                     <label class="dyn">Other [[SYSTEMS]] that <%- decode(chosenAlter.name) %> is in (up to 5):</label>

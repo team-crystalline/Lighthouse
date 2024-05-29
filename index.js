@@ -3452,111 +3452,66 @@ app.get('/wish-d/:id', (req, res) => {
 		}
 	});
 
-  app.post('/signup', function(req, res) {
-	// Bookmarks: signup post, post signup
-
-	  if (req.body.mjl2fbbz8s) return res.send("(:"); // It's a bot. Do not let them load anything.
-	  let email= (req.body.email).toLowerCase();
-      var query = {
-        text: "SELECT * FROM users WHERE email=$1 OR username=$2;",
-        values: [`'${Buffer.from((email).toLowerCase()).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`]
-      }
-      client.query(query, (err, result) => {
-          if (err) {
-            console.log(err.stack);
-            res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-          } else {
-            // console.log(res.rows)
-            if (result.rows.length > 0){
-                console.log("Already exists.");
-                req.flash("flash", strings.account.alreadyExists);
-                res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
-            } else {
-                // Write to the db
-                var query = {
-                  text: "INSERT INTO users (email, username, pass, email_link, worksheets_enabled, system_term, alter_term, email_pin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-                  values: [
-					`'${Buffer.from(email).toString('base64')}'`, 
-					`'${Buffer.from(req.body.username).toString('base64')}'`, 
-					`'${CryptoJS.SHA3(req.body.password)}'`, 
-					`'${Math.random().toString(36).substr(2, 16)}'`,
-					req.body.ws || true,
-					req.body.system_term || "system",
-					req.body.alter_term || "alter",
-					getRandomInt(1111,9999)
-				]}
-                client.query(query, (err, aresult) => {
-                    if (err) {
-                      console.log(err.stack);
-                      res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-                  } else {
-					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					  } else {
-						ejs.renderFile(__dirname + '/views/pages/email-welcome.ejs', { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]), userid: result.rows[0].id }, (err, data) => {
-							if (err) {
-							  console.log(err);
-							} else {
-							  var mailOptions = {
-								from: '"Lighthouse" <dee_deyes@writelighthouse.com>',
-								to: req.body.email,
-								subject: `Welcome to Lighthouse, ${req.body.username}!`,
-								html: data
-							  };
-						
-							  transporter.sendMail(mailOptions, (error, info) => {
-								if (error) {
-								  return console.log(error);
-								}
-							  });
-							}
-						  });
-					  }
-					})
-					
-					
-					  
-					client.query({text: "SELECT * FROM users WHERE email=$1;", values: [`'${Buffer.from(req.body.email).toString('base64')}'`]}, (err, result) => {
-						if (err) {
-						  console.log(err.stack);
-						  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", splash:splash,cookies:req.cookies });
-					  } else {
-						req.session.alter_term= result.rows[0].alter_term;
-						req.session.system_term= result.rows[0].system_term;
-						req.session.subsystem_term= result.rows[0].subsystem_term;
-						req.session.innerworld_term= result.rows[0].innerworld_term;
-						req.session.plural_term= result.rows[0].plural_term;
-					   	req.session.loggedin = true;
-					   	req.session.u_id= result.rows[0].id;
-					   	req.session.username = Buffer.from(result.rows[0].username, 'base64').toString();
-					   	req.session.is_legacy= result.rows[0].is_legacy;
-						req.session.font= result.rows[0].font;
-					   	req.flash("flash", strings.account.created);
-					   res
-					   .cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('username',  Buffer.from(result.rows[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('u_id', result.rows[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('alter_term', result.rows[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('system_term', result.rows[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('subsystem_term', result.rows[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('innerworld_term', result.rows[0].innerworld_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('plural_term', result.rows[0].plural_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('is_legacy', result.rows[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .cookie('skin', result.rows[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-					   .redirect("/tutorial");
-					   
-					  }
+	app.post('/signup', async function(req, res) {
+		// Bookmarks: signup post, post signup
+	
+		if (req.body.mjl2fbbz8s) return res.send("(:"); // It's a bot. Do not let them load anything.
+	
+		let email= (req.body.email).toLowerCase();
+	
+		const userCheck = await db.query(client, "SELECT * FROM users WHERE email=$1 OR username=$2;", [`'${Buffer.from((email).toLowerCase()).toString('base64')}'`, `'${Buffer.from(req.body.username).toString('base64')}'`], res, req);
+	
+	
+		if (userCheck.length > 0){
+			req.flash("flash", strings.account.alreadyExists);
+			return res.render(`pages/signup`, { session: req.session, splash:splash,cookies:req.cookies });
+		} 
+			// Write to the db
+			await db.query(client, "INSERT INTO users (email, username, pass, email_link, worksheets_enabled, system_term, alter_term, email_pin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", [`'${Buffer.from(email).toString('base64')}'`,`'${Buffer.from(req.body.username).toString('base64')}'`,`'${CryptoJS.SHA3(req.body.password)}'`,`'${Math.random().toString(36).substr(2, 16)}'`,req.body.ws || true,req.body.system_term || "system",req.body.alter_term || "alter",getRandomInt(1111,9999)], res, req);
+	
+			const userDat = await db.query(client, "SELECT * FROM users WHERE email=$1;", [`'${Buffer.from(req.body.email).toString('base64')}'`], res, req);
+	
+			
+	
+			ejs.renderFile(__dirname + '/views/pages/email-welcome.ejs', { alias: req.body.username || randomise(["Buddy", "Friend", "Pal"]), userid: userDat[0].id }, (err, data) => {
+				if (err) {
+					console.log(err);
+				} else {
+					var mailOptions = { from: '"Lighthouse" <dee_deyes@writelighthouse.com>', to: req.body.email, subject: `Welcome to Lighthouse, ${req.body.username}!`, html: data };
+					transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.log(error);
+					}
 					});
-
-                  }
-              });
-            }
-          }
-        });
-
-  });
+				}
+				});
+			
+				req.session.alter_term= userDat[0].alter_term;
+				req.session.system_term= userDat[0].system_term;
+				req.session.subsystem_term= userDat[0].subsystem_term;
+				req.session.innerworld_term= userDat[0].innerworld_term;
+				req.session.plural_term= userDat[0].plural_term;
+				req.session.loggedin = true;
+				req.session.u_id= userDat[0].id;
+				req.session.username = Buffer.from(userDat[0].username, 'base64').toString();
+				req.session.is_legacy= userDat[0].is_legacy;
+				req.session.font= userDat[0].font;
+				
+				res
+				.cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('username',  Buffer.from(userDat[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('u_id', userDat[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('alter_term', userDat[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('system_term', userDat[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('subsystem_term', userDat[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('innerworld_term', userDat[0].innerworld_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('plural_term', userDat[0].plural_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('is_legacy', userDat[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.cookie('skin', userDat[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+				.redirect("/tutorial");
+			
+			
+	  });
 
   app.post('/', function(req, res) {
 	if (req.body.loggingin){

@@ -160,7 +160,7 @@
 				<h3>Developer Section</h3>
 				<a href="/profile/tokens">API Tokens</a>
 			<h3>Delete Your Account</h3>
-			<p>This is an <strong>irreversible action</strong>. All <%- pluralize(cookies.alter_term) %>, journals, inner world entries and rules will be deleted with this account.</p>
+			<p>This is an <strong>irreversible action</strong>. All data will be permanently deleted with this account.</p>
 			<!-- The Modal -->
 			<div id="myModal" class="modal">
 
@@ -253,13 +253,6 @@
 		  $("#cancelDelete").click(function(){
 			$("#myModal").fadeOut("fast");
 		  })
-          // When the user clicks anywhere outside of the modal, close it
-        //   window.onclick = function(event) {
-        //     if (event.target == modal) {
-        //       // modal.style.display = "none";
-        //       $("#myModal").fadeOut("fast");
-        //     }
-        //   }
 
 		$('#newPass1').keyup(function(){
 			$('#newPass3').show();

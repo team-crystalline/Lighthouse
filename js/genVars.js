@@ -173,11 +173,22 @@ const options = {
 	minute:'2-digit'
   }
 
-exports.tuning= tuning;
-exports.journals= journals;
-exports.moods= moods;
-exports.editorColours= editorColours;
-exports.options= options;
-exports.timeOptions=timeOptions;
-exports.skinGroups= skinGroups;
+  const alterTypes=["Apparently Normal Part", "Emotional/Traumatised Part", "Younger Part", "Older Part",  "Introject (Factual)", "Introject (Fictional)", "Non-human", "Robot", "Animal", "Fragment", "Introject (Mixed)"]
+  const dayNames= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthNames=["January","February","March","April","May","June","July",
+"August","September","October","November","December"];
+
+module.exports={
+	tuning,
+	journals,
+	moods,
+	editorColours,
+	options,
+	timeOptions,
+	skinGroups,
+	alterTypes,
+	dayNames,
+	monthNames
+}
+
 console.log("➬ General Vars loaded.")

@@ -568,8 +568,8 @@ ul.breadcrumb {
 }
 .vvtinyimg{
     width: calc(1em);
-    height: calc(1em);
-    /* height: auto; */
+    /* height: calc(1em); */
+    height: auto;
     margin:auto;
     vertical-align: middle;
     object-fit: cover;
@@ -577,8 +577,8 @@ ul.breadcrumb {
 
 .vtinyimg{
     width: calc(2em);
-    height: calc(2em);
-    /* height: auto; */
+    /* height: calc(2em); */
+    height: auto;
     margin:auto;
     vertical-align: middle;
     object-fit: cover;
@@ -586,29 +586,29 @@ ul.breadcrumb {
 }
 .tinyimg{
     width: calc(4em);
-    height: calc(4em);
-    /* height: auto; */
+    /* height: calc(4em); */
+    height: auto;
     object-fit: cover;
     object-position: top;
 }
 .smallimg{
     width: calc(6em);
-    height: calc(6em);
-    /* height: auto; */
+    /* height: calc(6em); */
+    height: auto;
     object-fit: cover;
     object-position: top;
 }
 .medimg{
     width: calc(8em);
-    height: calc(8em);
-    /* height: auto; */
+    /* height: calc(8em); */
+    height: auto;
     object-fit: cover;
     object-position: top;
 }
 .lgimg{
     width: calc(10em);
-    height: calc(10em);
-    /* height: auto; */
+    /* height: calc(10em); */
+    height: auto;
     object-fit: cover;
     object-position: top;
 

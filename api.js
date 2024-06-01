@@ -351,4 +351,5 @@ router.post("/user/create", async function(req, res){
     }
 });
 
+console.log(`Public API Router Loaded.`);
 module.exports = router;

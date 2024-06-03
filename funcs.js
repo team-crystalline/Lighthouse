@@ -60,13 +60,13 @@ const getCookies = (req) => {
  * @returns {boolean} true or false
  */
 function apiEyesOnly(req) {
-	if (req.headers['referer']) {
-    // This is a browser.
+	if (req.headers['api-lh-call']=='api-lh-call') {
+    // This is an internal call.
 	   return true;
 	} else {
 	  return false;     
 	}
-  }
+}
 
 
   function encryptWithAES(text){

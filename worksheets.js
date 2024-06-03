@@ -6,19 +6,20 @@ const client= db.client;
 const crypto= require('crypto');
 const CryptoJS = require("crypto-js");
 var strings= require("./lang/en.json");
+const ejs = require('ejs');
+const path = require('path');
+const PORT = process.env.PORT || 5000;
+const fs = require('fs');
+var pdf = require("html-pdf");
 
 
 const { isLoggedIn, getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, forbidUser, 
-lostPage, idCheck, isNumberOrUuid, paginate, checkUUID, truncate, parseIp, capitalise, 
-getKeyByValue, compareByGroup, splitByGroup, randomise, getRandomInt, generateToken, 
-stripHTML, sortFunction, makeString, distill, getOrdinal, base64encode, base64decode, 
-truncateAndStringify, renderNestedList, getSystems } = require("./funcs.js")
+lostPage, checkUUID } = require("./funcs.js")
 
 
 
 // Refactored!
 router.get('/worksheets', async function (req, res){
-	if (isLoggedIn(req)){
 		if (isLoggedIn(req)){
 			if (!req.session.worksheets_enabled){
 			// Make sure they have worksheets enabled.
@@ -29,12 +30,12 @@ router.get('/worksheets', async function (req, res){
 		res.render(`pages/worksheets`, { session: req.session, cookies:req.cookies });	
 		} else {forbidUser(res,req)}
 		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
 	});
 
 // Refactored!
 router.get('/safety-plan', async function(req, res){
 if (isLoggedIn(req)){
+	console.log(apiEyesOnly(req))
 	if(apiEyesOnly(req)){
 		const safetyPlan= await db.query(client, "SELECT * FROM safetyplans WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
 		var user={

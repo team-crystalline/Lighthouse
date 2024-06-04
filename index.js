@@ -470,7 +470,7 @@ app.get('/glossary', async function(req, res){
 
 
   app.get('/reset/:id', (req, res)=>{
-	if (!checkUUID(req.params.id)) return lostPage(res, req);
+	// if (!checkUUID(req.params.id)) return lostPage(res, req);
      res.render("pages/new_pass", {session: req.session, cookies:req.cookies});
 
   });
@@ -1314,7 +1314,7 @@ app.get('/wish-d/:id', (req, res) => {
 	});
 	
 	app.post('/reset/:id', (req, res)=>{
-		if (!checkUUID(req.params.id)) return lostPage(res, req);
+		// if (!checkUUID(req.params.id)) return lostPage(res, req);
 		// Reset password
 		client.query({text: 'SELECT * FROM users WHERE email_link=$1', values: [`'${req.params.id}'`]}, (err, result)=>{
 		  if (err) {

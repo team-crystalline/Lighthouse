@@ -13,7 +13,7 @@
             <p>Make sure you also add the PIN number sent to your email from our system email. That confirms it's actually you!</p>
             <form method="post">
               <label for="pin">4 digit PIN number</label><br/>
-              <input type="text" autocomplete="off" name="pin" maxlength="4"><br/>
+              <input type="text" autocomplete="off" name="pin" maxlength="4" required><br/>
               <label for="newpass">New Password</label><br/>
               <input type="password" autocomplete="off" name="newpass" minlength="8" id="pass" onchange="checkPass()" required><br/>
               <label for="v-newpass">Write the password again</label><br/>

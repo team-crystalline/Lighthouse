@@ -1,6 +1,13 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Homemade+Apple&family=Noto+Serif+JP&family=Noto+Serif+KR&family=Permanent+Marker&family=Redacted+Script&family=Rubik&family=Shadows+Into+Light&display=swap');
+
+    /* @font-face {
+      font-family: 'LinjaSuwi';
+      src: url('../fonts/linjasuwi.otf');
+    } */
+
+
    /* Set droplist names - -item is the currently selected font, -label is the font's appearance in the droplist*/
    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='']::before,
     .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='']::before
@@ -37,7 +44,7 @@
     .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='creepster']::before
     {
       content: 'CREEPSTER';
-      font-family: 'creepster', cursive;
+      font-family: 'Creepster', cursive;
     }
     .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='homemade-apple']::before,
     .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='homemade-apple']::before
@@ -89,6 +96,13 @@
       content: 'Wingdings';
       font-family: 'wingdings', sans-seric;
     }
+
+    /* .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='linjasuwi']::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='linjasuwi']::before
+    {
+      content: 'linjasuwi';
+      font-family: 'LinjaSuwi';
+    } */
     /****************************************************
     Set the font-family content used for the HTML content.
     *****************************************************/
@@ -109,7 +123,7 @@
       font-family: 'Times New Roman' !important;
     }
     .ql-font-creepster {
-      font-family: 'creepster', cursive !important;
+      font-family: 'Creepster', cursive !important;
     }
     .ql-font-homemade-apple {
       font-family: 'Homemade Apple', cursive !important;
@@ -133,13 +147,18 @@
     .ql-font-notokr {
         font-family: 'Noto Serif KR', serif !important;
     }
+
+    /* .ql-font-linjasuwi {
+        font-family: 'LinjaSuwi' !important;
+    } */
+    
 </style>
 
 <script>
   
 
 let Font = Quill.import('formats/font');
-    Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr'];
+    Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr', /* 'linjasuwi' */];
     Quill.register(Font, true);
     
     var myToolbar= [
@@ -148,7 +167,7 @@ let Font = Quill.import('formats/font');
     ['blockquote', 'code-block'],
     [{ 'list': 'ordered' },{ 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' } ], 
     [{ 'color': [] }],         
-    [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr'] }],
+    [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr', /* 'linjasuwi' */] }],
     [{ 'align': [] }],
     [{ 'direction': 'rtl' }],
     ['link', 'image'],

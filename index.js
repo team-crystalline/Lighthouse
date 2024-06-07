@@ -574,7 +574,7 @@ app.get('/wish-d/:id', (req, res) => {
 
 	
 	app.get('/inner-world/delete/:id', (req, res)=>{
-		if (!checkUUID(req.params.id)) return lostPage(res, req);
+		// if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "DELETE FROM inner_worlds WHERE id=$1;",values: [`${req.params.id}`]}, (err, result) => {
 				if (err) {
@@ -911,7 +911,7 @@ app.get('/wish-d/:id', (req, res) => {
 	
 
 	app.post('/inner-world/:id', (req, res) => {
-		if (!checkUUID(req.params.id)) return lostPage(res, req);
+		// if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			client.query({text: "UPDATE inner_worlds SET key=$3, value=$4 WHERE u_id=$1 AND id=$2;",
 			values: [

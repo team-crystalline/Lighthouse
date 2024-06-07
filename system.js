@@ -7,7 +7,8 @@ const crypto= require('crypto');
 const CryptoJS = require("crypto-js");
 var strings= require("./lang/en.json");
 
-const {isLoggedIn,
+const {
+isLoggedIn,
   getCookies,
   encryptWithAES,
   forbidUser,

@@ -1,164 +1,10 @@
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Homemade+Apple&family=Noto+Serif+JP&family=Noto+Serif+KR&family=Permanent+Marker&family=Redacted+Script&family=Rubik&family=Shadows+Into+Light&display=swap');
-
-    /* @font-face {
-      font-family: 'LinjaSuwi';
-      src: url('../fonts/linjasuwi.otf');
-    } */
-
-
-   /* Set droplist names - -item is the currently selected font, -label is the font's appearance in the droplist*/
-   .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='']::before
-    {
-      content: 'Default';
-    }
-    
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='times-new-roman']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='times-new-roman']::before
-    {
-      content: 'Times New Roman';
-      font-family: 'Times New Roman';
-    }
-    
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='arial']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='arial']::before
-    {
-      content: 'Arial';
-      font-family: 'Arial';
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='monospace']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='monospace']::before
-    {
-      content: 'Monospace';
-      font-family: 'Courier New', Courier, monospace;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='cursive']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='cursive']::before
-    {
-      content: 'Cursive';
-      font-family: cursive;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='creepster']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='creepster']::before
-    {
-      content: 'CREEPSTER';
-      font-family: 'Creepster', cursive;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='homemade-apple']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='homemade-apple']::before
-    {
-      content: 'Homemade Apple';
-      font-family: 'homemade apple', cursive;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='marker']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='marker']::before
-    {
-      content: 'Permanent Marker';
-      font-family: 'Permanent Marker', cursive;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='redacted']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='redacted']::before
-    {
-      content: 'Redacted';
-      font-family: 'Redacted Script';
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='shadows']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='shadows']::before
-    {
-      content: 'Shadows Into Light';
-      font-family: 'Shadows Into Light';
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='rubik']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='rubik']::before
-    {
-      content: 'روبيك (Rubik, Arabic)';
-      font-family: 'Rubik';
-      font-language-override: "AR";
-      direction: rtl !important;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='notojp']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='notojp']::before
-    {
-      content: '能登セリフ (Noto Serif, Japanese)';
-      font-family: 'Noto Serif JP';
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='notokr']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='notokr']::before
-    {
-      content: '노토 세리프(Noto Serif, Korean)';
-      font-family: 'Noto Serif KR', serif;
-    }
-    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='wingdings']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='wingdings']::before
-    {
-      content: 'Wingdings';
-      font-family: 'wingdings', sans-seric;
-    }
-
-    /* .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='linjasuwi']::before,
-    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='linjasuwi']::before
-    {
-      content: 'linjasuwi';
-      font-family: 'LinjaSuwi';
-    } */
-    /****************************************************
-    Set the font-family content used for the HTML content.
-    *****************************************************/
-    .ql-font-arial {
-      font-family: 'Arial' !important;
-    }
-    
-    .ql-font-times-new-roman {
-      font-family: 'Times New Roman' !important;
-    }
-    .ql-font-monospace {
-      font-family: 'Courier New', Courier, monospace !important;
-    }
-    .ql-font-cursive {
-      font-family: cursive !important;
-    }
-    .ql-font-times-new-roman {
-      font-family: 'Times New Roman' !important;
-    }
-    .ql-font-creepster {
-      font-family: 'Creepster', cursive !important;
-    }
-    .ql-font-homemade-apple {
-      font-family: 'Homemade Apple', cursive !important;
-    }
-    .ql-font-marker {
-      font-family: 'Permanent Marker', cursive !important;
-    }
-    .ql-font-redacted {
-      font-family: 'Redacted Script', cursive !important;
-    }
-    .ql-font-shadows {
-      font-family: 'Shadows Into Light', cursive !important;
-    }
-    .ql-font-rubik {
-      font-family: 'Rubik', serif !important;
-      direction: rtl !important;
-    }
-    .ql-font-notojp {
-      font-family: 'Noto Serif JP', serif !important;
-    }
-    .ql-font-notokr {
-        font-family: 'Noto Serif KR', serif !important;
-    }
-
-    /* .ql-font-linjasuwi {
-        font-family: 'LinjaSuwi' !important;
-    } */
-    
-</style>
+<link rel="stylesheet" href="/stylesheets/quill-fonts.css">
 
 <script>
   
 
 let Font = Quill.import('formats/font');
-    Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr', /* 'linjasuwi' */];
+    Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'wingdings', 'rubik', 'notojp', 'notokr', 'linjasuwi'];
     Quill.register(Font, true);
     
     var myToolbar= [
@@ -167,7 +13,7 @@ let Font = Quill.import('formats/font');
     ['blockquote', 'code-block'],
     [{ 'list': 'ordered' },{ 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' } ], 
     [{ 'color': [] }],         
-    [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr', /* 'linjasuwi' */] }],
+    [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'wingdings', 'rubik', 'notojp', 'notokr', 'linjasuwi'] }],
     [{ 'align': [] }],
     [{ 'direction': 'rtl' }],
     ['link', 'image'],

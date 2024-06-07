@@ -60,7 +60,7 @@
                                                 </form>
                                                 <script>
                                                   var Font = Quill.import('formats/font');
-                                                  Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr'];
+                                                  Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr', 'linjasuwi'];
                                                   Quill.register(Font, true);
                                                   var myToolbar= [
                                                         [{ size: [ 'small', false, 'large', 'huge' ]}],
@@ -68,7 +68,7 @@
                                                         ['blockquote', 'code-block'],
                                                         [{ 'list': 'ordered' },{ 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' } ], 
                                                         [{ 'color': [] }],         
-                                                        [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr'] }],
+                                                        [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr', 'linjasuwi'] }],
                                                         [{ 'align': [] }],
                                                         [{ 'direction': 'rtl' }],
                                                         ['link', 'image'],
@@ -292,7 +292,7 @@
                       // sortField: 'text' 
                     });
                     var Font = Quill.import('formats/font');
-    Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr'];
+    Font.whitelist = ['times-new-roman', 'arial', 'monospace', 'cursive', 'marker', 'creepster','homemade-apple', 'shadows' ,'redacted', 'rubik', 'notojp', 'notokr', 'linjasuwi'];
     Quill.register(Font, true);
     
     var myToolbar= [
@@ -301,7 +301,7 @@
     ['blockquote', 'code-block'],
     [{ 'list': 'ordered' },{ 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' } ], 
     [{ 'color': [] }],         
-    [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr'] }],
+    [{ 'font': ['', 'times-new-roman', 'arial', 'monospace', 'cursive','marker', 'creepster', 'shadows', 'homemade-apple', 'redacted', 'rubik', 'notojp', 'notokr', 'linjasuwi'] }],
     [{ 'align': [] }],
     [{ 'direction': 'rtl' }],
     ['link', 'image'],
@@ -334,7 +334,7 @@
             "blockquote", 
             // "header",
             "indent", 
-            // "list", <-- commented-out to suppress auto bullets
+            "list",
             "align", 
             "direction", 
             "code-block", 

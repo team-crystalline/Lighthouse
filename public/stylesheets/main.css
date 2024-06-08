@@ -1150,3 +1150,22 @@ button .ql-fill,
   fill: var(--text) !important;
   stroke: none;
 }
+
+.selectize-control.single .selectize-input.input-active, .selectize-input {
+  background: var(--col7) !important;
+  cursor: text;
+  display: inline-block;
+  color: var(--text) !important;
+}
+
+.selectize-dropdown, .selectize-dropdown.form-control {
+  background: var(--col7) !important;
+}
+
+.selectize-dropdown, .selectize-input, .selectize-input input{
+  color: var(--text)!important;
+}
+
+.selectize-control.single .selectize-input::after {
+  border-color: var(--text) transparent transparent transparent !important;
+}

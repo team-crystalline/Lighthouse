@@ -50,6 +50,7 @@
 }
 
         </style>
+        <link rel="stylesheet" href="/stylesheets/toggleswitch.css?v=<%- version %>">
     </head>
     <body>
         <%- include ("../partials/nav.ejs") %>
@@ -122,14 +123,31 @@
                 <label for="notes">Other notes</label>       
                 <textarea name="notes"><% if (chosenAlter.notes !== null) { %><%- Buffer.from(chosenAlter.notes, 'base64').toString() %><% } %></textarea>
 
+                <label for="appearance">Internal Appearance</label>       
+                <textarea name="appearance"><% if (chosenAlter.appearance !== null) { %><%- decode(chosenAlter.appearance) %><% } %></textarea>
+
+                <label class="toggle" for="colourenabled" onclick="toggleColoursChange()">
+                    <input class="toggle-checkbox" type="checkbox" <% if (chosenAlter.colour_enabled){ %>checked <% } %> name="colourenabled" id="colourenabled">
+                    <div class="toggle-switch"></div>
+                    <span class="toggle-label">Custom Colour</span>
+                  </label>
+                <div id="toggleColour">
+                    <label for="colour">Name Colour </label><input type="color" id="colour" name="colour" value="<%= chosenAlter.colour %>">
+                </div>
                 
 
 
-                <label for="appearance">Internal Appearance</label>       
-                <textarea name="appearance"><% if (chosenAlter.appearance !== null) { %><%- Buffer.from(chosenAlter.appearance, 'base64').toString() %><% } %></textarea>
-                <label for="colour">Name Colour </label><input type="color" id="colour" name="colour" value="<%= chosenAlter.colour %>">
-                <!-- <label for="outline">Name Outline Colour </label><input type="color" id="outline" name="outline" value="<%= chosenAlter.outline %>"> -->
-                <label>Set to black (0,0,0) to fully reset colour options.</label>
+                <label class="toggle" for="outlineenabled" onclick="toggleColoursChange()">
+                    <input class="toggle-checkbox" type="checkbox" <% if (chosenAlter.outline_enabled){ %>checked <% } %> name="outlineenabled" id="outlineenabled">
+                    <div class="toggle-switch"></div>
+                    <span class="toggle-label">Custom Outline</span>
+                  </label>
+                  <div id="toggleOutline">
+                    <label for="outline">Name Outline Colour </label><input type="color" id="outline" name="outline" value="<%= chosenAlter.outline %>">
+                  </div>
+                  
+
+                
                 <label for="imgupload">Upload Avatar (max 2MB)</label> <% if (chosenAlter.img_blob){ %><a id="fileClear" style="display:inline-block;">Remove Uploaded Avatar</a> <% } %>
                 <input type="file" name="imgupload" id="imgupload" accept="image/*"> 
                 <input type="hidden" id="clear" name="clear">
@@ -199,31 +217,68 @@
     </div>
     <%- include ("../partials/footer.ejs") %>
     <script>
-        const checkboxes = document.querySelectorAll(".selectable"); // Select all checkboxes
-const maxSelections = 5; // Define your maximum allowed selections
 
-function handleCheckboxChange(event) {
-  const selectedCount = document.querySelectorAll(".selectable:checked").length;
-  console.log(selectedCount)
-  if (selectedCount > maxSelections) {
-    event.target.checked = false; // Deselect the latest checkbox
-    alert("You can only select a maximum of " + maxSelections + " options.");
-  }
-}
+        const checkboxes = document.querySelectorAll(".selectable"); // Select all system checkboxes
+        const maxSelections = 5; // Define your maximum allowed selections
 
-// Add event listener to all checkboxes
-checkboxes.forEach(checkbox => checkbox.addEventListener("change", handleCheckboxChange));
+        function handleCheckboxChange(event) {
+        const selectedCount = document.querySelectorAll(".selectable:checked").length;
+        console.log(selectedCount)
+        if (selectedCount > maxSelections) {
+            event.target.checked = false; // Deselect the latest checkbox
+            alert("You can only select a maximum of " + maxSelections + " options.");
+        }
+        }
+
+        // Add event listener to all checkboxes
+        checkboxes.forEach(checkbox => checkbox.addEventListener("change", handleCheckboxChange));
 
 
         function checkURL(){
            if ($("#imgurl").val().match(/cdn.discordapp.com/g)){
-            // They have a discord icon.
-            $("#discordwarning").addClass("fail").text("We have detected that this <%= cookies.alter_term %> has an icon pointing to Discord. Please read below for more information.")
-        } else {
-            $("#discordwarning").removeClass("fail").empty();
+                // They have a discord icon.
+                $("#discordwarning").addClass("fail").text("We have detected that this <%= cookies.alter_term %> has an icon pointing to Discord. Please read below for more information.")
+            } else {
+                $("#discordwarning").removeClass("fail").empty();
+            }
         }
+
+        checkURL();
+
+        function toggleColoursInit(){
+            // When loaded.
+            console.log(document.getElementById('colourenabled').checked)
+            if (document.getElementById('colourenabled').checked){
+                $("#toggleColour").show();
+            } else {
+                $("#toggleColour").hide();
+            }
+
+            if (document.getElementById('outlineenabled').checked){
+                $("#toggleOutline").show();
+            } else {
+                $("#toggleOutline").hide();
+            }
         }
-        checkURL()
+
+        toggleColoursInit();
+
+        function toggleColoursChange(){
+            // When the user clicks the toggles.
+            if (document.getElementById('colourenabled').checked){
+                $("#toggleColour").slideDown();
+            } else {
+                $("#toggleColour").slideUp();
+            }
+
+            if (document.getElementById('outlineenabled').checked){
+                $("#toggleOutline").slideDown();
+            } else {
+                $("#toggleOutline").slideUp();
+            }
+        }
+
+
         $("#imgurl").bind("change paste keyup keydown", function(){ checkURL()});
         var originalSubmit = $("#submit").clone();
         var alterTypes=[

@@ -16,12 +16,11 @@ isLoggedIn,
   idCheck,
   paginate,
   checkUUID,
-  base64encode} = require("./funcs.js")
+  base64encode, authUser, validateParam} = require("./funcs.js")
 
 
 // Refactoring
-router.get('/', async function(req, res) {
-    if (isLoggedIn(req)){
+router.get('/', authUser, async function(req, res) {
 		const innerWorlds= await db.query(client, "SELECT inner_worlds from USERS WHERE id=$1;", [getCookies(req)['u_id']], res, req);
 		req.session.innerworld = innerWorlds[0].inner_worlds || false;
 		const worksheets= await db.query(client, "SELECT worksheets_enabled from USERS WHERE id=$1;", [getCookies(req)['u_id']], res, req);
@@ -44,16 +43,13 @@ router.get('/', async function(req, res) {
 		  
 		  
 		res.status(200).render('pages/system',{ session: req.session, cookies:req.cookies, system: systemMap, alters: alterData});
-    } else {
-        forbidUser(res, req);
-    }
+
   });
 
 
-  router.get("/communal-journal", async function(req, res){
+  router.get("/communal-journal", authUser, async function(req, res){
     // If there's an id provided, it's a system communal journal. Grab based on user id AND sys_id
     // If no id provided, just grab from their user id.
-    if (isLoggedIn(req)){
         let commJournInfo;
         let pinnedComm;
         let sysChoice= req.query.sys || null; 
@@ -85,25 +81,10 @@ router.get('/', async function(req, res) {
         res.status(200).render(`pages/commjourn`, { session: req.session, cookies: req.cookies, posts: entries, pinned:pinnedComm, pageNum: pageNumber, sysChoice:sysChoice, finalPage: finalPage });
         // res.send("<h1>Communal Journal</h1>")
 
-    } else {
-        forbidUser(res, req);
-    }
 })
 
-/*
-  _____          _     _____                            _       
- |  __ \        | |   |  __ \                          | |      
- | |__) |__  ___| |_  | |__) |___  __ _ _   _  ___  ___| |_ ___ 
- |  ___/ _ \/ __| __| |  _  // _ \/ _` | | | |/ _ \/ __| __/ __|
- | |  | (_) \__ \ |_  | | \ \  __/ (_| | |_| |  __/\__ \ |_\__ \
- |_|   \___/|___/\__| |_|  \_\___|\__, |\__,_|\___||___/\__|___/
-                                     | |                        
-                                     |_|                        
-  Keywords (for easy searching): post requests, post, requests
-*/
 
-
-router.post("/communal-journal", async function(req, res){
+router.post("/communal-journal", authUser, async function(req, res){
   let sysChoice= req.query.sys;
   let isPinned = req.body.ispinned == 'on' ? true : false;
   if (!sysChoice){
@@ -123,9 +104,7 @@ router.post("/communal-journal", async function(req, res){
   
 });
 
-router.get('/:id/:pg?', async function(req, res, next){
-	if (!checkUUID(req.params.id)) return lostPage(res, req);
-    if (isLoggedIn(req)){
+router.get('/:id/:pg?', authUser, validateParam('id'), async function(req, res, next){
 		if (!req.session.worksheets_enabled){
 			// Quick, add that.
 			const wsEn= await db.query(client, "SELECT worksheets_enabled FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
@@ -134,14 +113,16 @@ router.get('/:id/:pg?', async function(req, res, next){
 		const sysMap= await db.query(client, "SELECT systems.sys_id, systems.subsys_id, systems.user_id, systems.sys_alias, alters.alt_id, systems.icon, systems.description FROM systems LEFT JOIN alters ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1 ORDER BY alters.name ASC", [`${req.params.id}`], res, req);
 		if (!idCheck(req, sysMap[0].user_id)) return res.status(404).render(`pages/404`, { session: req.session, code:"Not Found", cookies:req.cookies });
 		req.session.chosenSys= sysMap[0];
+
 		if (req.session.chosenSys.subsys_id != null){
 			// There's a subsystem.
 			const subsysInf= await db.query(client, "SELECT sys_alias FROM systems WHERE sys_id=$1", [`${req.session.chosenSys.subsys_id}`], res, req);
 			req.session.chosenSys.subsys_alias= subsysInf[0].sys_alias || getCookies(req)['system_term'];
 		}
+
 			const numUp= await db.query(client, "SELECT altupnum FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);
 
-			const alters = await db.query(client, "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id = $1 OR (alters.subsys_id1 = $1::text OR alters.subsys_id2 = $1::text OR alters.subsys_id3 = $1::text OR alters.subsys_id4 = $1::text OR alters.subsys_id5 = $1::text) ORDER BY alters.name ASC;", [`${req.params.id}`], res, req);
+			const alters = await db.query(client, "SELECT alters.alt_id, alters.img_url, alters.sys_id, alters.name, alters.pronouns, alter_moods.mood, alters.is_archived, alters.img_blob, alters.blob_mimetype, alters.colour, alters.colour_enabled, alters.outline_enabled, alters.outline FROM alters LEFT JOIN alter_moods ON alters.alt_id = alter_moods.alt_id WHERE alters.sys_id = $1 OR (alters.subsys_id1 = $1::text OR alters.subsys_id2 = $1::text OR alters.subsys_id3 = $1::text OR alters.subsys_id4 = $1::text OR alters.subsys_id5 = $1::text) ORDER BY alters.name ASC;", [`${req.params.id}`], res, req);
 			req.session.alters=[]
 			alters.forEach((alter) =>{
 				req.session.alters.push({
@@ -154,7 +135,10 @@ router.get('/:id/:pg?', async function(req, res, next){
 						icon: alter.img_url || "aHR0cHM6Ly93d3cud3JpdGVsaWdodGhvdXNlLmNvbS9pbWcvYXZhdGFyLWRlZmF1bHQuanBn",
 						img_blob: alter.img_blob,
 						mimetype: alter.blob_mimetype,
-						colour: alter.colour
+						colour: alter.colour,
+						colourEnabled: alter.colour_enabled,
+						outlineEnabled: alter.outline_enabled,
+						outline: alter.outline
 				})
 			});
 			let altCount= req.session.alters.length;
@@ -162,15 +146,11 @@ router.get('/:id/:pg?', async function(req, res, next){
 			req.session.alters= paginate(req.session.alters, Number(numUp[0].altupnum))
 			res.render(`pages/sys_info`, { session: req.session,  alterArr: req.session.alters[req.params.pg -1 || 0],cookies:req.cookies, sys_id: req.params.id, pgCount: req.session.alters.length, altCount: altCount, curPage: req.params.pg || 1, numup: Number(numUp[0].altupnum), currentSys: req.params.id});
 
-    } else {
-		forbidUser(res, req)
-    }
     
   });
 
 
-	router.post("/:alt/:pg?", function(req, res){
-		if (!checkUUID(req.params.alt)) return;
+	router.post("/:alt/:pg?", authUser, validateParam('alt'), function(req, res){
 		// Post system
 			if (isLoggedIn(req)){
 				if (req.body.sysid){
@@ -214,7 +194,7 @@ router.get('/:id/:pg?', async function(req, res, next){
 	});
 
 
-	router.post('/', async function (req, res){
+	router.post('/', authUser, async function (req, res){
 
 		if (req.body.sysname){
 

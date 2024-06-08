@@ -15,6 +15,7 @@ var pluralize = require('pluralize');
 var pjson = require('./package.json');
 var flash = require('express-flash');
 const fileUpload = require('express-fileupload');
+const methodOverride = require('method-override');
 
 // Local files below
 const { isLoggedIn, getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, forbidUser, 
@@ -97,12 +98,7 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({extended: true}));
 	});
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/css")));
 	app.use(express.static(path.join(__dirname, "node_modules/tabulator-tables/dist/js")));
-	
-	// app.use((req, res, next) => {
-	// 	const theme = req.session.skin || getCookies(req)['skin'] || 'lighthouse';  // Set default if missing
-	// 	app.locals.theme = theme;
-	// 	next();
-	//   });
+	app.use(methodOverride('_method'))
 	
 
 

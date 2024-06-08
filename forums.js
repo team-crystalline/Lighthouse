@@ -9,12 +9,10 @@ var strings= require("./lang/en.json");
 
 
 const { isLoggedIn, getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, forbidUser, 
-lostPage, idCheck, paginate, checkUUID, sortFunction } = require("./funcs.js")
+lostPage, idCheck, paginate, checkUUID, sortFunction, authUser, validateParam } = require("./funcs.js")
 
 // Refactored!
-router.get('/forum/:id/new', async function(req, res){
-if (!checkUUID(req.params.id)) return lostPage(res, req);
-if (isLoggedIn(req)){
+router.get('/forum/:id/new', validateParam('id'), authUser, async function(req, res){
     const forumData= await db.query(client, "SELECT * FROM forums WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
     let forumList= new Array();
     forumData.forEach(element=>{
@@ -24,13 +22,10 @@ if (isLoggedIn(req)){
         })
     });
     res.render(`pages/create_topic`, { session: req.session, cookies:req.cookies, forumLisT: forumList });
-    
-} else {forbidUser(res, req)}
-
 });
-router.get('/forum/:id/:pg?', async function (req, res) {
-if (!checkUUID(req.params.id)) return lostPage(res, req);
-if (isLoggedIn(req)){
+
+router.get('/forum/:id/:pg?', validateParam('id'), authUser, async function (req, res) {
+
     try{
         // Get Forum Name
     let forumInfo = await db.query(client, "SELECT * FROM forums WHERE u_id=$1 AND id=$2;", [getCookies(req)['u_id'], req.params.id], res, req);
@@ -80,12 +75,10 @@ if (isLoggedIn(req)){
         res.status(404).render('pages/404',{ session: req.session, code:"Not Found", cookies:req.cookies });
     }
     
-} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
 
 });
 
-router.get('/forum', (req, res) => {
-	if (isLoggedIn(req)){
+router.get('/forum', authUser, (req, res) => {
 		client.query({text: "SELECT * FROM categories WHERE u_id=$1 ORDER BY f_order, created_on ASC;",values: [getCookies(req)['u_id']]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
@@ -122,12 +115,9 @@ router.get('/forum', (req, res) => {
 		  }
 		});
 		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
 	
   });
-  router.get('/topic/:id/:pg?', (req, res)=>{
-	if (!checkUUID(req.params.id)) return lostPage(res, req);
-	if (isLoggedIn(req)){
+  router.get('/topic/:id/:pg?', validateParam('id'), authUser, (req, res)=>{
 		client.query({text: "SELECT threads.*, forums.topic FROM threads INNER JOIN forums ON threads.topic_id= forums.id WHERE threads.u_id=$1 AND threads.id=$2;",values: [getCookies(req)['u_id'], req.params.id]}, (err, result) => {
 			if (err) {
 			  console.log(err.stack);
@@ -197,7 +187,10 @@ router.get('/forum', (req, res) => {
 								mimetype: bresult.rows[i].blob_mimetype,
 								colour: bresult.rows[i].colour,
 								mood: bresult.rows[i].mood,
-								reason: bresult.rows[i].reason ? decryptWithAES(bresult.rows[i].reason) : null
+								reason: bresult.rows[i].reason ? decryptWithAES(bresult.rows[i].reason) : null,
+                                colourEnabled: bresult.rows[i].colour_enabled,
+                                outlineEnabled: bresult.rows[i].outline_enabled,
+                                outline: bresult.rows[i].outline,
 							})
 
 					}
@@ -221,25 +214,20 @@ router.get('/forum', (req, res) => {
 			});
 		}
 		  });
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
 	
   });
 
-  router.get('/reply/:id', async function (req, res){
-	if (!checkUUID(req.params.id)) return lostPage(res, req);
-	if (isLoggedIn(req)){
+  router.get('/reply/:id', validateParam('id'), authUser, async function (req, res){
+
 		let threadInfo = await db.query(client, "SELECT thread_posts.*, threads.u_id FROM thread_posts INNER JOIN threads ON thread_posts.thread_id = threads.id WHERE thread_posts.id=$1", [`${req.params.id}`], res, req);
 		if (!idCheck(req, threadInfo[0].u_id)) return res.status(404).render(`pages/404`, { session: req.session, code:"Not Found", cookies:req.cookies });
 		res.render(`pages/edit_reply`, { session: req.session, cookies:req.cookies, chosenReply: {id: threadInfo[0].id, body: decryptWithAES(threadInfo[0].body), alt_id: threadInfo[0].alt_id, thread_id: threadInfo[0].thread_id}});
-		
-		
-	} else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
 	
   });
   
 
 
-  router.get('/forum-data', (req, res, next) => {
+  router.get('/forum-data', authUser, (req, res, next) => {
     if (apiEyesOnly(req)){
         // No browser access.
         var blurry= Buffer.from("Blurry").toString("base64")
@@ -312,9 +300,7 @@ router.get('/forum', (req, res) => {
     }
 })
 
-router.post('/forum/:id/new', (req, res) => {
-    if (!checkUUID(req.params.id)) return lostPage(res, req);
-    if (isLoggedIn(req)){
+router.post('/forum/:id/new', validateParam('id'), authUser, (req, res) => {
         let postAuth= req.body.author== "blur" ? null : req.body.author;
         client.query({text: "INSERT INTO threads (u_id, topic_id, title, body, alt_id) VALUES ($1, $2, $3, $4, $5);",values: [getCookies(req)['u_id'], req.params.id, `${encryptWithAES(req.body.fTitle)}`, `${encryptWithAES(req.body.topicBody)}`, postAuth]}, (err, result) => {
             if (err) {
@@ -333,14 +319,10 @@ router.post('/forum/:id/new', (req, res) => {
             });
           }
         });
-    }else {
-        res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });
-    }
+   
 });
 
-router.post('/reply/:id', (req, res) => {
-    if (!checkUUID(req.params.id)) return lostPage(res, req);
-    if (isLoggedIn(req)){
+router.post('/reply/:id', validateParam('id'), authUser, (req, res) => {
         let postAuth= req.body.replyauthor== "blur" ? null : req.body.replyauthor;
         client.query({text: "UPDATE thread_posts SET body=$2, alt_id=$3 WHERE id=$1;",values: [`${req.params.id}`, `${encryptWithAES(req.body.editor3)}`, postAuth]}, (err, result) => {
             if (err) {
@@ -352,12 +334,9 @@ router.post('/reply/:id', (req, res) => {
           }
         });
         
-    } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
-    
   });
 
-router.post('/topic/:id/:pg?', (req, res)=>{
-    if (!checkUUID(req.params.id)) return lostPage(res, req);
+router.post('/topic/:id/:pg?', validateParam('id'), authUser, (req, res)=>{
     if (req.body.newtop){
         let postAuth= req.body.replyauthor== "blur" ? null : req.body.replyauthor;
         client.query({text: "INSERT INTO thread_posts (alt_id, body, thread_id) VALUES ($1, $2, $3)",values: [postAuth, `${encryptWithAES(req.body.reply)}`, req.params.id]}, (err, result) => {
@@ -391,9 +370,7 @@ router.post('/topic/:id/:pg?', (req, res)=>{
     }
     
 });
-router.post('/forum/:id', (req, res) => {
-    if (!checkUUID(req.params.id)) return lostPage(res, req);
-    if (isLoggedIn(req)){
+router.post('/forum/:id', validateParam('id'), authUser, (req, res) => {
         if (req.body.newtop){
             client.query({text: "INSERT INTO threads (u_id, topic_id, title, body, alt_id) VALUES ($1, $2, $3, $4, $5);",values: [getCookies(req)['u_id'], req.params.id, `${encryptWithAES(req.body.fTitle)}`, `${encryptWithAES(req.body.topicBody)}`, req.body.author]}, (err, result) => {
                 if (err) {
@@ -423,14 +400,10 @@ router.post('/forum/:id', (req, res) => {
               }
             });
         }
-        
-        
-    } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
     
   });
 
-router.post('/forum', (req, res) => {
-    if (isLoggedIn(req)){
+router.post('/forum', authUser, (req, res) => {
         if (req.body.newcat){
             // New Category
             client.query({text: "INSERT INTO categories (u_id, name, description, icon) VALUES ($1, $2, $3, $4)",values: [getCookies(req)['u_id'], `${encryptWithAES(req.body.cattitle)}`, `${encryptWithAES(req.body.catdesc)}`, req.body.caticon]}, (err, result) => {
@@ -464,14 +437,11 @@ router.post('/forum', (req, res) => {
               }
               });
         }
-    } else {res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies });}
 });
 
 
 
-router.put("/forum-data", (req,res) => {
-    // Deleting Forum Data
-    if (isLoggedIn(req)){
+router.put("/forum-data", authUser, (req,res) => {
         if (apiEyesOnly(req)){
             if (req.body.mode=="sticky"){
                 // Toggle Sticky Mode.
@@ -518,11 +488,8 @@ router.put("/forum-data", (req,res) => {
                     });
             } 
         } else res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies })
-    } else res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies })
 });
- router.delete("/forum-data", (req,res) => {
-    // Deleting Forum Data
-    if (isLoggedIn(req)){
+ router.delete("/forum-data", authUser, (req,res) => {
         if (apiEyesOnly(req)){
                 if (req.body.mode== "category"){
                     client.query({text: "DELETE FROM categories WHERE id=$2 AND u_id=$1;",values: [getCookies(req)['u_id'], req.body.id]}, (err, result) => {
@@ -567,7 +534,6 @@ router.put("/forum-data", (req,res) => {
                 }
                     
                 } else res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies })
-    } else res.status(403).render('pages/403',{ session: req.session, code:"Forbidden", cookies:req.cookies })
 })
 
 

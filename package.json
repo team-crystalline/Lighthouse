@@ -1,6 +1,6 @@
 {
   "name": "lighthouse",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "A journal app for systems to write diaries. Plural users specifically.",
   "main": "main.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "froala-editor": "^4.0.10",
     "handlebars": "^4.7.7",
     "html-pdf": "^3.0.1",
+    "method-override": "^3.0.0",
     "multer": "^1.4.5-lts.1",
     "multer-s3": "^3.0.1",
     "node-localstorage": "^2.2.1",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "css-loader": "^5.2.7",
+    "nodemon": "^3.1.3",
     "postcss": "^8.4.23",
     "postcss-loader": "^4.3.0",
     "raw-loader": "^4.0.2",

@@ -23,6 +23,34 @@ var strings= require("./lang/en.json");
   Keywords (for easy searching): custom functions, custom, functions, funcs
 */
 /**
+ * Middleware for routes to require authentication
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+function authUser (req, res, next){
+  if (req.cookies.u_id){
+    return next();
+  } else {
+    return forbidUser(res, req);
+  }
+}
+
+/**
+ * Middleware- Ensure that the parameter in the URL is UUIDv4.
+ * @param {*} paramName name of parameter.
+ * @returns 
+ */
+const validateParam = (paramName) => (req, res, next) => {
+  let uuidRegex= /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
+  if (uuidRegex.test(req.params[paramName])){
+    return next();
+  } else {
+    return res.render('pages/404',{ session: req.session, code:"Not Found",cookies:req.cookies });
+  }
+};
+/**
  * Uses HTTP request to determine if the user is logged in.
  * @param {object} req ExpressJS API's HTTP request
  * @returns {boolean} true or false
@@ -436,5 +464,7 @@ module.exports = {
     base64decode,
     truncateAndStringify,
     renderNestedList,
-    getSystems
+    getSystems,
+    authUser,
+    validateParam
 }

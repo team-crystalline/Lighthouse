@@ -12,7 +12,7 @@
     
     domReady(() => {
       <% if (typeof cookies.skin == undefined || cookies.skin =="" ){ %>
-        $("head").append(`<link rel="stylesheet" href="/stylesheets/lighthouse.css?v=1.6.3">`);
+        $("head").append(`<link rel="stylesheet" href="/stylesheets/lighthouse.css?v=<%- version %>">`);
       <% } else { %>
         $("head").append(`<link rel="stylesheet" href="/stylesheets/<%- session.skin || cookies.skin || 'lighthouse' %>.css?v=1.6.3">`);
       <% } %>

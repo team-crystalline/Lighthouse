@@ -39,8 +39,16 @@ td{
 }
 .alt{
     color: <%= alterInfo.colour == "#000000" ? "inherit" : alterInfo.colour %>!important;
+    text-shadow:
+    -1px -1px 0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+     0   -1px 0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+     1px -1px 0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+     1px  0   0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+     1px  1px 0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+     0    1px 0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+    -1px  1px 0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>,
+    -1px  0   0 <%= alterInfo.outline_enabled == false ? "transparent" : alterInfo.outline %>;
 }
-
 .header{
     height: 15em;
     width: 100%;
@@ -48,7 +56,7 @@ td{
     <% if (alterInfo.header_blob){ %>
         background-image: url('data:<%= alterInfo.header_mimetype %>;base64,<%= Buffer.from(alterInfo.header_blob).toString("base64") %>');
         background-size: cover;
-        border-bottom: 3px solid <%= alterInfo.colour == "#000000" ? "black" : alterInfo.colour %>;
+        border-bottom: 3px solid <%= alterInfo.colour_enabled == false ? "inherit" : alterInfo.colour %>;
         margin-bottom: 1em;
         position: relative;
         box-shadow: 0 -50px 70px rgba(0, 0, 0, 0.3) inset;

@@ -153,7 +153,7 @@
                }
                %>
 
-            <h2><% if (originalPost.is_sticky== true){ %>(Pinned) <% } %><% if (originalPost.is_locked== true){ %>(Locked) <% } %><%= originalPost.title %></h2> <% if (!opInfo.is_archived){%>
+            <h2><% if (originalPost.is_sticky== true){ %>(Pinned) <% } %><% if (originalPost.is_locked== true){ %>(Locked) <% } %><%= originalPost.title %></h2>
               <span>Moderation Panel</span>
               <div class="modpanel">
                 <a title="Edit <%- originalPost.title %>" class="editCat"><i id="tbutton" class="fa fa-pencil" aria-hidden="true"></i></a> 
@@ -164,7 +164,6 @@
                 
                 <% if (originalPost.is_locked== true) { %><i title="Unlock thread and allow replies."  onclick="modThread('lock', '<%= originalPost.id %>')" class="fa fa-unlock" aria-hidden="true"></i><% } else { %><i title="Lock thread and prevent replies." onclick="modThread('lock', '<%= originalPost.id %>')" class="fa fa-lock" aria-hidden="true"></i><% } %>
               </div>
-            <% } %>
 
             <!-- OP Post -->
             <% if (currPage == 1) { %>
@@ -183,10 +182,24 @@
                 <section class="threadpost">
                 <div class="user">
                 <!-- Time to do some alter logic. -->
+                
                 <% for (i in alterArr){ %> 
                     <% if (alterArr[i].id == originalPost.alt_id){ %> 
 
-                        <h3><a href="/alter/<%= alterArr[i].id %>" style="color:<%= alterArr[i].colour == "#000000" ? "" : alterArr[i].colour %>"><%= alterArr[i].name %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i></a></h3>
+                        <h3>
+                          <a href="/alter/<%= alterArr[i].id %>" 
+                            style="
+                        <% if(alterArr[i].colourEnabled==true){ %>
+                            color: <%- alterArr[i].colour %>;
+                        <% } %>
+                        <% if(alterArr[i].outlineEnabled==true){ %>
+                            text-shadow: -1px -1px 0 <%- alterArr[i].outline %>,
+                                        1px -1px 0 <%- alterArr[i].outline %>,
+                                        -1px 1px 0 <%- alterArr[i].outline %>,
+                                        1px 1px 0 <%- alterArr[i].outline %>;
+                        <% } %>
+                        "
+                            ><%= alterArr[i].name %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i></a></h3>
 
                         <% if (alterArr[i].img_blob){ %> 
                           <img src="data:<%= alterArr[i].blob_mimetype %>;base64,<%= Buffer.from(alterArr[i].img_blob).toString("base64") %>" class="smallimg">
@@ -225,7 +238,17 @@
                         <% if (alterArr[i].id == replyArr[r].alt_id){ 
                           var is_archived = alterArr[i].is_archived;
                           %> 
-                            <h3 style="padding-bottom:0;"><a href="/alter/<%= alterArr[i].id %>" style="color:<%= alterArr[i].colour == "#000000" ? "" : alterArr[i].colour %>"><%= alterArr[i].name %> <% if (alterArr[i].id == originalPost.alt_id){ %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i> <% } %></a></h3>
+                            <h3 style="padding-bottom:0;"><a href="/alter/<%= alterArr[i].id %>" style="
+                        <% if(alterArr[i].colourEnabled==true){ %>
+                            color: <%- alterArr[i].colour %>;
+                        <% } %>
+                        <% if(alterArr[i].outlineEnabled==true){ %>
+                            text-shadow: -1px -1px 0 <%- alterArr[i].outline %>,
+                                        1px -1px 0 <%- alterArr[i].outline %>,
+                                        -1px 1px 0 <%- alterArr[i].outline %>,
+                                        1px 1px 0 <%- alterArr[i].outline %>;
+                        <% } %>
+                        "><%= alterArr[i].name %> <% if (alterArr[i].id == originalPost.alt_id){ %> <i class='far fa-newspaper' title="Original Author" aria-hidden="false"></i> <% } %></a></h3>
                             <% if (alterArr[i].is_archived == true) { %><span><small>Archived</small><br/></span><% } %>
 
                             <% if (alterArr[i].img_blob){ %> 

@@ -96,7 +96,6 @@ method: "GET",
     });
     let body = await response.text();
     let sysInfo = JSON.parse(body);
-    // console.log(sysInfo)
     if (!response.ok) return $("#alters").html("<p><img src='/img/svg/ship-icon.svg' class='tinyimg'><em>There was an error communicating with our database. Please reload or try again later.</em></p>");
     var alterArr= new Array();
     for (i in sysInfo.search){

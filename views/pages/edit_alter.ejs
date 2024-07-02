@@ -235,7 +235,6 @@
 
         function handleCheckboxChange(event) {
         const selectedCount = document.querySelectorAll(".selectable:checked").length;
-        console.log(selectedCount)
         if (selectedCount > maxSelections) {
             event.target.checked = false; // Deselect the latest checkbox
             alert("You can only select a maximum of " + maxSelections + " options.");
@@ -259,7 +258,6 @@
 
         function toggleColoursInit(){
             // When loaded.
-            console.log(document.getElementById('colourenabled').checked)
             if (document.getElementById('colourenabled').checked){
                 $("#toggleColour").show();
             } else {

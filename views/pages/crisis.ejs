@@ -2,6 +2,16 @@
 <html lang="en" dir="ltr">
     <head>
         <%- include ("../partials/header.ejs") %>
+        <style>
+            details{
+                margin: 1em auto;
+            }
+
+            details ul{
+                margin-left:3em;
+            }
+            
+        </style>
     </head>
     <body>
         <%- include ("../partials/nav.ejs") %>
@@ -10,11 +20,9 @@
                 <div class="splash"><%- locals.messages.flash %></div>
             <% } %>
             <section>
-                <% if (typeof splash == 'string'){  %>
-                    <p class="splash"><%- splash %></p>
-                <% } %>
-                <img src="/img/svg/ptsd-support.svg" class="vtinyimg"  style="display:inline-block; margin:0 auto; float: left; margin-right:1em;"><h2>Crisis Helplines</h2>
-                <p><a href="http://togetherweare-strong.tumblr.com/helpline" target="_blank">Global List of Helplines for a variety of countries can be found here.</a></p>
+                
+                <img src="/img/svg/ptsd-support.svg" class="vtinyimg"  style="display:inline-block; margin:0 auto; float: left; margin-right:1em;"><h2>International Crisis Helplines</h2>
+               <p><a href="http://togetherweare-strong.tumblr.com/helpline" target="_blank">Global List of Helplines for a variety of countries can be found here.</a></p>
                 <ul>
                     <li>Trevor Project</li>
                     <ul><li>“START” to 678678</li></ul>
@@ -27,11 +35,35 @@ from 4 PM to midnight and Saturdays from 12 PM to 5 PM</li></ul>
                     <li>Fenway Health</li>
                     <ul><li>Peer Listening Line (ages 25 and under) (1-800-399-
 PEER)—Available Monday-Saturday from 5:30 PM to 10 PM</li></ul>
-                    <li>Suicide Prevention Hotline</li>
-                    <ul><li>Call 1-800-273-TALK (or dial 988 in the US)</li></ul>
                     <ul><li>“HOME” to 741741 (Available to US and Ontario residents)</li></ul>
                 </ul>
             </section>
+            <!-- <details>
+                <summary>United States</summary>
+                <ul>
+                    <li>Depression Hotline: 1-630-482-9696</li>
+                    <li>Suicide Hotline: 1-800-784-8433</li>
+                    <li>NAMI Hotline: 1-800-950-6264</li>
+                    <li>“HOME” to 741741 (Available to US and Ontario residents)</li>
+                    <li>Peer Listening Line: 1-800-399-PEER</li>
+                </ul>
+            </details>
+            <details>
+                <summary>United Kingdom</summary>
+                <ul>
+                    <li>Samaritans: 116-123</li>
+                    <li>Anxiety UK: 0844 477 5774</li>
+                    <li>Depression Alliance: 0845 123 23 20</li>
+                </ul>
+            </details>
+            <details>
+                <summary>Canada</summary>
+                <ul>
+                    <li>Helpline (Greater Vancouver): 604-872-3311</li>
+                    <li>Helpline (Ottawa and Eastern Ontario): 1-866-996-0991</li>
+                    <li>Helpline (TTY): 1-866-872-0113</li>
+                </ul>
+            </details> -->
         </div>
         <%- include ("../partials/footer.ejs") %>
     </body>

@@ -102,7 +102,6 @@ select{
             });
             let body= await response.text();
             let alters= (JSON.parse(body)).search;
-            // console.log(alters)
             alters.forEach((alter)=>{
                 if (alter.img_blob){
                     $("#alters").append(`
@@ -140,7 +139,6 @@ select{
             for (i in altArr){
                 if (method=="id"){
                     if (altArr[i].id){
-                        // console.log(altArr[i].id);
                         altList.push(altArr[i].id); 
                     }
                 } else {

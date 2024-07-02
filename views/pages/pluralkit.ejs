@@ -140,7 +140,6 @@
                 for (i in sysInfo){
                 
                 var alterName= sysInfo[i].display_name == null ? sysInfo[i].name : sysInfo[i].display_name;
-                // console.log(sysInfo[i])
                     $('#roster')
                     .append($(`<li> <input type="checkbox" class="alterChoice" value=${sysInfo[i].id} onchange="boxCount()" id=${sysInfo[i].id}><label for=${sysInfo[i].id}><img src="${sysInfo[i].avatar_url}" class="vtinyimg"> ${sysInfo[i].display_name || sysInfo[i].name}</label></li>`)
                         .hide()

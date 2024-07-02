@@ -77,7 +77,6 @@
             $(`${window.location.hash}`).css("background-color", "rgba(255, 255, 0, .2)")
         }
         function copyLink(url) {
-            console.log(url)
             navigator.clipboard.writeText(`https://www.writelighthouse.com/glossary/#${url}`);
             $("#copyNotification").show().delay(3000).fadeOut("slow");
             } 

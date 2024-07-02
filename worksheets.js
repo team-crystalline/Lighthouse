@@ -35,7 +35,6 @@ router.get('/worksheets', async function (req, res){
 // Refactored!
 router.get('/safety-plan', async function(req, res){
 if (isLoggedIn(req)){
-	console.log(apiEyesOnly(req))
 	if(apiEyesOnly(req)){
 		const safetyPlan= await db.query(client, "SELECT * FROM safetyplans WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
 		var user={

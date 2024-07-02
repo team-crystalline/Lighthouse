@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <div id="wrapper">
+            <ul class="breadcrumb">
+                <li><a href="/system" title=""><%= capitalise(cookies.system_term) %></a></li>
+                <li><a href="/system/<%= sender.sys_id %>" title="Back to <%= decode(sender.sys_alias) %>"><%= decode(sender.sys_alias) %></a></li>
+                <li><a href="/alter/<%= sender.alt_id %>"><%= decode(sender.name) %></a></li>
+                <li><a href="/inbox/<%= sender.alt_id %>">Inbox</a></li>
+                <li><%- decrypt(message.title) %></li>
+              </ul> 
+            <section>
+                <div class="alert alert-info">This area is <strong>incomplete</strong> and should not be visible in production due to bugs. Please let us know if you see this page.</div>
+                
+                <h2><%- decrypt(message.title) %></h2>
+                <p>To: <%= decode(recipient.name) %> • From: <%= decode(sender.name) %></p>
+                <section>
+                    <%- decrypt(message.body) %>
+                </section>
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    </body>
+</html>

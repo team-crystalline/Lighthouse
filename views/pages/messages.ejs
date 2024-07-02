@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <%- include ("../partials/header.ejs") %>
+        <style>
+            #messagebox{
+                width: 95%;
+                height: 50vh;
+                border: 1px solid black;
+                margin: auto;
+                overflow-y: scroll;
+                padding: 1em;
+            }
+            #inboxheader{
+                width: 95%;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+            }
+            .message{
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+        </style>
+    </head>
+    <body>
+        <%- include ("../partials/nav.ejs") %>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content" id="modalContent">
+              <span class="material-symbols-outlined close">
+                cancel
+                </span>
+                <h2>About the Inbox</h2>
+                <p class="dyn">This area is to leave messages to other [[ALTERS]] in a longer format, similar to forums back in the 2000s-2010s. Feel free to use this however you need to; we recommend using it for reminders and notes to send to another [[ALTER]].</p>
+            </div>
+
+          </div>
+        <div id="wrapper">
+            <ul class="breadcrumb">
+                <li><a href="/system" title=""><%= capitalise(cookies.system_term) %></a></li>
+                <li><a href="/system/<%= alter.sys_id %>" title="Back to <%= decode(alter.sys_alias) %>"><%= decode(alter.sys_alias) %></a></li>
+                <li><a href="/alter/<%= alter.alt_id %>"><%= decode(alter.name) %></a></li>
+                <li>Inbox</li>
+              </ul> 
+            <section>
+                <div id="inboxheader">
+                   <% if(messages.length == 0){ %> 
+                    <h1>Inbox</h1>
+                <% } else { %>
+                    <h1><%= truncate(decode(alter.name), 10) %>'s Inbox</h1>
+                <% } %>
+                <a href="/inbox/<%= alter.alt_id %>/create" class="linkbutton" id="comp">Compose new message</a> 
+                </div>
+                <a id="about">What's this?</a>
+                <div id="messagebox">
+                    <% if(messages.length == 0){ %> 
+                        <img src="/img/svg/bottle2.svg" class="medimg" style="float:left;">
+                        <p>Your inbox is empty, <%= decode(alter.name) %>!</p>
+                    <% } else { %>
+                        <% messages.forEach((i) => {  %> 
+                            <a href="/inbox/messages/<%= i.id %>" class="message">
+                                <div><% if (i.is_read == false && !(i.sender == alter.alt_id)){ %><img src="/img/svg/sparkles.svg" class="vvtinyimg" style="margin:0 1em;"><% } %><% if (i.sender == alter.alt_id){ %><img src="/img/svg/author.svg" class="vvtinyimg" style="margin:0 1em;"><% } %><%= decrypt(i.title) %></div>
+                                <!-- ${postDate.toLocaleDateString(undefined, options)} at ${postDate.toLocaleTimeString(undefined, timeOptions)} -->
+                                <div>Originally sent <%= (new Date(i.created_on).toLocaleTimeString(undefined, timeOptions)) %> <%= (new Date(i.created_on).toLocaleDateString(undefined, dateOptions)) %></div>
+                            </a>
+                        <% }) %>
+                    <% } %>
+                </div>
+                
+            </section>
+    </div>
+    <%- include ("../partials/footer.ejs") %>
+    <script>
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("about");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+          // modal.style.display = "block";
+          $("#myModal").fadeIn("fast");
+        }
+        span.onclick = function() {
+          // modal.style.display = "none";
+          $("#myModal").fadeOut("fast");
+        }
+        // ======= //
+
+        var modal = document.getElementById("compose");
+        var btn = document.getElementById("comp");
+        var span = document.getElementsByClassName("close")[1];
+        btn.onclick = function() {
+          // modal.style.display = "block";
+          $("#compose").fadeIn("fast");
+        }
+        span.onclick = function() {
+          // modal.style.display = "none";
+          $("#compose").fadeOut("fast");
+        }
+        </script>
+    </body>
+</html>

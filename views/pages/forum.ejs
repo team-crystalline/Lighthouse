@@ -280,10 +280,8 @@ var catModal = document.getElementById("editCat");
             
         });
         async function orderCat(id, order, sum, length){
-          console.log(order)
           if ((parseInt(length) <= order && sum=='down') || (order == 1 && sum=="up")){
             event.preventDefault();
-            console.log("Move no more!")
             return;
           }
           let response = await fetch(`/forum-data`, { 

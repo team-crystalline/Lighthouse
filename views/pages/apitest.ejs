@@ -33,7 +33,6 @@
     <%- include ("../partials/footer.ejs") %>
     <script>
         $("#api").click(async function(){
-            console.log($("#token").val())
             let response = await fetch(`/api/${$("#endpoint").val()}/${$("#userid").val()}`, { 
                 method: "GET",
                 headers: { 

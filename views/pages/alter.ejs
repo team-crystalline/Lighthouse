@@ -4,6 +4,12 @@
 <head>
     <%- include ("../partials/header.ejs") %>
     <style>
+        .hiddenInput{
+            background: transparent;
+            text-align:right;
+            border: 0;
+            padding:0;
+        }
         .radio-toolbar input[type="radio"] {
          display: none;
 }
@@ -131,7 +137,7 @@ td{
         <% } %></small></dd>
             
             <form method="post" autocomplete="off">
-              <input type="text" name="altname" value="<%= Buffer.from(alterInfo.name, 'base64').toString() %>" style="text-align:center;"> is a part of <select name="alterSys" style="text-align:center;"><% for (i in session.sysList){ %>
+              <input type="text" name="altname" value="<%= Buffer.from(alterInfo.name, 'base64').toString() %>" class="hiddenInput" disabled> is a part of <select name="alterSys" style="text-align:center;"><% for (i in session.sysList){ %>
                 <% if (alterInfo.sys_alias == session.sysList[i].sys_alias){ %>
                   <option value="<%= session.sysList[i].sys_id %>" selected><%= Buffer.from(session.sysList[i].sys_alias, 'base64').toString() %></option>
                 <% } else { %>

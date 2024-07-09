@@ -343,10 +343,16 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
 
           } 
 
-
+            const alterData = await db.query(client, "SELECT * FROM alters WHERE alt_id=$1", [`${req.params.id}`], res, req);
+            let alterName;
+            if (!req.body.name){
+              alterName = alterData[0].name;
+            } else {
+              alterName= `'${base64encode(req.body.name)}'`;
+            }
             await db.query(client, "UPDATE alters SET name=$2, triggers_pos=$3, triggers_neg= $4, agetext=$5, likes=$6, dislikes=$7, job=$8, safe_place=$9, wants=$10, acc=$11, notes=$12, img_url=$13, type=$14, pronouns=$15, birthday=$16, first_noted=$17, gender=$18, sexuality=$19, source=$20, fronttells=$21, relationships=$22, hobbies=$23, appearance=$24, colour=$25, nickname=$26, species=$27, pk_id=$28, sp_id=$29, colour_enabled=$30, outline_enabled=$31, outline=$32 WHERE alt_id=$1", [
               `${req.params.id}`,
-              `'${base64encode(req.body.name)}'`,
+              alterName,
               `'${base64encode(req.body.postr)}'`,
               `'${base64encode(req.body.negtr)}'`,
               `'${base64encode(req.body.age)}'`,

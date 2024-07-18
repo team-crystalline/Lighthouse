@@ -165,7 +165,7 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
 
       });
     
-      router.get('/journal/:id/delete', authUser, validateParam('id'), (req, res)=>{
+      router.get('/journal/:id/delete', authUser, validateParam('id'), async (req, res)=>{
         const journalInfo = await db.query(client, "SELECT posts.*, systems.user_id FROM posts INNER JOIN journals ON posts.j_id = journals.j_id INNER JOIN alters ON journals.alt_id = alters.alt_id INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE posts.p_id=$1;", [`${req.params.id}`], res, req, true);
         if (!journalInfo) return;
         if (!idCheck(req, journalInfo[0].user_id)) return lostPage(res, req);
@@ -188,7 +188,7 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
 
       });
       
-      router.get('/alter/:id/delete', authUser, validateParam('id'), (req, res)=>{
+      router.get('/alter/:id/delete', authUser, validateParam('id'), async (req, res)=>{
         let alterInfo = await db.query(client, "SELECT alters.*, systems.sys_id, systems.user_id FROM alters INNER JOIN systems on alters.sys_id=systems.sys_id WHERE alters.alt_id=$1", [`${req.params.id}`], res, req, true);
         if (!alterInfo) return;
         if (!idCheck(req, alterInfo[0].user_id)) return lostPage(res, req);
@@ -228,8 +228,9 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
               if (req.body.altname){
                 await db.query(client, "UPDATE alters SET sys_id=$1, name=$2 WHERE alt_id=$3",[req.body.alterSys, `'${base64encode(req.body.altname)}'`,  req.params.id], res, req);
               } else {
-                await db.query(client, "UPDATE alters SET sys_id=$1 WHERE alt_id=$3", [req.body.alterSys, req.params.id], res, req);
+                await db.query(client, "UPDATE alters SET sys_id=$1 WHERE alt_id=$2", [req.body.alterSys, req.params.id], res, req);
               }
+              res.redirect(`/alter/${req.params.id}`);
             } else if (req.body.changePass){
               // Change alter password.
               client.query({text: "UPDATE journals SET password=$1 WHERE alt_id=$2;",values: [`'${CryptoJS.SHA3(req.body.jPassNew)}'`, req.params.id]}, (err, result) => {

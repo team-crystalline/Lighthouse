@@ -1,6 +1,6 @@
 {
   "name": "lighthouse",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A journal app for systems to write diaries. Plural users specifically.",
   "main": "main.js",
   "scripts": {

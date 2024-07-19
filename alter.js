@@ -18,7 +18,7 @@ const { isLoggedIn, getCookies, encryptWithAES, decryptWithAES, forbidUser,
 
 router.get("/alter/edit-journal/:id", authUser, validateParam('id'), async (req, res)=>{
       let journCheck = await db.query(client, "SELECT systems.user_id FROM systems INNER JOIN journals ON journals.sys_id = systems.sys_id WHERE journals.alt_id = $1;", [`${req.params.id}`], res, req, true);
-      if (!jounCheck) return;
+      if (!journCheck) return;
       if (!idCheck(req, journCheck[0].user_id)) return lostPage(res, req);
 
       let journalInfo = await db.query(client, "SELECT journals.*, alters.*, systems.* FROM journals INNER JOIN alters ON journals.alt_id = alters.alt_id INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE journals.alt_id=$1", [`${req.params.id}`], res, req);

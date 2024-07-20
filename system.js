@@ -118,7 +118,9 @@ router.get('/:id/:pg?', authUser, validateParam('id'), async function(req, res, 
 		if (req.session.chosenSys.subsys_id != null){
 			// There's a subsystem.
 			const subsysInf= await db.query(client, "SELECT sys_alias FROM systems WHERE sys_id=$1", [`${req.session.chosenSys.subsys_id}`], res, req);
-			req.session.chosenSys.subsys_alias= subsysInf[0].sys_alias || getCookies(req)['system_term'];
+			if (subsysInf.length > 0){
+				req.session.chosenSys.subsys_alias= subsysInf[0].sys_alias || getCookies(req)['system_term'];
+			}
 		}
 
 			const numUp= await db.query(client, "SELECT altupnum FROM users WHERE id=$1;", [getCookies(req)['u_id']], res, req);

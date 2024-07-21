@@ -120,9 +120,10 @@ app.locals.isLoggedIn = function(cookies){
 	  return true;
 	}
   };
-app.locals.pad= function (number, digits) {
-    return Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
+  app.locals.pad = function(number, digits) {
+    return String(number).padStart(digits, '0');
 }
+
 app.locals.randomise= randomise;
 app.locals.truncate= truncate;
 app.locals.distill= distill;
@@ -642,43 +643,40 @@ app.get('/wish-d/:id', (req, res) => {
 		if (apiEyesOnly(req)){
 			if (req.headers.grab== "comm-posts"){
 				// Communal Journal Posts.
-				// In case: "AND subsys_id IS NULL"
-				client.query({text: "SELECT * FROM systems WHERE user_id=$1;",values: [`${getCookies(req)['u_id']}`]}, (err, result) => {
-					if (err) {
-					  console.log(err.stack);
-					  res.status(400).json({code: 400});
-				  } else {
-					var sysArr = new Array();
-					for (i in result.rows){
-						sysArr.push({ sys_id: result.rows[i].sys_id, alias: Buffer.from(result.rows[i].sys_alias, "base64").toString(), icon:result.rows[i].icon, subsys: result.rows[i].subsys_id});
-					}
-					client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=false ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, cresult) => {
-						if (err) {
-						  console.log(err.stack);
-						  res.status(400).json({code: 400});
-					  } else {
-						var nonPinned= new Array();
-						for (i in cresult.rows){
-							nonPinned.push({ title: decryptWithAES(cresult.rows[i].title), body: decryptWithAES(cresult.rows[i].body),  created_on: cresult.rows[i].created_on, id: cresult.rows[i].id})
-						}
-						client.query({text: "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=true ORDER BY created_on DESC;",values: [`${getCookies(req)['u_id']}`]}, (err, dresult) => {
-							if (err) {
-							  console.log(err.stack);
-							  res.status(400).json({code: 400});
-						  } else {
-							var isPinned= new Array();
-						for (i in dresult.rows){
-							isPinned.push({ title: decryptWithAES(dresult.rows[i].title), body: decryptWithAES(dresult.rows[i].body),  created_on: dresult.rows[i].created_on, id: dresult.rows[i].id})
-						}
 
-							// var currPage= paginate(nonPinned,2);
-							res.json({code: 200, sysArr: sysArr, nonPinned: nonPinned, isPinned: isPinned});
-						  }
-						});
-					  }
-					});
-				  }
+				const sysInfo = await db.query(client, "SELECT * FROM systems WHERE user_id=$1", [`${getCookies(req)['u_id']}`], res, req, false);
+				const nonPinInfo = await db.query(client, "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=false ORDER BY created_on DESC;", [`${getCookies(req)['u_id']}`], res, req);
+				const pinInfo = await db.query(client, "SELECT * FROM comm_posts WHERE u_id=$1 AND is_pinned=false ORDER BY created_on DESC;", [`${getCookies(req)['u_id']}`], res, req);
+
+				let sysArr = sysInfo.map((system)=>{
+					return {
+						sys_id: system.sys_id, 
+						alias: base64decode(system.sys_alias), 
+						icon:system.icon, 
+						subsys: system.subsys_id
+					}
 				});
+
+				let nonPinned = nonPinInfo.map((post)=>{
+					return {
+						title: decryptWithAES(post.title), 
+						body: decryptWithAES(post.body),  
+						created_on: post.created_on, 
+						id: post.id
+					}
+				})
+				let isPinned = pinInfo.map((post)=>{
+					return {
+						title: decryptWithAES(post.title), 
+						body: decryptWithAES(post.body),  
+						created_on: post.created_on, 
+						id: post.id
+					}
+				})
+				console.log(sysInfo)
+
+				res.json({code: 200, sysArr: sysArr, nonPinned: nonPinned, isPinned: isPinned});
+
 			} else if (req.headers.grab == "alters"){
 				// Fetch alters
 				let altInfo = await db.query(client, "SELECT * FROM alters INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE systems.user_id=$1;", [`${getCookies(req)['u_id']}`], res, req);
@@ -730,28 +728,42 @@ app.get('/wish-d/:id', (req, res) => {
 				  }
 				});
 			} else if (req.headers.grab=="journalPosts"){
-				client.query({text: "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;",values: [`${req.headers.uuid}`]}, (err, result) => {
-					if (err) {
-					   console.log(err.stack);
-					   res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", cookies:req.cookies });
-				   } else {
-					let journalPosts = {
-						pinned:[],
-						nonpin:[]
-					};
-					for (i in result.rows){
-						if (result.rows[i].is_pinned == true){
-							// Pinned Post
-							journalPosts.pinned.push({title: decryptWithAES(result.rows[i].title), body: decryptWithAES(result.rows[i].body), createdon: result.rows[i].created_on, id: result.rows[i].p_id});
-						} else {
-							// Not pinned.
-							journalPosts.nonpin.push({title: decryptWithAES(result.rows[i].title), body: decryptWithAES(result.rows[i].body), createdon: result.rows[i].created_on, id: result.rows[i].p_id});
-						}
+
+				const journalPostInfo = await db.query(client, "SELECT * FROM posts WHERE j_id=$1 ORDER BY created_on DESC;", [`${req.headers.uuid}`], res, req, false);
+				let journalPosts = {
+					pinned:[],
+					nonpin:[]
+				}
+
+				journalPosts.pinned = journalPostInfo.map((post)=>{
+					if (post.is_pinned == true){
+					  return {
+						title: post.title ? decryptWithAES(post.title) : "", 
+						body: post.body ? decryptWithAES(post.body): "", 
+						createdon: post.created_on, 
+						id: post.p_id,
+						feeling: post.feeling ? decryptWithAES(post.feeling): ""
+					  }
 					}
-					  res.status(200).json({code: 200, search: journalPosts});
-	
-				   }
-			  });
+				  }).filter(Boolean);
+				  
+				  journalPosts.nonpin = journalPostInfo.map((post)=>{
+					if (post.is_pinned == false){
+					  return {
+						title: post.title ? decryptWithAES(post.title) : "", 
+						body: post.body ? decryptWithAES(post.body): "", 
+						createdon: post.created_on, 
+						id: post.p_id,
+						feeling: post.feeling ? decryptWithAES(post.feeling): ""
+					  }
+					}
+				  }).filter(Boolean);
+				  
+				journalPosts.pinned = journalPosts.pinned.filter(Boolean); // Remove undefined.
+				journalPosts.nonpin = journalPosts.nonpin.filter(Boolean); // Remove undefined.
+
+				res.status(200).json({code: 200, search: journalPosts});
+
 			} else if (req.headers.grab=="subsystems"){
 				client.query({text: "SELECT * FROM systems WHERE user_id=$1 AND subsys_id= $2;",values: [`${getCookies(req)['u_id']}`, `${req.headers.sysid}` ]}, (err, result) => {
 					if (err) {
@@ -1468,7 +1480,7 @@ app.get('/wish-d/:id', (req, res) => {
 		if (!checkUUID(req.params.id)) return lostPage(res, req);
 
 		if (isLoggedIn(req)){
-			client.query({text: "UPDATE posts SET title=$1, body=$2, created_on=$4 WHERE p_id=$3; ",values: [`${encryptWithAES(req.body.jTitle)}`, `${encryptWithAES(req.body.jBody)}`, `${req.params.id}`, `${req.body.jDate || new Date().toISOString()}`]}, (err, result) => {
+			client.query({text: "UPDATE posts SET title=$1, body=$2, created_on=$4, feeling=$5 WHERE p_id=$3; ",values: [`${encryptWithAES(req.body.jTitle)}`, `${encryptWithAES(req.body.jBody)}`, `${req.params.id}`, `${req.body.jDate || new Date().toISOString()}`, `${encryptWithAES(req.body.feeling)}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
  				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", cookies:req.cookies });
@@ -1514,7 +1526,7 @@ app.get('/wish-d/:id', (req, res) => {
 		if (!checkUUID(req.params.id)) return lostPage(res, req);
 		if (isLoggedIn(req)){
 			if (req.body.submit){
-			client.query({text: "INSERT INTO posts (j_id, created_on, body, title) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4);",values: [`${req.body.j_id}`, `${Date.now()}`, `${encryptWithAES(req.body.j_body)}`, `${encryptWithAES(req.body.j_title)}`]}, (err, result) => {
+			client.query({text: "INSERT INTO posts (j_id, created_on, body, title, feeling) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4, $5);",values: [`${req.body.j_id}`, `${Date.now()}`, `${encryptWithAES(req.body.j_body)}`, `${encryptWithAES(req.body.j_title)}`, `${encryptWithAES(req.body.feeling)}`]}, (err, result) => {
  			   if (err) {
  				  console.log(err.stack);
  				  res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", cookies:req.cookies});

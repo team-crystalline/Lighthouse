@@ -159,7 +159,8 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
           name: base64decode(journalDat[0].name),
           sys_alias: base64decode(journalDat[0].sys_alias),
           sys_id: journalDat[0].sys_id,
-          journId: journalDat[0].j_id
+          journId: journalDat[0].j_id,
+          feeling: journalDat[0].feeling
         }
         res.render('pages/journal',{ session: req.session, cookies:req.cookies, alterInfo:alterInfo })
 
@@ -175,17 +176,14 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
         res.render(`pages/delete_post`, { session: req.session, cookies:req.cookies });
       });
     
-      router.get('/journal/:id/edit',authUser, validateParam('id'), (req, res)=>{
+      router.get('/journal/:id/edit',authUser, validateParam('id'), async (req, res)=>{
+        const journalInfo = await db.query(client, "SELECT posts.*, journals.alt_id, alters.sys_id, systems.user_id FROM posts INNER JOIN journals ON posts.j_id= journals.j_id INNER JOIN alters ON journals.alt_id = alters.alt_id INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE posts.p_id=$1;", [`${req.params.id}`], res, req);
 
-          client.query({text: "SELECT posts.*, journals.alt_id FROM posts INNER JOIN journals ON posts.j_id= journals.j_id WHERE p_id=$1;",values: [`${req.params.id}`]}, (err, result) => {
-           if (err) {
-            console.log(err.stack);
-            res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", cookies:req.cookies });
-          } else {
-            res.render(`pages/edit_post`, { session: req.session, cookies:req.cookies, cJourn: {id: result.rows[0].p_id, body: decryptWithAES(result.rows[0].body), title: decryptWithAES(result.rows[0].title), is_comm: false, date: result.rows[0].created_on}, journalID: result.rows[0].j_id, alt_id:result.rows[0].alt_id, });
-          }
-        });
+        if (!journalInfo) return lostPage(res, req);
 
+        if (!idCheck(req, journalInfo[0].user_id)) return lostPage(res, req);
+        let feeling = journalInfo[0].feeling ? decryptWithAES(journalInfo[0].feeling) : "";
+        return res.render(`pages/edit_post`, { session: req.session, cookies:req.cookies, cJourn: {id: journalInfo[0].p_id, body: decryptWithAES(journalInfo[0].body), title: decryptWithAES(journalInfo[0].title), is_comm: false, date: journalInfo[0].created_on, feeling: feeling}, journalID: journalInfo[0].j_id, alt_id:journalInfo[0].alt_id});
       });
       
       router.get('/alter/:id/delete', authUser, validateParam('id'), async (req, res)=>{

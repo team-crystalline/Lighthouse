@@ -29,9 +29,14 @@
                     name="jTitle" 
                     value="<%- cJourn.title %>"
                     ><br/>
-                <label for="jDate">Post Date (mm/dd/yyyy, hh:mm)</label><br/>
+                <label for="jDate">Post Date (dd/mm/yyyy, hh:mm)</label><br/>
                 <!-- 2017-06-01T08:30 -->
-                <input type="datetime-local" id="jDate" name="jDate" value="<%= (cJourn.date).getFullYear() %>-<%= pad(Number((cJourn.date).getMonth()) +1, 2) %>-<%= pad((cJourn.date).getDate(), 2) %>T<%= pad((cJourn.date).getHours(), 2) %>:<%= (cJourn.date).getMinutes() %>"/><br>
+                <input type="datetime-local" id="jDate" name="jDate" value="<%- (cJourn.date).getFullYear() %>-<%- pad((cJourn.date).getMonth()+1 , 2) %>-<%- pad((cJourn.date).getDate(), 2) %>T<%- pad((cJourn.date).getHours(), 2) %>:<%- pad((cJourn.date).getMinutes(), 2) %>"/><br>
+
+                <!-- <span><%- (cJourn.date).getFullYear() %>-<%- pad((cJourn.date).getMonth()+1 , 2) %>-<%- pad((cJourn.date).getDate(), 2) %>T<%- pad((cJourn.date).getHours(), 2) %>:<%- pad((cJourn.date).getMinutes(), 2) %></span><br> -->
+
+                <label for="feeling">Currently feeling... </label><br/>
+                <input type="text" id="feeling" name="feeling" autocomplete="off" value="<%- cJourn.feeling %>"></br>
                 <label for="jBody">Post Body</label><br/>
                 <div id="editor"><%- cJourn.body %></div>
                 <textarea name="jBody" autocomplete="off" cols="60" rows="15" id="hidden-text" ></textarea><br/>

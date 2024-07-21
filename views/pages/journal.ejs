@@ -40,6 +40,8 @@
                 <input type="hidden" name="alt_id" value="<%= alterInfo.alt_id %>">
                 <label for="j_title">Journal title</label><br/>
                 <input type="text" name="j_title" autocomplete="off"><br/>
+                <label for="feeling">Currently feeling... </label>
+                <input type="text" id="feeling" name="feeling" autocomplete="off"><br/>
                 <label for="j_body">Journal Body</label><br/>
                 <div id="editor"></div>
                 <textarea name="j_body" id="hidden-text"></textarea><br/>
@@ -110,16 +112,17 @@ async function pinPosts(pID){
             if (!response.ok) return $("#Wait").html("<p><img src='/img/svg/ship-icon.svg' class='tinyimg'><em>There was an error communicating with our database. Please reload or try again later.</em></p>");
 
             let sysInfo = JSON.parse(body);
-            // sysArr, nonPinned, isPinned
+            
             $("#Wait").empty();
-            // return console.log(sysInfo.search.nonpin)
+
             var journalPosts = sysInfo.search;
             var language = window.navigator.userLanguage || window.navigator.language;
+            
             if (journalPosts.pinned.length > 0){
             for (i in journalPosts.pinned){
                           var bodyArr= (journalPosts.pinned[i].body).replace(/\r/gi, '').split("\n").filter(function() { return true; });
                           var postStr= new String();
-                            postStr+= `<h2><i style="color:var(--col4)" class="fa fa-thumb-tack" aria-hidden="true" title="Pinned Post"></i> ${journalPosts.pinned[i].title}</h2><a title="Edit ${journalPosts.pinned[i].title}" href="/journal/${journalPosts.pinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${journalPosts.pinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${journalPosts.pinned[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" class="fa fa-thumb-tack" title="Unpin this post from the top of your journal" aria-hidden="true" onclick="pinPosts('${journalPosts.pinned[i].id}')"></i>
+                            postStr+= `<h2><i style="color:var(--col4)" class="fa fa-thumb-tack" aria-hidden="true" title="Pinned Post"></i> ${journalPosts.pinned[i].title}</h2><a title="Edit ${journalPosts.pinned[i].title}" href="/journal/${journalPosts.pinned[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${journalPosts.pinned[i].id}" value="Remove" class="textless" onclick="deleteWarn('${journalPosts.pinned[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <h4>Feeling: ${journalPosts.pinned[i].feeling}</h4> <i style="color:var(--col4)" class="fa fa-thumb-tack" title="Unpin this post from the top of your journal" aria-hidden="true" onclick="pinPosts('${journalPosts.pinned[i].id}')"></i>
                 <p><sub>Posted ${(journalPosts.pinned[i].createdon).substr(0,10)}</sub></p>`;
                           for (i in bodyArr){
                             postStr += `<p>${bodyArr[i]}</p>`;
@@ -132,7 +135,7 @@ async function pinPosts(pID){
             for (i in journalPosts.nonpin){
                           var bodyArr= (journalPosts.nonpin[i].body).replace(/\r/gi, '').split("\n").filter(function() { return true; });
                           var postStr= new String();
-                            postStr+= `<h2>${journalPosts.nonpin[i].title}</h2><a title="Edit ${journalPosts.nonpin[i].title}" href="/journal/${journalPosts.nonpin[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${journalPosts.nonpin[i].id}" value="Remove" class="textless" onclick="deleteWarn('${journalPosts.nonpin[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <i style="color:var(--col4)" class="fa fa-thumb-tack" title="Pin this post to the top of your journal" aria-hidden="true" onclick="pinPosts('${journalPosts.nonpin[i].id}')"></i>
+                            postStr+= `<h2>${journalPosts.nonpin[i].title}</h2><a title="Edit ${journalPosts.nonpin[i].title}" href="/journal/${journalPosts.nonpin[i].id}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a><form method="post" style="display: inline;"><button type="submit" name="${journalPosts.nonpin[i].id}" value="Remove" class="textless" onclick="deleteWarn('${journalPosts.nonpin[i].title}')"><span class="material-symbols-outlined textless"> delete</span></button></form> <h4>Feeling: ${journalPosts.nonpin[i].feeling}</h4> <i style="color:var(--col4)" class="fa fa-thumb-tack" title="Pin this post to the top of your journal" aria-hidden="true" onclick="pinPosts('${journalPosts.nonpin[i].id}')"></i>
                 <p><sub>Posted ${(journalPosts.nonpin[i].createdon).substr(0,10)}</sub></p>`;
                           for (i in bodyArr){
                             postStr += `<p>${bodyArr[i]}</p>`;

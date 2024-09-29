@@ -213,7 +213,7 @@ router.get('/journals/:id', async function (req, res){
 
   router.get("/user/auth", async function(req, res){
     // Grab user info. This is for logging in.
-    let userCheck = await db.query(client, "SELECT * FROM users WHERE email=$1 OR username=$3 AND pass=$2;", [`'${Buffer.from((req.headers.email).toLowerCase()).toString('base64')}'`, `'${CryptoJS.SHA3(req.headers.tok)}'`, `'${Buffer.from((req.headers.email)).toString('base64')}'`], res, req);
+    let userCheck = await db.query(client, "SELECT * FROM users WHERE email=$1 AND pass=$2;", [`'${Buffer.from((req.headers.email).toLowerCase()).toString('base64')}'`, `'${CryptoJS.SHA3(req.headers.tok)}'`], res, req);
     if (userCheck.length > 0){
       req.session.alter_term= userCheck[0].alter_term;
       req.session.system_term= userCheck[0].system_term;

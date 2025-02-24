@@ -288,7 +288,6 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
             }
       });
       router.post("/edit-alter/:id", authUser, validateParam('id'), async (req, res)=>{
-    
           // Is this their alter tho?
           let altInf= await db.query(client, "SELECT systems.user_id FROM systems INNER JOIN alters ON alters.sys_id = systems.sys_id WHERE alters.alt_id = $1;", [`${req.params.id}`], res, req);
           if (!idCheck(req, altInf[0].user_id)) return lostPage(res, req);
@@ -305,6 +304,7 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
             if (req.files.imgupload){
               // This is for the icons!
               const uploadedFile = req.files.imgupload;
+              // console.log("Icon upload:", uploadedFile.size, "Max size:", maxBytes, "| In compliance:", uploadedFile.size < maxBytes);
               if (uploadedFile.size > maxBytes) {
                 // Bookmark
                 req.flash("flash",`File size must be under ${maxBytes / 1024 / 1024}MB`);

@@ -1,0 +1,112 @@
+{
+    "test": "你好世界",
+    "quickleave": "快速离开",
+"qlDesc": "如果您需要快速离开Lighthouse，请点击“快速离开”。",
+    "alter": {
+        "created": "[[ALTERNAME]] 已成功添加!",
+        "updated": "[[ALTERNAME]] 已成功更新!",
+        "deleted": "[[ALTERNAME]] 已成功移除.",
+        "delete": "删除 [[ALTERNAME]]",
+        "archive": "汇整 [[ALTERNAME]]"
+    },
+    "mood":{
+        "updated": "更新了心情！",
+        "deleted": "清空了心情。"
+    },
+    "system": {
+        "createButton": "创建",
+        "addSystem": "添加 [[SYSTEMCAP]]",
+        "created": "[[SYSTEMCAP]] 已创建!",
+        "updated": "[[SYSTEM]] 已成功更新!",
+        "deleted": "删除了 [[SYSTEM]].",
+        "links":{
+            "search": "[[ALTERCAP]] 搜",
+            "rules": "[[SYSTEMCAP]] 守则",
+            "wishlist": "心愿单",
+            "worksheets": "工作表",
+            "tutorial": "指导课",
+            "combine": "结合 [[ALTERS]]"
+        }
+    },
+    "account":{
+        "created": "感谢您注册Lighthouse！",
+        "updated": "设置更新！",
+        "deleted": "很遗憾看到你去。你可以随时再次注册。",
+        "alreadyExists": "<strong>哎呦！</strong> 那户名或此电邮地址已被占用 。 <a href='/login'>你需要登录吗？</a>",
+        "incorrect": "你的电邮或密码不正确。 <a href='/forgot-password'>你需要重置密码吗？</a>",
+        "loggedout": "您现在已退出。",
+        "loggedin": "你好，[[USERNAME]]! 您现在已登录！",
+        "sessionExpired": "Your session might have expired. Please log in again.",
+        "skin": "Website skin changed successfully!",
+        "notVerified": "Your account isn't verified yet! Please check your email and verify your account.",
+        "alreadyVerified": "Your account is already verified."
+    },
+    "wish":{
+        "created": "愿望创建！",
+        "granted": "愿望成真！",
+        "deleted": "愿望删除。"
+    },
+    "import":{
+        "PK":{
+          "success": "从Pluralkit导入成功了！",
+          "failure":{
+            "noCheck": "No [[ALTERS]] were selected to import.",
+            "notExists": "That [[SYSTEM]] doesn't seem to exist.",
+            "unavailable": "Pluralkit is currently unreachable."
+          }
+        },
+        "SP":{
+            "success": "Import from Simply Plural successful!",
+            "failure":{
+                "noCheck": "No [[ALTERS]] were selected to import.",
+                "notExists": "That [[SYSTEM]] doesn't seem to exist.",
+                "unavailable": "Simply Plural is currently unreachable."
+              }
+          }
+        
+    },
+    "posts":{
+        "moved": "Journal entry moved successfully.",
+        "deleted": "Deleted Journal entry."
+    },
+    "journals":{
+        "updateSkin": "Update Journal Skin"
+    },
+    "actions":{
+        "rename": "Rename",
+        "delete": "Delete",
+        "startOver": "Start Over",
+        "setIcon": "Set Icon",
+        "editAlter": "Edit [[ALTERNAME]]",
+        "update": "Update",
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "setMood": "Update Mood",
+        "clearMood": "Clear Mood"
+    },
+    "homepage":{
+        "slogan": "Journal Together",
+        "helping": "我们正在帮助[[x]]个[[SYSTEMS]]!",
+        "desc": "Lighthouse is a safe and supportive space for [[SYSTEMS]] to explore their thoughts and feelings, identify their different [[ALTERS]], and develop healthy and positive communication internally.",
+        "disclaimer": " Lighthouse was not developed by a medical professional, and is not intended to be a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your mental health professional or other qualified health provider with any questions you may have regarding your condition.",
+        "imgCredits": "Image Credits Here",
+        "author": "Designed and programmed by The Lighthouse System.",
+        "supportKoFi": "Support Us On Ko-Fi!",
+        
+        "bullet1": "Create a Space for Your [[ALTERSCAP]]",
+        "bullet1Desc": "[[ALTERSCAP]] get a private journal for their own thoughts and feelings that can be safe-guarded with a password.",
+        "bullet2": "Keep Your [[SYSTEMCAP]] Informed",
+        "bullet2desc": "Users get both a Communal Journal and an Internal Forum that can be used by all [[ALTERS]] to keep everyone up-to-date.",
+        "bullet3": "Get to the Root of Feelings",
+        "bullet3desc": "Each [[ALTER]] can set a mood with a short reason as to why they feel that way.",
+        "bullet4": "Understand Your [[ALTERSCAP]] Better",
+        "bullet4desc": "[[ALTERSCAP]] can provide basic information on themselves, but can also address what makes them feel safe, what they would want from the [[SYSTEM]], and what they would like accommodations for. Users can also create nested [[SUBSYSTEMS]], or a second standalone [[SYSTEM]], for those with complex [[SYSTEMS]].",
+        "bullet5": "Import from Pluralkit & Simply Plural",
+        "bullet5desc": "If you already use the popular Discord bot <strong>Pluralkit</strong> or the app <strong>Simply Plural</strong>, you can import your [[SYSTEM]] into Lighthouse!",
+        "bullet6": "Interactive Worksheets",
+        "bullet6desc": "If you have a trauma-based [[SYSTEM]] or would like to use trauma worksheets, Lighthouse has a growing number of interactive pages to help process emotions, make a safety plan, or prepare for an event that you know will be stressful or triggering.",
+        "bullet6disclaimer": "*These worksheets are intended for educational and informational purposes only and should not be used as a substitute for professional mental health care.",
+
+        "supporters": "Thank You to Our Supporters"
+    }
+}

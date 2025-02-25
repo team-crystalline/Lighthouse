@@ -3,110 +3,109 @@
     "quickleave": "クイック終了",
     "qlDesc": "ウェブサイトをすぐに終了する必要がある場合は、「クイック終了」をクリックしてください。",
     "alter": {
-        "created": "[[ALTERNAME]] added successfully!",
-        "updated": "[[ALTERNAME]] updated successfully!",
-        "deleted": "[[ALTERNAME]] removed successfully.",
-        "delete": "Delete [[ALTERNAME]]",
-        "archive": "Archive [[ALTERNAME]]"
+        "created": "[[ALTERNAME]] が正常に追加されました！",
+        "updated": "[[ALTERNAME]] が正常に更新されました！",
+        "deleted": "[[ALTERNAME]] が正常に削除されました。",
+        "delete": "[[ALTERNAME]] を削除",
+        "archive": "[[ALTERNAME]] をアーカイブ"
     },
-    "mood":{
-        "updated": "Updated mood!",
-        "deleted": "Cleared mood."
+    "mood": {
+        "updated": "ムードが更新されました！",
+        "deleted": "ムードがクリアされました。"
     },
     "system": {
-        "createButton": "作る",
-        "addSystem": "[[SYSTEM]]を作る",
-        "created": "[[SYSTEMCAP]] created!",
-        "updated": "[[SYSTEM]] updated!",
-        "deleted": "Deleted [[SYSTEM]].",
-        "links":{
-            "search": "[[ALTERCAP]] Search",
-            "rules": "[[SYSTEMCAP]] Rules",
-            "wishlist": "Wishlist",
-            "worksheets": "Worksheets",
-            "tutorial": "Tutorial",
-            "combine": "Combine [[ALTERS]]"
+        "createButton": "作成",
+        "addSystem": "[[SYSTEM]]を作成",
+        "created": "[[SYSTEMCAP]] が作成されました！",
+        "updated": "[[SYSTEM]] が更新されました！",
+        "deleted": "[[SYSTEM]] が削除されました。",
+        "links": {
+            "search": "[[ALTERCAP]] 検索",
+            "rules": "[[SYSTEMCAP]] ルール",
+            "wishlist": "ウィッシュリスト",
+            "worksheets": "ワークシート",
+            "tutorial": "チュートリアル",
+            "combine": "[[ALTERS]] を結合"
         }
     },
-    "account":{
-        "created": "Thank you for signing up to Lighthouse!",
-        "updated": "Settings updated!",
-        "deleted": "So sorry to see you go. You can sign up again at any time.",
-        "alreadyExists": "<strong>Uh oh!</strong> That username or email is already in use. <a href='/login'>Do you need to log in instead?</a>",
-        "incorrect": "Your email or password is incorrect. <a href='/forgot-password'>Do you need to reset your password?</a>",
-        "loggedout": "You're now logged out.",
-        "loggedin": "Hi, [[USERNAME]]! You're now logged in!",
-        "sessionExpired": "Your session might have expired. Please log in again.",
-        "skin": "Website skin changed successfully!",
-        "notVerified": "Your account isn't verified yet! Please check your email and verify your account.",
-        "alreadyVerified": "Your account is already verified."
+    "account": {
+        "created": "Lighthouseにサインアップしていただきありがとうございます！",
+        "updated": "設定が更新されました！",
+        "deleted": "お別れするのは残念です。またいつでもサインアップできます。",
+        "alreadyExists": "<strong>ああ！</strong> そのユーザー名またはメールはすでに使用されています。 <a href='/login'>代わりにログインする必要がありますか？</a>",
+        "incorrect": "メールアドレスまたはパスワードが正しくありません。 <a href='/forgot-password'>パスワードをリセットする必要がありますか？</a>",
+        "loggedout": "ログアウトしました。",
+        "loggedin": "こんにちは、[[USERNAME]]！ログインしました！",
+        "sessionExpired": "セッションが期限切れになった可能性があります。再度ログインしてください。",
+        "skin": "ウェブサイトのスキンが正常に変更されました！",
+        "notVerified": "アカウントはまだ確認されていません！メールを確認してアカウントを確認してください。",
+        "alreadyVerified": "アカウントはすでに確認されています。"
     },
-    "wish":{
-        "created": "Wish created!",
-        "granted": "Wish granted!",
-        "deleted": "Wish deleted."
+    "wish": {
+        "created": "ウィッシュが作成されました！",
+        "granted": "ウィッシュが承認されました！",
+        "deleted": "ウィッシュが削除されました。"
     },
-    "import":{
-        "PK":{
-          "success": "Import from Pluralkit successful!",
-          "failure":{
-            "noCheck": "No [[ALTERS]] were selected to import.",
-            "notExists": "That [[SYSTEM]] doesn't seem to exist.",
-            "unavailable": "Pluralkit is currently unreachable."
-          }
+    "import": {
+        "PK": {
+            "success": "Pluralkitからのインポートが成功しました！",
+            "failure": {
+                "noCheck": "インポートするために選択された[[ALTERS]]はありません。",
+                "notExists": "その[[SYSTEM]]は存在しないようです。",
+                "unavailable": "Pluralkitは現在アクセスできません。"
+            }
         },
-        "SP":{
-            "success": "Import from Simply Plural successful!",
-            "failure":{
-                "noCheck": "No [[ALTERS]] were selected to import.",
-                "notExists": "That [[SYSTEM]] doesn't seem to exist.",
-                "unavailable": "Simply Plural is currently unreachable."
-              }
-          }
+        "SP": {
+            "success": "Simply Pluralからのインポートが成功しました！",
+            "failure": {
+                "noCheck": "インポートするために選択された[[ALTERS]]はありません。",
+                "notExists": "その[[SYSTEM]]は存在しないようです。",
+                "unavailable": "Simply Pluralは現在アクセスできません。"
+            }
+        }
+    },
+    "posts": {
+        "moved": "ジャーナルエントリが正常に移動されました。",
+        "deleted": "ジャーナルエントリが削除されました。"
+    },
+    "journals": {
+        "updateSkin": "ジャーナルスキンを更新"
+    },
+    "actions": {
+        "rename": "名前を変更",
+        "delete": "削除",
+        "startOver": "やり直す",
+        "setIcon": "アイコンを設定",
+        "editAlter": "[[ALTERNAME]] を編集",
+        "update": "更新",
+        "lock": "ロック",
+        "unlock": "ロック解除",
+        "setMood": "ムードを更新",
+        "clearMood": "ムードをクリア"
+    },
+        "homepage": {
+        "slogan": "あなたの旅をナビゲート",
+        "helping": "[[x]] [[SYSTEMS]]をサポートしています！",
+        "desc": "Lighthouseは、PTSDやDIDを持つ人々が自分の思考や感情を探求し、異なる[[ALTERS]]を特定し、内部で健康的でポジティブなコミュニケーションを発展させるための安全でサポートのある空間です。",
+        "disclaimer": "Lighthouseは医療専門家によって開発されたものではなく、専門的なアドバイス、診断、または治療の代替として意図されていません。ご自身の状態に関する質問がある場合は、必ずメンタルヘルスの専門家または他の資格を持つ医療提供者に相談してください。",
+        "imgCredits": "画像のクレジットはこちら",
+        "author": "The Lighthouse Systemによってデザインおよびプログラムされました。",
+        "supportKoFi": "私たちをKo-Fiでサポートしてください！",
         
-    },
-    "posts":{
-        "moved": "Journal entry moved successfully.",
-        "deleted": "Deleted Journal entry."
-    },
-    "journals":{
-        "updateSkin": "Update Journal Skin"
-    },
-    "actions":{
-        "rename": "Rename",
-        "delete": "Delete",
-        "startOver": "Start Over",
-        "setIcon": "Set Icon",
-        "editAlter": "Edit [[ALTERNAME]]",
-        "update": "Update",
-        "lock": "Lock",
-        "unlock": "Unlock",
-        "setMood": "Update Mood",
-        "clearMood": "Clear Mood"
-    },
-    "homepage":{
-        "slogan": "一緒に書きましょう",
-        "helping": "We're helping [[x]] [[SYSTEMS]]!",
-        "desc": "Lighthouse is a safe and supportive space for people with PTSD and DID to explore their thoughts and feelings, identify their different [[ALTERS]], and develop healthy and positive communication internally.",
-        "disclaimer": " Lighthouse was not developed by a medical professional, and is not intended to be a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your mental health professional or other qualified health provider with any questions you may have regarding your condition.",
-        "imgCredits": "Image Credits Here",
-        "author": "Designed and programmed by The Lighthouse System.",
-        "supportKoFi": "Support Us On Ko-Fi!",
+        "bullet1": "あなたの[[ALTERSCAP]]のためのスペースを作成",
+        "bullet1Desc": "[[ALTERSCAP]]は、自分の思考や感情のためのプライベートジャーナルを持ち、パスワードで保護できます。",
+        "bullet2": "あなたの[[SYSTEMCAP]]を最新の状態に保つ",
+        "bullet2desc": "ユーザーは、すべての[[ALTERS]]が最新情報を共有できる共同ジャーナルと内部フォーラムを持ちます。",
+        "bullet3": "感情の根本を理解する",
+        "bullet3desc": "各[[ALTER]]は、自分の気持ちを表す短い理由とともにムードを設定できます。",
+        "bullet4": "あなたの[[ALTERSCAP]]をよりよく理解する",
+        "bullet4desc": "[[ALTERSCAP]]は自分に関する基本情報を提供できますが、安全に感じる理由、[[SYSTEM]]から望むこと、必要な配慮についても説明できます。ユーザーは、複雑な[[SYSTEMS]]を持つ人のために、ネストされた[[SUBSYSTEMS]]や独立した[[SYSTEM]]を作成することもできます。",
+        "bullet5": "Pluralkit & Simply Pluralからインポート",
+        "bullet5desc": "人気のDiscordボット<strong>Pluralkit</strong>やアプリ<strong>Simply Plural</strong>をすでに使用している場合、あなたの[[SYSTEM]]をLighthouseにインポートできます！",
+        "bullet6": "インタラクティブなワークシート",
+        "bullet6desc": "トラウマに基づく[[SYSTEM]]を持っている場合やトラウマワークシートを使用したい場合、Lighthouseには感情を処理したり、安全計画を作成したり、ストレスやトリガーになるイベントに備えたりするためのインタラクティブなページが増えています。",
+        "bullet6disclaimer": "*これらのワークシートは教育的および情報提供の目的のみで使用され、専門的なメンタルヘルスケアの代替として使用されるべきではありません。",
         
-        "bullet1": "Create a Space for Your [[ALTERSCAP]]",
-        "bullet1Desc": "[[ALTERSCAP]] get a private journal for their own thoughts and feelings that can be safe-guarded with a password.",
-        "bullet2": "Keep Your [[SYSTEMCAP]] Informed",
-        "bullet2desc": "Users get both a Communal Journal and an Internal Forum that can be used by all [[ALTERS]] to keep everyone up-to-date.",
-        "bullet3": "Get to the Root of Feelings",
-        "bullet3desc": "Each [[ALTER]] can set a mood with a short reason as to why they feel that way.",
-        "bullet4": "Understand Your [[ALTERSCAP]] Better",
-        "bullet4desc": "[[ALTERSCAP]] can provide basic information on themselves, but can also address what makes them feel safe, what they would want from the [[SYSTEM]], and what they would like accommodations for. Users can also create nested [[SUBSYSTEMS]], or a second standalone [[SYSTEM]], for those with complex [[SYSTEMS]].",
-        "bullet5": "Import from Pluralkit & Simply Plural",
-        "bullet5desc": "If you already use the popular Discord bot <strong>Pluralkit</strong> or the app <strong>Simply Plural</strong>, you can import your [[SYSTEM]] into Lighthouse!",
-        "bullet6": "Interactive Worksheets",
-        "bullet6desc": "If you have a trauma-based [[SYSTEM]] or would like to use trauma worksheets, Lighthouse has a growing number of interactive pages to help process emotions, make a safety plan, or prepare for an event that you know will be stressful or triggering.",
-        "bullet6disclaimer": "*These worksheets are intended for educational and informational purposes only and should not be used as a substitute for professional mental health care.",
-
-        "supporters": "Thank You to Our Supporters"
+        "supporters": "私たちのサポーターに感謝します"
     }
 }

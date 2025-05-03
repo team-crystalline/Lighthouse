@@ -46,7 +46,7 @@ var tuning={
     cookietime: 1000 * 60 * 60 * 24 * 7 * 2 //2 weeks
 }
 
-var skinGroups=["Default", "Misc. User Skins", "Galaxii Kingdom", "Constellation Collection", "Chaotic Troop", "Pax Vesania Collective", "Pride", "DivineChrysalism", "GOOPYGAMER9000", "Era vulgaris", "Unlockables"] 
+var skinGroups=["Default", "Misc. User Skins", "Galaxii Kingdom", "Constellation Collection", "Chaotic Troop", "Pax Vesania Collective", "Pride", "DivineChrysalism", "GOOPYGAMER9000", "Era vulgaris", "Unlockables", "Metallic"] 
 
 // Group 1: Default Skins.
 // Group 2: Single user skins (These users didn't make more than 2 skins)
@@ -59,6 +59,7 @@ var skinGroups=["Default", "Misc. User Skins", "Galaxii Kingdom", "Constellation
 // Group 9: GOOPYGAMER9000
 // Group 10: Era Vulgaris
 // Group 11: Unlockables
+// Group 12: Metallic
 var journals=[
 	{val: '1', c: "Red", group:1, ext:"png"}, 
 	{val: '2', c: "Orange", group:1, ext:"png"}, 
@@ -148,8 +149,8 @@ var journals=[
 	{val: '86', c: "Gay Pride (🎨 Perichoresis, sunshade collective)", group:7, ext:"png"},
 	{val: '87', c: "Bi Pride (🎨 Perichoresis, sunshade collective)", group:7, ext:"png"},
 	{val: '88', c: "Untitled (🎨 The Rainy Day System)", group:2, ext:"webp"},
-	{val: '89', c: "Snake Journal (🎨 Snakes & Roses System)", group:2, ext:"png"},
-	{val: '90', c: "Rose and Thorns Journal (🎨 Snakes & Roses System)", group:2, ext:"png"},
+	{val: '89', c: "Snake Journal (🎨 Snakes & Roses Sys.)", group:2, ext:"png"},
+	{val: '90', c: "Rose and Thorns Journal (🎨 Snakes & Roses Sys.)", group:2, ext:"png"},
 	{val: '91', c: "LGBTQ+ Pride (🎨 sunshade collective)", group:7, ext:"png"},
 	{val: '92', c: "Polyamorous Pride 1 (🎨 sunshade collective)", group:7, ext:"png"},
 	{val: '93', c: "Grayromantic Pride (🎨 sunshade collective)", group:7, ext:"png"},
@@ -180,6 +181,36 @@ var journals=[
 	{val: '118', c: "Hot Topic (White) (🎨 Renkindle)", group:2, ext:"png"},
 	{val: '119', c: "Hot Topic (Mint) (🎨 Renkindle)", group:2, ext:"png"},
 	{val: '120', c: "Hot Topic (Progress Pride) (🎨 Renkindle)", group:2, ext:"png"},
+	{val: '121', c: "Vincian (🎨 dna system)", group:7, ext:"png"},
+	{val: '122', c: "Lesbian (🎨 dna system)", group:7, ext:"png"},
+	{val: '123', c: "Bi (🎨 dna system)", group:7, ext:"png"},
+	{val: '124', c: "Pan (🎨 dna system)", group:7, ext:"png"},
+	{val: '125', c: "Trans (🎨 dna system)", group:7, ext:"png"},
+	{val: '126', c: "Nonbinary (🎨 dna system)", group:7, ext:"png"},
+	{val: '127', c: "Asexual (🎨 dna system)", group:7, ext:"png"},
+	{val: '128', c: "Aromantic (🎨 dna system)", group:7, ext:"png"},
+	{val: '129', c: "Aroace (🎨 dna system)", group:7, ext:"png"},
+	{val: '130', c: "Agender (🎨 dna system)", group:7, ext:"png"},
+	{val: '131', c: "Genderfluid (🎨 dna system)", group:7, ext:"png"},
+	{val: '132', c: "Omni (🎨 dna system)", group:7, ext:"png"},
+	{val: '133', c: "Gold (🎨 dna system)", group:12, ext:"png"},
+	{val: '134', c: "Silver (🎨 dna system)", group:12, ext:"png"},
+	{val: '135', c: "Obsidian (🎨 dna system)", group:12, ext:"png"},
+	{val: '136', c: "Morganite (🎨 dna system)", group:12, ext:"png"},
+	{val: '137', c: "Amethyst (🎨 dna system)", group:12, ext:"png"},
+	{val: '138', c: "Ruby (🎨 dna system)", group:12, ext:"png"},
+	{val: '139', c: "Black Opal (🎨 dna system)", group:12, ext:"png"},
+	{val: '140', c: "Sapphire (🎨 dna system)", group:12, ext:"png"},
+	{val: '141', c: "Emerald (🎨 dna system)", group:12, ext:"png"},
+	{val: '142', c: "Demigirl (🎨 dna system)", group:7, ext:"png"},
+	{val: '143', c: "Demiboy (🎨 dna system)", group:7, ext:"png"},
+	{val: '144', c: "Deminonbinary (🎨 dna system)", group:7, ext:"png"},
+	{val: '145', c: "Transmasc (🎨 dna system)", group:7, ext:"png"},
+	{val: '146', c: "Transfem (🎨 dna system)", group:7, ext:"png"},
+	{val: '147', c: "Transneutral (🎨 dna system)", group:7, ext:"png"},
+	{val: '148', c: "Transandrogynous (🎨 dna system)", group:7, ext:"png"},
+	{val: '149', c: "Transfemmasc (🎨 dna system)", group:7, ext:"png"},
+	{val: '150', c: "Transxenine (🎨 dna system)", group:7, ext:"png"},
 ]
 
 var editorColours=[

@@ -4,12 +4,13 @@
         <%- include ("../partials/header.ejs") %>
         <style>
             .skins {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            flex-wrap: wrap;
-            }
-            .verylongname{
-                grid-template-columns: repeat(1, 1fr) !important;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap:calc(.25em);
+                flex-wrap: wrap;
+                word-wrap: break-word !important;
+                min-width: none;
+                max-width: 10em;
             }
             /* Media query for mobile screens */
                 @media only screen and (max-width: 900px) {
@@ -103,11 +104,11 @@
 
                         <% } else { %>
                             <h3><%- skinGroups[i] %></h3>
-                            <div class="skins<% if(skinGroups[i] == "Pride"){ %> verylongname<% } %>">
+                            <div class="skins">
                                 <% group.forEach((item)=>{ %>
                                     <div class="radio-toolbar child" >
                                         <input type="radio" id="<%= item.val %>" name="journ" value="<%= item.val %>">
-                                        <label for="<%= item.val %>">
+                                        <label for="<%= item.val %>" style="word-wrap: break-word; width:10em; min-width: 10em; max-width: 10em;">
                                             <img src="/img/<%- item.val %>.<%- item.ext %>" class="smallimg"><br>
                                             <% if (skinGroups[i] == "Pride" || skinGroups[i] == "Misc. User Skins"){ %>
                                                 <%- item.c %> 

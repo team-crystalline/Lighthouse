@@ -225,6 +225,9 @@ var journals=[
 	{val: '162', c: "Icing and Sprinkles (🎨 neoteric wilds)", group:2, ext:"png"},
 	{val: '163', c: "In da Jungle (🎨 The Saturniid System)", group:2, ext:"png"},
 	{val: '164', c: "A Sunny Day (🎨 The Ethereal System)", group:2, ext:"png"},
+	{val: '165', c: "Symbolless Plural Peafowl Flag (🎨 The Circuit Cozy System)", group:7, ext:"png"},
+	{val: '166', c: "Plural Peafowl Flag with Ampersand (🎨 The Circuit Cozy System)", group:7, ext:"png"},
+	{val: '167', c: "Plural Peafowl Flag with Peafowl (🎨 The Circuit Cozy System)", group:7, ext:"png"},
 ]
 
 var editorColours=[

@@ -518,24 +518,25 @@ $("#hidden-text").text(editor)
           window.location= `/topic/<%= topic %>/${$("#page").val()}`
         })
         
-        $(document).ready(()=>{
-          const markdownSupp = $(".md-support");
-  
-          // Iterate over each element with the class .md-support
-          markdownSupp.each(function() {
-            const b = $(this); // Current .md-support element
+        $(document).ready(function () {
+          fetchPosts().then(() => {
+            const markdownSupp = $(".md-support");
 
-            // Iterate over each child of the current .md-support element
-            b.children().each(function() {
-              const a = $(this); // Current child element
-              const existingText = a.text(); // Get existing text content
-              
-              // Parse the existing text and replace quotes
-              const parsedHtml = marked.parse(existingText).replace("“", "").replace("”", "");
-              a.html(parsedHtml); // Set the new HTML content
+            markdownSupp.each(function () {
+              const b = $(this);
+              b.children().each(function () {
+                const a = $(this);
+                const existingText = a.html();
+                const parsedHtml = marked
+                  .parse(existingText, { sanitize: false })
+                  .replace("“", "")
+                  .replace("”", "");
+                a.html(parsedHtml);
+                // Wheeee callback hell :3
+              });
             });
           });
-        })
+    });
     </script>
     <%- include ("../partials/footer.ejs") %>
     </body>

@@ -4,7 +4,7 @@
   "description": "A journal app for systems to write diaries. Plural users specifically.",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "aws-sdk-js-codemod": "^0.28.2",
@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "css-loader": "^5.2.7",
-    "nodemon": "^3.1.10",
     "postcss": "^8.4.23",
     "postcss-loader": "^4.3.0",
     "raw-loader": "^4.0.2",

@@ -78,23 +78,17 @@
   margin: 0;
 }
 </style>
-
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const tableElement = document.getElementById("alterTable");
-    if (tableElement && tableElement.children.length > 0) {
-        const tableRows = Array.from(tableElement.children[0].children);
-        tableRows.forEach((row) => {
-            if (row.children.length > 1) {
-                const valueCell = row.children[1];
-                let existingText = valueCell.innerHTML;
-                if (!existingText || existingText === "''" || existingText === "null") {
-                    valueCell.innerHTML = "<em>(empty)</em>";
-                } else {
-                    valueCell.innerHTML = marked.parse(existingText);
-                }
-            }
-        });
+  const valueElements = document.querySelectorAll('.alter-info-value');
+  valueElements.forEach((el) => {
+    let existingText = el.innerHTML;
+    if (!existingText || existingText === "''" || existingText === "null") {
+      el.innerHTML = "<em>(empty)</em>";
+    } else {
+      el.innerHTML = marked.parse(existingText);
     }
+  });
 });
 </script>

@@ -231,10 +231,16 @@ router.get('/journals/:id', async function (req, res){
       let storedSalt;
       let inputHash;
 
-      if (storedSalt !== null) {
+      if (userCheck[0].salt != null && userCheck[0].salt !== undefined) {
         // Decrypt the stored salt and use to compare.
-        storedSalt = decryptWithAES(userCheck[0].salt, process.env.SALT_KEY);
-        inputHash = CryptoJS.SHA3(req.headers.tok + storedSalt).toString();
+        try {
+          storedSalt = decryptWithAES(userCheck[0].salt, process.env.SALT_KEY);
+          if (!storedSalt) throw new Error("Decryption returned null or empty salt.");
+          inputHash = CryptoJS.SHA3(req.headers.tok + storedSalt).toString();
+        } catch (err) {
+          console.error("Error decrypting salt:", err);
+          return res.status(500).send("Internal server error.");
+        }
       } else {
         // Legacy: no salt, hash as before
         inputHash = CryptoJS.SHA3(req.headers.tok).toString();
@@ -281,12 +287,10 @@ router.get('/journals/:id', async function (req, res){
           name: Buffer.from(userCheck[0].username, 'base64').toString()
         });
       } else {
-        console.log(`Password mismatch for user with email: ${req.headers.email}`);
         // Not sending through response to prevent oracle attacks.
         return res.status(401).send("Incorrect credentials.");
       }
     }  else {
-      console.log(`No user found with that email. Attempted email: ${req.headers.email}`);
       // Not sending through response to prevent oracle attacks.
       return res.status(401).send("Incorrect credentials.");
     }
@@ -371,7 +375,6 @@ router.post('/generate-token', async function (req, res){
       const addTok= await db.query(client, "INSERT INTO tokens (u_id, name) VALUES ($1, $2);", [req.body.id, encryptWithAES(tok)], res, req);
       let userToks= await db.query(client, "SELECT * FROM tokens WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
       const selectedTok = (userToks.filter(result => decryptWithAES(result.name) === tok))[0];
-      // console.log(selectedTok);
       return res.status(200).json({
         name: decryptWithAES(selectedTok.name),
         read: selectedTok.read,

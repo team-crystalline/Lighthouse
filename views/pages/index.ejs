@@ -202,9 +202,19 @@
                 window.location.replace("/system");
             }, 3000);
         } else {
-            $("#Wait").hide();
-            $("#login").show();
-            $.iaoAlert({ msg: `Wrong Email or Password. <a href="/forgot-password">Need to reset your password?</a>`, type: "error", mode: "dark", autoHide: false})
+            if (response.status === 401) {
+                $("#Wait").hide();
+                $("#login").show();
+                $.iaoAlert({ msg: `Wrong Email or Password. <a href="/forgot-password">Need to reset your password?</a>`, type: "error", mode: "dark", autoHide: false});
+            } else if (response.status === 500) {
+                $("#Wait").hide();
+                $("#login").show();
+                $.iaoAlert({ msg: `There seems to have been a hiccup since our security update. <a href="/forgot-password">Please reset your password,</a> and then log in again.`, type: "error", mode: "dark", autoHide: false});
+            } else {
+                $("#Wait").hide();
+                $("#login").show();
+                $.iaoAlert({ msg: `An unexpected error occurred. Please try again later.`, type: "error", mode: "dark", autoHide: false});
+            }
         }
         })
     </script>

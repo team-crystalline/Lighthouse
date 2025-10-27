@@ -17,6 +17,7 @@
             <% if (!isLoggedIn(cookies)){ %>
             <div id="loggedIn" class="splash" style="display:none">Hi, <span id="greeting">friend</span>! You are now logged in. Redirecting you now...</div>
             <div id="wrongpass" class="splash" style="display:none">Incorrect email and/or password. <a href="/forgot-password">Need to reset your password?</a></div>
+            <div id="loginerror" class="splash" style="display:none">There seems to have been a hiccup since our security update. <a href="/forgot-password">Please reset your password,</a> and then log in again.</div>
             <h2>Log In to Lighthouse</h2>
             <small>No Account? <a id="signup" href="/signup">Signing Up takes only a minute!</a></small><br/>
             <form method="post">
@@ -63,10 +64,19 @@
                     window.location.replace("/system");
                 }, 3000);
             } else {
-                $("#login").show();
-                $("#Wait").hide();
-                $.iaoAlert({ msg: `Wrong Email or Password.`, type: "error", mode: "dark", autoHide: false})
-                $("#fgglow").addClass("glow");
+                if (response.status === 401) {
+                    $("#Wait").hide();
+                    $("#login").show();
+                    $.iaoAlert({ msg: `Wrong Email or Password. <a href="/forgot-password">Need to reset your password?</a>`, type: "error", mode: "dark", autoHide: false});
+                } else if (response.status === 500) {
+                    $("#Wait").hide();
+                    $("#login").show();
+                    $.iaoAlert({ msg: `There seems to have been a hiccup since our security update. <a href="/forgot-password">Please reset your password,</a> and then log in again.`, type: "error", mode: "dark", autoHide: false});
+                } else {
+                    $("#Wait").hide();
+                    $("#login").show();
+                    $.iaoAlert({ msg: `An unexpected error occurred. Please try again later.`, type: "error", mode: "dark", autoHide: false});
+                }
             }
             })
         </script>

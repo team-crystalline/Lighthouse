@@ -28,3 +28,26 @@ Setting up Lighthouse is fairly straightforward.
     - `SALT_KEY`: This is a key we use to encrypt the salt for password hashing. Now, you might be thinking "This is a bit overkill", and it is. Like I've said in the past: Paranoia is a wonderful motivator for this project.
 4. Set up your PostgreSQL database using the provided SQL schema in the `local-db` folder. There's a README in that folder with more instructions, if you need that.
 5. Finally, you can run the server using `npm start`. When Lighthouse boots, it will provide you with an "Open in browser" link. Click that, and you should be good to go!
+
+## What needs done immediately
+### Cleanup. Lots and lots of cleanup.
+The code, as you will quickly see, is just a mess. This code is in dire need of cleanup. There needs to be a helper function file to reduce redundancy, the routes still need to be organized into separate files, and queries need to use the new await db.query call which handles all the errors and whatnot. 
+
+This project was built all the way back in 2021, when I was still fresh out of an Associates Degree program and had only been coding for a few months. That's why there's so much callback hell, redundant code and a general lack of organisation. This doesn't mean the data itself is unsafe! It's just that the backend is like the side of cross-stitch that you don't show people.
+
+### Login issues
+This one is still baffling me. For some reason, changing passwords has become a problem. Sign ups might also be broken when registering. Why that's happening is beyond me, as I've tested it repeatedly and have not been able to replicate the issue. I get a sneaking suspicion that we'll only get answers once cleanup is done. While sign ups are disabled, let's focus on cleaning up the code and making sure we understand how everything works. Once we do that, we can probably figure out what's going on with the login issues.
+
+### Screen reader accessibility
+I've been emailed a couple times about how screenreaders cannot navigate Lighthouse. I don't have a screen reader myself, so I haven't been able to test this. Once the sign up and clean up issues are resolved, this should be our next priority.
+
+### API access
+I really want to be sure people can't make random CURL commands to this project's API and start pulling data. I think I have an ok system in place to prevent that, but I want to make sure it's solid.
+
+### Safety Plan Export
+Currently we store those PDFs for 5 minutes, but if the program crashes in that 5 minute window, they might get left on the server. We need to make sure that doesn't happen. Now that I know how to send blobs in a response, that's how we should be doing it instead of storing them on the server at all. Just stream the PDF info directly to the user. Saves space and makes it more secure.
+
+### Reduce the POST, DELETE, PUT request redirects.
+We can use use a fetch on the front end and when it gets a response, redirect or alert the users.
+
+Also! Updates to data like updating alters, systems, etc should be PUT requests, not POST. POST = create, PUT = update, GET= read, DELETE = delete.

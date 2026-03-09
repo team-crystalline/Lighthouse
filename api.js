@@ -420,6 +420,7 @@ router.get("/user/export/:id", async function(req, res){
     Compile these into a zip and send to user?
   */
   if (apiEyesOnly(req)){
+    // Good lord. TODO: Make this not a fucking nightmare to read. ...Also is that like 13 queries at once? Might be ok if there's not many people online, but like... Woof.
     const userInfo = await db.query(client, "SELECT * FROM users WHERE id=$1;", [req.params.id], res, req);
     const systems = await db.query(client, "SELECT * FROM systems WHERE user_id=$1;", [req.params.id], res, req);
     const alters = await db.query(client, "SELECT * FROM alters WHERE sys_id IN (SELECT sys_id FROM systems WHERE user_id=$1);", [req.params.id], res, req);

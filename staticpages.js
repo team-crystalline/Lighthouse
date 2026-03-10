@@ -32,8 +32,8 @@ const {errorPage} = require("./funcs.js");
         
     });
     router.get('/signup', (req, res, next) => {
-      // res.render(`pages/signup`, { session: req.session, cookies:req.cookies });
-      res.render(`pages/signup-disabled`, { session: req.session, cookies:req.cookies });
+      res.render(`pages/signup`, { session: req.session, cookies:req.cookies });
+      // res.render(`pages/signup-disabled`, { session: req.session, cookies:req.cookies });
     });
     router.get('/login', (req, res) => {
         // Bookmark: login page

@@ -500,6 +500,33 @@ function formatGMTToLocal(gmtTimestamp) {
 
     return localDateTimeString;
 }
+
+/**
+ * Generates a hashed password and an encrypted salt.
+ * @param {string} plainTextPassword 
+ * @returns {Object} An object containing the hashed password and the encrypted salt.
+ */
+function createPassword(plainTextPassword) {
+  // TODO: Switch to bcrypt. I want to make a potential attacker McStruggle to get a password.
+    const rawSalt = crypto.randomBytes(32).toString('hex');
+    /* Everyone says this is jank but I don't see why...? This encryption key is not used by the rest of the app. 
+    
+    I know it's just to make passwords harder to guess against a rainbow table, but like... I dunno. I don't mind working a bit harder to obfuscate the salt. Hardly costs any performance, and it makes the salt more resistant to rainbow table attacks.
+
+    But having said that... TODO: Pepper it too. I'll figure out a decent pepper. Getting a feeling there's other seasonings of password hashing, but idk what they are yet. This'll do for now. I don't think Lighthouse is gonna be some high value target since we don't have financial info or something.
+
+    I'm gonna stop yapping, I got tasks at work to do ha.
+    - Blue, Lighthouse System
+    */
+    const encryptedSalt = encryptWithAES(rawSalt, process.env.SALT_KEY);
+    const passwordHash = CryptoJS.SHA3(plainTextPassword + rawSalt).toString();
+    
+    return {
+        hash: passwordHash,
+        salt: encryptedSalt
+    };
+}
+
 module.exports = {
     isLoggedIn,
     getCookies,
@@ -535,5 +562,6 @@ module.exports = {
     validateParam,
     errorPage,
     getHourFormat,
-    formatGMTToLocal
+    formatGMTToLocal,
+    createPassword
 }

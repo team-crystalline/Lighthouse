@@ -2,83 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./db');
-const client= db.client;
-const crypto= require('crypto');
+const client = db.client;
+const crypto = require('crypto');
 const CryptoJS = require("crypto-js");
-var strings= require("./lang/en.json");
+var strings = require("./lang/en.json");
 const archiver = require('archiver');
 const { Readable } = require('stream');
+const { getCookies, checkUUID, apiEyesOnly, generateToken, encryptWithAES, decryptWithAES, createPassword } = require('./funcs');
 
-
-function checkUUID(str){
-	let uuidRegex= /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
-	return uuidRegex.test(str);
-}
-/**
- * Generates an object containing HTTP request cookies.
- * @param {object} req ExpressJS API request
- * @returns {object} Collected of cookies associated by request. Retrieve with object['key'].
- */
-const getCookies = (req) => {
-  // We extract the raw cookies from the request headers
-  if (!req.headers.cookie) return 'undefined';
-  const rawCookies = req.headers.cookie.split('; ');
- 
-  const parsedCookies = {};
-  rawCookies.forEach(rawCookie=>{
-  const parsedCookie = rawCookie.split('=');
-  // parsedCookie = ['myapp', 'secretcookie'], ['analytics_cookie', 'beacon']
-   parsedCookies[parsedCookie[0]] = parsedCookie[1];
-  });
-  return parsedCookies;
- };
-
-/**
- * Checks if the request is specifically an internal API call, or a browser making a request.
- * @param {object} req ExpressJS API request. 
- * @returns {boolean} true or false
- */
-function apiEyesOnly(req) {
-	if (req.headers['referer']) {
-    // This is a browser.
-	   return true;
-	} else {
-	  return false;     
-	}
-  }
-
-/**
- * Generates a token.
- * @param {number} n Length of token
- * @returns {string} token
- */
-function generateToken(n) {
-	const token = crypto.randomBytes(n).toString('hex');
-	return token;
-  }
-
-/**
- * Encrypts a string using AES encryption. DO NOT USE FOR PASSWORDS.
- * @param {String} text - The text to encrypt.
- * @param {String} passphrase - The passphrase to use for encryption.
- * @returns {String} The encrypted text.
- */
-function encryptWithAES(text, passphrase = process.env.cryptkey){
-  return CryptoJS.AES.encrypt(text, passphrase).toString();
-}
-
-/**
- * Decrypts a string using AES encryption. DO NOT USE FOR PASSWORDS.
- * @param {String} ciphertext - The encrypted text to decrypt.
- * @param {String} passphrase - The passphrase to use for decryption.
- * @returns {String} The decrypted text.
- */
-function decryptWithAES(ciphertext, passphrase = process.env.cryptkey){
-  if (ciphertext == null || ciphertext == undefined || ciphertext === "") return "";
-  const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
-  const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  return originalText;
-}
 /*
 
    ____      _     ____                            _       
@@ -89,213 +20,212 @@ function decryptWithAES(ciphertext, passphrase = process.env.cryptkey){
                                 |_|                        
 
 */
-router.get("/test", async function(req, res){
-    return res.status(200).render('pages/apitest',{ session: req.session, cookies:req.cookies });
+router.get("/test", async function (req, res) {
+  return res.status(200).render('pages/apitest', { session: req.session, cookies: req.cookies });
 });
 
 // Grab user's members by user ID and token. If the token is not provided, reject them. The token should not be in the URL
-router.get('/members/:id', async function (req, res){
-    if (!checkUUID(req.params.id)) return res.status(400).send("Bad Request");
-      let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
-      let matched= false;
-      // Using a for loop bc I can easily break out of it.
-      for (i in userCheck){
-        let compareTok= decryptWithAES(userCheck[i].name);
-        if (compareTok == req.headers.usertoken){
-          // Matches. Read and Alter perms?
-          if (userCheck[i].read == false || userCheck[i].alters == false) return res.status(401).send("Not Authorised")
-          matched= true;
-          break;
-        }
-      }
-      if (matched == true){
-        let alters= await db.query(client, "SELECT alters.*, systems.sys_id, systems.sys_alias FROM alters INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE systems.user_id=$1", [req.params.id], res, req);
-        let altArr= new Array();
-        alters.forEach((alter)=>{
-          altArr.push({
-            id: alter.alt_id,
-            sys_id: alter.sys_id,
-            sys_alias: alter.sys_alias != null ? Buffer.from(alter.sys_alias, "base64").toString() : "",
-            name: alter.name != null ? Buffer.from(alter.name, "base64").toString() : "",
-            pronouns: alter.pronouns != null ? Buffer.from(alter.pronouns, "base64").toString() : "",
-            age: alter.agetext != null ? Buffer.from(alter.agetext, "base64").toString() : "",
-            positiveTriggers: alter.triggers_pos != null ? Buffer.from(alter.triggers_pos, "base64").toString() : "",
-            negativeTriggers: alter.triggers_neg != null ? Buffer.from(alter.triggers_neg, "base64").toString() : "",
-            likes: alter.likes != null ? Buffer.from(alter.likes, "base64").toString() : "",
-            dislikes: alter.dislikes != null ? Buffer.from(alter.dislikes, "base64").toString() : "",
-            job: alter.job != null ? Buffer.from(alter.job, "base64").toString() : "",
-            safePlace: alter.safe_place != null ? Buffer.from(alter.safe_place, "base64").toString() : "",
-            wants: alter.wants != null ? Buffer.from(alter.wants, "base64").toString() : "",
-            accommodation: alter.acc != null ? Buffer.from(alter.acc, "base64").toString() : "",
-            notes: alter.notes != null ? Buffer.from(alter.notes, "base64").toString() : "",
-            imgUrl: alter.img_url != null ? Buffer.from(alter.img_url, "base64").toString() : "",
-            type: alter.type,
-            birthday: alter.birthday != null ? Buffer.from(alter.birthday, "base64").toString() : "",
-            firstNoted: alter.first_noted != null ? Buffer.from(alter.first_noted, "base64").toString() : "",
-            gender: alter.gender != null ? Buffer.from(alter.gender, "base64").toString() : "",
-            sexuality: alter.sexuality != null ? Buffer.from(alter.sexuality, "base64").toString() : "",
-            source: alter.source != null ? Buffer.from(alter.source, "base64").toString() : "",
-            frontTells: alter.fronttells != null ? Buffer.from(alter.fronttells, "base64").toString() : "",
-            relationships: alter.relationships != null ? Buffer.from(alter.relationships, "base64").toString() : "",
-            hobbies: alter.hobbies != null ? Buffer.from(alter.hobbies, "base64").toString() : "",
-            appearance: alter.appearance != null ? Buffer.from(alter.appearance, "base64").toString() : "",
-            colour: alter.colour,
-            outline: alter.outline,
-            isArchived: alter.is_archived
-          });
-          
-        });
-        return res.status(200).json(altArr);
-      } else {
-        return res.status(401).send("Not Authorised")
-      }
-  });
+router.get('/members/:id', async function (req, res) {
+  if (!checkUUID(req.params.id)) return res.status(400).send("Bad Request");
+  let userCheck = await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
+  let matched = false;
+  // Using a for loop bc I can easily break out of it.
+  for (i in userCheck) {
+    let compareTok = decryptWithAES(userCheck[i].name);
+    if (compareTok == req.headers.usertoken) {
+      // Matches. Read and Alter perms?
+      if (userCheck[i].read == false || userCheck[i].alters == false) return res.status(401).send("Not Authorised")
+      matched = true;
+      break;
+    }
+  }
+  if (matched == true) {
+    let alters = await db.query(client, "SELECT alters.*, systems.sys_id, systems.sys_alias FROM alters INNER JOIN systems ON alters.sys_id = systems.sys_id WHERE systems.user_id=$1", [req.params.id], res, req);
+    let altArr = new Array();
+    alters.forEach((alter) => {
+      altArr.push({
+        id: alter.alt_id,
+        sys_id: alter.sys_id,
+        sys_alias: alter.sys_alias != null ? Buffer.from(alter.sys_alias, "base64").toString() : "",
+        name: alter.name != null ? Buffer.from(alter.name, "base64").toString() : "",
+        pronouns: alter.pronouns != null ? Buffer.from(alter.pronouns, "base64").toString() : "",
+        age: alter.agetext != null ? Buffer.from(alter.agetext, "base64").toString() : "",
+        positiveTriggers: alter.triggers_pos != null ? Buffer.from(alter.triggers_pos, "base64").toString() : "",
+        negativeTriggers: alter.triggers_neg != null ? Buffer.from(alter.triggers_neg, "base64").toString() : "",
+        likes: alter.likes != null ? Buffer.from(alter.likes, "base64").toString() : "",
+        dislikes: alter.dislikes != null ? Buffer.from(alter.dislikes, "base64").toString() : "",
+        job: alter.job != null ? Buffer.from(alter.job, "base64").toString() : "",
+        safePlace: alter.safe_place != null ? Buffer.from(alter.safe_place, "base64").toString() : "",
+        wants: alter.wants != null ? Buffer.from(alter.wants, "base64").toString() : "",
+        accommodation: alter.acc != null ? Buffer.from(alter.acc, "base64").toString() : "",
+        notes: alter.notes != null ? Buffer.from(alter.notes, "base64").toString() : "",
+        imgUrl: alter.img_url != null ? Buffer.from(alter.img_url, "base64").toString() : "",
+        type: alter.type,
+        birthday: alter.birthday != null ? Buffer.from(alter.birthday, "base64").toString() : "",
+        firstNoted: alter.first_noted != null ? Buffer.from(alter.first_noted, "base64").toString() : "",
+        gender: alter.gender != null ? Buffer.from(alter.gender, "base64").toString() : "",
+        sexuality: alter.sexuality != null ? Buffer.from(alter.sexuality, "base64").toString() : "",
+        source: alter.source != null ? Buffer.from(alter.source, "base64").toString() : "",
+        frontTells: alter.fronttells != null ? Buffer.from(alter.fronttells, "base64").toString() : "",
+        relationships: alter.relationships != null ? Buffer.from(alter.relationships, "base64").toString() : "",
+        hobbies: alter.hobbies != null ? Buffer.from(alter.hobbies, "base64").toString() : "",
+        appearance: alter.appearance != null ? Buffer.from(alter.appearance, "base64").toString() : "",
+        colour: alter.colour,
+        outline: alter.outline,
+        isArchived: alter.is_archived
+      });
+
+    });
+    return res.status(200).json(altArr);
+  } else {
+    return res.status(401).send("Not Authorised")
+  }
+});
 // Grab user's systems by user ID and token. If the token is not provided, reject them. The token should not be in the URL
-router.get('/systems/:id', async function (req, res){
+router.get('/systems/:id', async function (req, res) {
   if (!checkUUID(req.params.id)) return res.status(400).send("Bad Request");
 
-    let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
-    let matched= false;
-    // Using a for loop bc I can easily break out of it.
-    for (i in userCheck){
-      let compareTok= decryptWithAES(userCheck[i].name);
-      if (compareTok == req.headers.usertoken){
-        // Matches. Read and Alter perms?
-        if (userCheck[i].read == false || userCheck[i].systems == false) return res.status(401).send("Not Authorised")
-        matched= true;
-        break;
-      }
+  let userCheck = await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
+  let matched = false;
+  // Using a for loop bc I can easily break out of it.
+  for (i in userCheck) {
+    let compareTok = decryptWithAES(userCheck[i].name);
+    if (compareTok == req.headers.usertoken) {
+      // Matches. Read and Alter perms?
+      if (userCheck[i].read == false || userCheck[i].systems == false) return res.status(401).send("Not Authorised")
+      matched = true;
+      break;
     }
-    if (matched == true){
-      let systems= await db.query(client, "SELECT * FROM systems WHERE user_id=$1", [req.params.id], res, req);
-      let sysArr= new Array();
-      systems.forEach((system)=>{
-        sysArr.push({
-          id: system.sys_id,
-          name: Buffer.from(system.sys_alias, "base64").toString(),
-          icon: system.icon,
-          parent_sys: system.subsys_id
-        })
+  }
+  if (matched == true) {
+    let systems = await db.query(client, "SELECT * FROM systems WHERE user_id=$1", [req.params.id], res, req);
+    let sysArr = new Array();
+    systems.forEach((system) => {
+      sysArr.push({
+        id: system.sys_id,
+        name: Buffer.from(system.sys_alias, "base64").toString(),
+        icon: system.icon,
+        parent_sys: system.subsys_id
       })
-      return res.status(200).json(sysArr);
-    } else {
-      return res.status(401).send("Not Authorised")
-    }
-  
+    })
+    return res.status(200).json(sysArr);
+  } else {
+    return res.status(401).send("Not Authorised")
+  }
+
 });
 
 // Grab user's systems by user ID and token. If the token is not provided, reject them. The token should not be in the URL
-router.get('/journals/:id', async function (req, res){
+router.get('/journals/:id', async function (req, res) {
   if (!checkUUID(req.params.id)) return res.status(400).send("Bad Request");
 
-    let userCheck= await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
-    let matched= false;
-    // Using a for loop bc I can easily break out of it.
-    for (i in userCheck){
-      let compareTok= decryptWithAES(userCheck[i].name);
-      if (compareTok == req.headers.usertoken){
-        // Matches. Read and Alter perms?
-        if (userCheck[i].read == false || userCheck[i].journals == false) return res.status(401).send("Not Authorised")
-        matched= true;
-        break;
-      }
+  let userCheck = await db.query(client, "SELECT users.id, tokens.* FROM users INNER JOIN tokens ON users.id= tokens.u_id WHERE users.id=$1;", [req.params.id], res, req);
+  let matched = false;
+  // Using a for loop bc I can easily break out of it.
+  for (i in userCheck) {
+    let compareTok = decryptWithAES(userCheck[i].name);
+    if (compareTok == req.headers.usertoken) {
+      // Matches. Read and Alter perms?
+      if (userCheck[i].read == false || userCheck[i].journals == false) return res.status(401).send("Not Authorised")
+      matched = true;
+      break;
     }
-    if (matched == true){
-      let journals= await db.query(client, "SELECT journals.*, posts.* FROM journals INNER JOIN systems ON systems.sys_id= journals.sys_id INNER JOIN posts ON posts.j_id= journals.j_id WHERE user_id=$1", [req.params.id], res, req);
-      let jArr= new Array();
-      journals.forEach((j)=>{
-        jArr.push({
-          id: j.j_id,
-          alt_id: j.alt_id,
-          private_journal: j.is_private,
-          is_pinned: j.is_pinned,
-          skin: j.skin,
-          sys_id: j.sys_id,
-          created_on: j.created_on,
-          title: j.title != null ? decryptWithAES(j.title) : "",
-          body: j.body != null ? decryptWithAES(j.body) : ""
-        })
+  }
+  if (matched == true) {
+    let journals = await db.query(client, "SELECT journals.*, posts.* FROM journals INNER JOIN systems ON systems.sys_id= journals.sys_id INNER JOIN posts ON posts.j_id= journals.j_id WHERE user_id=$1", [req.params.id], res, req);
+    let jArr = new Array();
+    journals.forEach((j) => {
+      jArr.push({
+        id: j.j_id,
+        alt_id: j.alt_id,
+        private_journal: j.is_private,
+        is_pinned: j.is_pinned,
+        skin: j.skin,
+        sys_id: j.sys_id,
+        created_on: j.created_on,
+        title: j.title != null ? decryptWithAES(j.title) : "",
+        body: j.body != null ? decryptWithAES(j.body) : ""
       })
-      return res.status(200).json(jArr);
-    } else {
-      return res.status(401).send("Not Authorised")
-    }
+    })
+    return res.status(200).json(jArr);
+  } else {
+    return res.status(401).send("Not Authorised")
+  }
 
 });
 
-  router.get("/user/auth", async function(req, res){
-    // Grab user info. This is for logging in.
-    let userCheck = await db.query(client, 
-      "SELECT * FROM users WHERE email=$1;", 
-      [`'${Buffer.from((req.headers.email).toLowerCase()).toString('base64')}'`], res, req);
+router.get("/user/auth", async function (req, res) {
+  // Grab user info. This is for logging in.
+  let userCheck = await db.query(client,
+    "SELECT * FROM users WHERE email=$1;",
+    [`'${Buffer.from((req.headers.email).toLowerCase()).toString('base64')}'`], res, req);
 
-    if (userCheck.length > 0){
-      let storedHash = (userCheck[0].pass).replace(/'/g, "");
-      let storedSalt;
-      let inputHash;
+  if (userCheck.length > 0) {
+    let storedHash = userCheck[0].pass.replace(/'/g, ""); // <-- I was stupid and included single quotes in the hash when I first made it, so now I have to remove them every time I read it. Fun.
+    let storedSalt;
+    let inputHash;
 
-      if (typeof userCheck[0].salt === 'string' && userCheck[0].salt.length > 0){ 
-        // Decrypt the stored salt and use to compare.
-        try {
-          storedSalt = decryptWithAES(userCheck[0].salt, process.env.SALT_KEY);
-          inputHash = CryptoJS.SHA3(req.headers.tok + storedSalt).toString();
-        } catch (err) {
-          console.error("Error decrypting salt: ", err);
-          return res.status(500).send("Internal server error.");
-        }
-      } else {
-        // Legacy: no salt, hash as before
-        inputHash = CryptoJS.SHA3(req.headers.tok).toString();
+    if (typeof userCheck[0].salt === 'string' && userCheck[0].salt.length > 0) {
+      // Decrypt the stored salt and use to compare.
+      try {
+        let cleanSalt = userCheck[0].salt.replace(/'/g, "");
+        storedSalt = decryptWithAES(cleanSalt, process.env.SALT_KEY);
+        inputHash = CryptoJS.SHA3(req.headers.tok + storedSalt).toString();
+      } catch (err) {
+        console.error("Error decrypting salt: ", err);
+        return res.status(500).send("Internal server error.");
+      }
+    } else {
+      // Legacy: no salt, hash as before
+      inputHash = CryptoJS.SHA3(req.headers.tok).toString();
+    }
+
+    if (inputHash === storedHash) {
+      // Retroactively salt passwords that aren't salted.
+      if (userCheck[0].salt == null) {
+        let { hash: newpass, salt: newsalt } = createPassword(req.headers.tok);
+        await db.query(client, "UPDATE users SET pass=$1, salt=$2 WHERE id=$3;", [newpass, newsalt, userCheck[0].id], res, req);
       }
 
-      if (inputHash === storedHash) {
-        // Retroactively salt passwords that aren't salted.
-        if (userCheck[0].salt == null){
-          let rawSalt = crypto.randomBytes(32).toString('hex');
-          let newsalt = encryptWithAES(rawSalt, process.env.SALT_KEY);
-          let newpass = CryptoJS.SHA3(req.headers.tok + rawSalt).toString();
-          await db.query(client, "UPDATE users SET pass=$1, salt=$2 WHERE id=$3;", [newpass, newsalt, userCheck[0].id], res, req);
-        }
+      // #region set req.session and cookies.
+      req.session.alter_term = userCheck[0].alter_term;
+      req.session.system_term = userCheck[0].system_term;
+      req.session.subsystem_term = userCheck[0].subsystem_term;
+      req.session.innerworld_term = userCheck[0].innerworld_term;
+      req.session.plural_term = userCheck[0].plural_term;
+      req.session.loggedin = true;
+      req.session.u_id = userCheck[0].id;
+      req.session.username = Buffer.from(userCheck[0].username, 'base64').toString();
+      req.session.is_legacy = userCheck[0].is_legacy;
+      req.session.textsize = userCheck[0].textsize;
+      req.session.worksheets_enabled = userCheck[0].worksheets_enabled;
 
-        // #region set req.session and cookies.
-        req.session.alter_term= userCheck[0].alter_term;
-        req.session.system_term= userCheck[0].system_term;
-        req.session.subsystem_term= userCheck[0].subsystem_term;
-        req.session.innerworld_term= userCheck[0].innerworld_term;
-        req.session.plural_term= userCheck[0].plural_term;
-        req.session.loggedin = true;
-        req.session.u_id= userCheck[0].id;
-        req.session.username = Buffer.from(userCheck[0].username, 'base64').toString();
-        req.session.is_legacy= userCheck[0].is_legacy;
-        req.session.textsize= userCheck[0].textsize;
-        req.session.worksheets_enabled= userCheck[0].worksheets_enabled;
-
-        // Cookies.
-        res
+      // Cookies.
+      res
         .cookie('loggedin', true, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('username',  Buffer.from(userCheck[0].username, 'base64').toString(),{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('u_id', userCheck[0].id,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('alter_term', userCheck[0].alter_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('system_term', userCheck[0].system_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('is_legacy', userCheck[0].is_legacy,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('skin', userCheck[0].skin,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('subsystem_term', userCheck[0].subsystem_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('innerworld_term', userCheck[0].innerworld_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('plural_term', userCheck[0].plural_term,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('textsize', userCheck[0].textsize,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
-        .cookie('worksheets_enabled', userCheck[0].worksheets_enabled,{ maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
-        // #endregion
-        return res.status(200).json({
-          name: Buffer.from(userCheck[0].username, 'base64').toString()
-        });
-      } else {
-        // Not sending through response to prevent oracle attacks.
-        return res.status(401).send("Incorrect credentials.");
-      }
-    }  else {
+        .cookie('username', Buffer.from(userCheck[0].username, 'base64').toString(), { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('u_id', userCheck[0].id, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('alter_term', userCheck[0].alter_term, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('system_term', userCheck[0].system_term, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('is_legacy', userCheck[0].is_legacy, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('skin', userCheck[0].skin, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('subsystem_term', userCheck[0].subsystem_term, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('innerworld_term', userCheck[0].innerworld_term, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('plural_term', userCheck[0].plural_term, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('textsize', userCheck[0].textsize, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true })
+        .cookie('worksheets_enabled', userCheck[0].worksheets_enabled, { maxAge: 1000 * 60 * 60 * 24 * 7 * 2, httpOnly: true });
+      // #endregion
+      return res.status(200).json({
+        name: Buffer.from(userCheck[0].username, 'base64').toString()
+      });
+    } else {
       // Not sending through response to prevent oracle attacks.
       return res.status(401).send("Incorrect credentials.");
     }
+  } else {
+    // Not sending through response to prevent oracle attacks.
+    return res.status(401).send("Incorrect credentials.");
+  }
 })
 
 /*
@@ -307,15 +237,15 @@ router.get('/journals/:id', async function (req, res){
                                  |_|                        
 */
 
-router.put("/tokens", async function (req, res){
-  if (apiEyesOnly(req)){
+router.put("/tokens", async function (req, res) {
+  if (apiEyesOnly(req)) {
     // Do not let the program take a template literal. Could become an SQL injection.
-    let request= req.body;
-    let userToks= await db.query(client, "SELECT * FROM tokens WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
-    userToks.every(async function(token){
-      if (decryptWithAES(token.name) == request.tok){
+    let request = req.body;
+    let userToks = await db.query(client, "SELECT * FROM tokens WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
+    userToks.every(async function (token) {
+      if (decryptWithAES(token.name) == request.tok) {
         // Matched.
-        switch(request.mode){
+        switch (request.mode) {
           case "read":
             await db.query(client, "UPDATE tokens SET read=$1 WHERE name=$2 AND u_id=$3;", [request.enable, token.name, getCookies(req)['u_id']], res, req);
             break;
@@ -328,17 +258,17 @@ router.put("/tokens", async function (req, res){
           case "systems":
             await db.query(client, "UPDATE tokens SET systems=$1 WHERE name=$2 AND u_id=$3;", [request.enable, token.name, getCookies(req)['u_id']], res, req);
             break;
-          default: 
-          await db.query(client, "UPDATE tokens SET journals=$1 WHERE name=$2 AND u_id=$3;", [request.enable, token.name, getCookies(req)['u_id']], res, req);
+          default:
+            await db.query(client, "UPDATE tokens SET journals=$1 WHERE name=$2 AND u_id=$3;", [request.enable, token.name, getCookies(req)['u_id']], res, req);
             break;
         }
         res.status(200).send("!");
         return true;
       }
     });
-    
+
   } else {
-    res.status(404).render('pages/404',{ session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
+    res.status(404).render('pages/404', { session: req.session, code: "Not Found", splash: splash, cookies: req.cookies });
   }
 });
 
@@ -352,14 +282,14 @@ router.put("/tokens", async function (req, res){
                                            |_|                        
 */
 
-router.delete("/tokens", async function(req, res){
-  if (apiEyesOnly(req)){
-    let userToks= await db.query(client, "SELECT * FROM tokens WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
+router.delete("/tokens", async function (req, res) {
+  if (apiEyesOnly(req)) {
+    let userToks = await db.query(client, "SELECT * FROM tokens WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
     const selectedTok = (userToks.filter(result => decryptWithAES(result.name) === req.headers.tok))[0];
     await db.query(client, "DELETE FROM tokens WHERE name=$1 AND u_id=$2;", [selectedTok.name, getCookies(req)['u_id']], res, req);
     return res.status(200).send("!")
   } else {
-    res.status(404).render('pages/404',{ session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
+    res.status(404).render('pages/404', { session: req.session, code: "Not Found", splash: splash, cookies: req.cookies });
   }
 })
 
@@ -371,36 +301,26 @@ router.delete("/tokens", async function(req, res){
  |_|   \___/|___/\__| |_| \_\___|\__, |\__,_|\___||___/\__|___/
                                     |_|                        
 */
-router.post('/generate-token', async function (req, res){
-    if (apiEyesOnly(req)){
-      let tok= generateToken(10);
-      const addTok= await db.query(client, "INSERT INTO tokens (u_id, name) VALUES ($1, $2);", [req.body.id, encryptWithAES(tok)], res, req);
-      let userToks= await db.query(client, "SELECT * FROM tokens WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
-      const selectedTok = (userToks.filter(result => decryptWithAES(result.name) === tok))[0];
-      return res.status(200).json({
-        name: decryptWithAES(selectedTok.name),
-        read: selectedTok.read,
-        write: selectedTok.write,
-        alters: selectedTok.alters,
-        systems: selectedTok.systems,
-        journals: selectedTok.journals
-      });
-    } else {
-      res.status(404).render('pages/404',{ session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
-    }
+router.post('/generate-token', async function (req, res) {
+  if (apiEyesOnly(req)) {
+    let tok = generateToken(10);
+    const addTok = await db.query(client, "INSERT INTO tokens (u_id, name) VALUES ($1, $2);", [req.body.id, encryptWithAES(tok)], res, req);
+    let userToks = await db.query(client, "SELECT * FROM tokens WHERE u_id=$1;", [getCookies(req)['u_id']], res, req);
+    const selectedTok = (userToks.filter(result => decryptWithAES(result.name) === tok))[0];
+    return res.status(200).json({
+      name: decryptWithAES(selectedTok.name),
+      read: selectedTok.read,
+      write: selectedTok.write,
+      alters: selectedTok.alters,
+      systems: selectedTok.systems,
+      journals: selectedTok.journals
+    });
+  } else {
+    res.status(404).render('pages/404', { session: req.session, code: "Not Found", splash: splash, cookies: req.cookies });
+  }
 });
 
-router.post("/user/create", async function(req, res){
-    // Sign a user up.
-    if (apiEyesOnly(req)){
-      
-    } else {
-      res.status(404).render('pages/404',{ session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
-    }
-});
-
-// Next route: Download data and send it to the user as a zip file.
-router.get("/user/export/:id", async function(req, res){
+router.get("/user/export/:id", async function (req, res) {
   if (!checkUUID(req.params.id)) return res.status(400).send("Bad Request");
   /* Things to export:
     - User info (username, terms, settings)
@@ -419,7 +339,7 @@ router.get("/user/export/:id", async function(req, res){
     - Communal Journal Entries
     Compile these into a zip and send to user?
   */
-  if (apiEyesOnly(req)){
+  if (apiEyesOnly(req)) {
     // Good lord. TODO: Make this not a fucking nightmare to read. ...Also is that like 13 queries at once? Might be ok if there's not many people online, but like... Woof.
     const userInfo = await db.query(client, "SELECT * FROM users WHERE id=$1;", [req.params.id], res, req);
     const systems = await db.query(client, "SELECT * FROM systems WHERE user_id=$1;", [req.params.id], res, req);
@@ -447,7 +367,7 @@ router.get("/user/export/:id", async function(req, res){
         textsize: userInfo[0].textsize,
         worksheets_enabled: userInfo[0].worksheets_enabled
       },
-      systems: systems.map(system=>({
+      systems: systems.map(system => ({
         sys_id: system.sys_id,
         user_id: system.user_id,
         desc: decryptWithAES(system.desc),
@@ -455,7 +375,7 @@ router.get("/user/export/:id", async function(req, res){
         icon: system.icon,
         subsys_id: system.subsys_id
       })),
-      alters: alters.map(alter=>({
+      alters: alters.map(alter => ({
         alt_id: alter.alt_id,
         sys_id: alter.sys_id,
         name: alter.name != null ? Buffer.from(alter.name, "base64").toString() : "",
@@ -485,7 +405,7 @@ router.get("/user/export/:id", async function(req, res){
         outline: alter.outline,
         is_archived: alter.is_archived
       })),
-      journals: journals.map(journal=>({
+      journals: journals.map(journal => ({
         j_id: journal.j_id,
         sys_id: journal.sys_id,
         alt_id: journal.alt_id,
@@ -496,14 +416,14 @@ router.get("/user/export/:id", async function(req, res){
         title: decryptWithAES(journal.title),
         body: decryptWithAES(journal.body)
       })),
-      posts: posts.map(post=>({
+      posts: posts.map(post => ({
         post_id: post.post_id,
         j_id: post.j_id,
         created_on: post.created_on,
         title: decryptWithAES(post.title),
         body: decryptWithAES(post.body)
       })),
-      bdaPlan: bdaPlan.map(plan=>({
+      bdaPlan: bdaPlan.map(plan => ({
         id: plan.id,
         u_id: plan.u_id,
         before: decryptWithAES(plan.before),
@@ -513,25 +433,25 @@ router.get("/user/export/:id", async function(req, res){
         alias: decryptWithAES(plan.alias),
         timestamp: plan.timestamp
       })),
-      innerWorlds: innerWorlds.map(iw=>({
+      innerWorlds: innerWorlds.map(iw => ({
         id: iw.id,
         u_id: iw.u_id,
         key: Buffer.from(iw.key, "base64").toString(),
         value: Buffer.from(iw.value, "base64").toString()
       })),
-      rules: rules.map(rule=>({
+      rules: rules.map(rule => ({
         id: rule.id,
         u_id: rule.u_id,
         rule: Buffer.from(rule.rule, "base64").toString(),
         created: rule.created
       })),
-      wishlist: wishlist.map(item=>({
+      wishlist: wishlist.map(item => ({
         id: item.uuid,
         user_id: item.user_id,
         wish: item.wish ? Buffer.from(item.wish, "base64").toString() : "",
         is_fulfilled: item.is_filled
       })),
-      communalJournals: communalJournals.map(cj=>({
+      communalJournals: communalJournals.map(cj => ({
         id: cj.id,
         u_id: cj.u_id,
         created_on: cj.created_on,
@@ -541,7 +461,7 @@ router.get("/user/export/:id", async function(req, res){
         system_id: cj.system_id,
         feeling: decryptWithAES(cj.feeling)
       })),
-      categories: categories.map(cat=>({
+      categories: categories.map(cat => ({
         id: cat.id,
         u_id: cat.u_id,
         name: decryptWithAES(cat.name),
@@ -552,7 +472,7 @@ router.get("/user/export/:id", async function(req, res){
         created_on: cat.created_on,
         f_order: cat.f_order
       })),
-      threads: threads.map(thread=>({
+      threads: threads.map(thread => ({
         id: thread.id,
         u_id: thread.u_id,
         alt_id: thread.alt_id,
@@ -564,7 +484,7 @@ router.get("/user/export/:id", async function(req, res){
         is_locked: thread.is_locked,
         is_popular: thread.is_popular
       })),
-      threadPosts: threadPosts.map(tpost=>({
+      threadPosts: threadPosts.map(tpost => ({
         id: tpost.id,
         thread_id: tpost.thread_id,
         alt_id: tpost.alt_id,
@@ -617,7 +537,7 @@ router.get("/user/export/:id", async function(req, res){
     archive.finalize();
 
   } else {
-    return res.status(404).render('pages/404',{ session: req.session, code:"Not Found", splash:splash,cookies:req.cookies });
+    return res.status(404).render('pages/404', { session: req.session, code: "Not Found", splash: splash, cookies: req.cookies });
   }
 });
 

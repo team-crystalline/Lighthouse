@@ -320,16 +320,6 @@ router.post('/generate-token', async function (req, res) {
   }
 });
 
-router.post("/user/create", async function (req, res) {
-  // Sign a user up.
-  if (apiEyesOnly(req)) {
-
-  } else {
-    res.status(404).render('pages/404', { session: req.session, code: "Not Found", splash: splash, cookies: req.cookies });
-  }
-});
-
-// Next route: Download data and send it to the user as a zip file.
 router.get("/user/export/:id", async function (req, res) {
   if (!checkUUID(req.params.id)) return res.status(400).send("Bad Request");
   /* Things to export:

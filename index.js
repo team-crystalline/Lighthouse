@@ -387,13 +387,8 @@ app.get('/glossary', async function (req, res) {
 app.get('/logout', (req, res) => {
     req.session = null;
 
-    const cookiesToClear = [
-        'loggedin', 'username', 'u_id', 'system_term', 
-        'subsystem_term', 'innerworld_term', 'plural_term', 
-        'alter_term', 'is_legacy', 'skin', 'textsize'
-    ];
-
-    cookiesToClear.forEach(cookie => res.clearCookie(cookie));
+	// Delete *all* cookies.
+    Object.keys(req.cookies).forEach(cookie => res.clearCookie(cookie));
 
     res.redirect("/");
 });

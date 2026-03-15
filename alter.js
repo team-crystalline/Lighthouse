@@ -424,5 +424,6 @@ router.post("/alter/edit-journal/:id", authUser, validateParam('id'), async (req
     
         
       });
+      
 console.log(`Alters Router Loaded.`);
 module.exports = router;

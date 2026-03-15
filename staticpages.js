@@ -66,6 +66,33 @@ const {errorPage} = require("./funcs.js");
 router.get("/lighthouse-system", (req, res)=>{
   res.render("pages/lighthouse-sys", { session: req.session, cookies:req.cookies})
 });
-  console.log(`Static Page Router Loaded.`);
 
+/**
+ * GET /combine/item
+ * Moved here until the combine function is expanded.
+ */
+app.get('/combine/:item', (req, res) => {
+  if (isLoggedIn(req)) {
+    res.render(`pages/combine-alters`, { session: req.session, cookies: req.cookies });
+  } else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+});
+
+app.get('/simply-plural', (req, res) => {
+	if (isLoggedIn(req)) {
+		res.render(`pages/sp-import`, { session: req.session, cookies: req.cookies });
+	} else { forbidUser(res, req) }
+});
+
+app.get("/pluralkit", (req, res) => {
+	if (isLoggedIn(req)) {
+		res.render(`pages/pluralkit`, { session: req.session, cookies: req.cookies, lang: req.acceptsLanguages()[0] });
+	}
+});
+
+app.get('/reset/:id', (req, res) => {
+	res.render("pages/new_pass", { session: req.session, cookies: req.cookies });
+});
+
+
+  console.log(`Static Page Router Loaded.`);
   module.exports = router;

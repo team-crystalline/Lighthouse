@@ -275,76 +275,6 @@ if (process.env.maintenance == "true") {
 }
 // #endregion
 
-// Refactored!
-app.get('/verify/:id', async function (req, res) {
-	if (!checkUUID(req.params.id)) return lostPage(res, req);
-	const userData = await db.query(client, "SELECT * FROM users WHERE id=$1;", [req.params.id], res, req);
-	req.session.alter_term = userData[0].alter_term;
-	req.session.system_term = userData[0].system_term;
-	req.session.subsystem_term = userData[0].subsystem_term;
-	req.session.loggedin = true;
-	req.session.u_id = userData[0].id;
-	req.session.username = Buffer.from(userData[0].username, 'base64').toString();
-	req.session.is_legacy = userData[0].is_legacy;
-	// Add to cookies
-	res
-		.cookie('loggedin', true, { maxAge: twoWeeks, httpOnly: true })
-		.cookie('username', Buffer.from(userData[0].username, 'base64').toString(), { maxAge: twoWeeks, httpOnly: true })
-		.cookie('u_id', userData[0].id, { maxAge: twoWeeks, httpOnly: true })
-		.cookie('alter_term', userData[0].alter_term, { maxAge: twoWeeks, httpOnly: true })
-		.cookie('system_term', userData[0].system_term, { maxAge: twoWeeks, httpOnly: true })
-		.cookie('subsystem_term', userData[0].subsystem_term, { maxAge: twoWeeks, httpOnly: true })
-		.cookie('is_legacy', userData[0].is_legacy, { maxAge: twoWeeks, httpOnly: true })
-		.cookie('skin', userData[0].skin, { maxAge: twoWeeks, httpOnly: true });
-
-	if (userData[0].verified == false) {
-		console.log("They aren't verified. Fixing this now.");
-		const updateAcc = query(client, "UPDATE users SET verified=true WHERE id=$1", [userData[0].id], res, req);
-		updateAcc.then(response => {
-			res.render('pages/verify', { session: req.session, cookies: req.cookies });
-		})
-
-	} else {
-		req.flash("flash", strings.account.alreadyVerified);
-		res.redirect("/")
-	}
-});
-
-
-
-
-
-
-
-// No need to refactor
-app.get('/simply-plural', (req, res) => {
-	if (isLoggedIn(req)) {
-		res.render(`pages/sp-import`, { session: req.session, cookies: req.cookies });
-	} else { forbidUser(res, req) }
-});
-
-// No need to refactor
-app.get('/combine/:item', (req, res) => {
-
-	if (isLoggedIn(req)) {
-		let page;
-		switch (req.params.item) {
-			case "alt":
-			case "alts":
-				page = "alts"
-				break;
-			default:
-				page = "alts";
-				break; // May not need the break here but just in case.
-		}
-		res.render(`pages/combine-${page}`, { session: req.session, cookies: req.cookies });
-	} else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
-});
-
-
-
-
-
 app.get('/inner-world/:id', (req, res) => {
 	// if (!checkUUID(req.params.id)) return lostPage(res, req);
 	if (isLoggedIn(req)) {
@@ -426,13 +356,6 @@ app.get('/mod', (req, res) => {
 });
 
 
-app.get("/pluralkit", (req, res) => {
-	if (isLoggedIn(req)) {
-		res.render(`pages/pluralkit`, { session: req.session, cookies: req.cookies, lang: req.acceptsLanguages()[0] });
-	}
-});
-
-
 app.get('/changelog', (req, res) => {
 	client.query({ text: "SELECT * FROM changelog ORDER BY date DESC LIMIT 50", values: [] }, (err, result) => {
 		if (err) {
@@ -461,79 +384,18 @@ app.get('/glossary', async function (req, res) {
 });
 
 
-
-
-
 app.get('/logout', (req, res) => {
+    req.session = null;
 
-	try {
-		req.session = null;
-	} catch (e) {
-	}
+    const cookiesToClear = [
+        'loggedin', 'username', 'u_id', 'system_term', 
+        'subsystem_term', 'innerworld_term', 'plural_term', 
+        'alter_term', 'is_legacy', 'skin', 'textsize'
+    ];
 
-	try {
-		res.clearCookie('loggedin');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('username');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('u_id');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('system_term');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('subsystem_term');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('innerworld_term');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('plural_term');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('alter_term');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('is_legacy');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('skin');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	try {
-		res.clearCookie('textsize');
-	} catch (e) {
-		console.log("Didn't have that cookie.")
-	}
-	res.redirect("/");
-});
+    cookiesToClear.forEach(cookie => res.clearCookie(cookie));
 
-
-app.get('/reset/:id', (req, res) => {
-	// if (!checkUUID(req.params.id)) return lostPage(res, req);
-	res.render("pages/new_pass", { session: req.session, cookies: req.cookies });
-
+    res.redirect("/");
 });
 
 app.get('/wish', (req, res) => {

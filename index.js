@@ -1651,6 +1651,7 @@ app.post('/inner-world', (req, res) => {
 app.post('/deletesys/:alt', async function (req, res) {
 	if (!checkUUID(req.params.alt)) return lostPage(res, req);
 	const sysData = await db.query(client, "SELECT * FROM systems WHERE sys_id=$1", [`${req.params.alt}`], res, req);
+	if (sysData.length == 0) return lostPage(res, req);
 	if (getCookies(req)['u_id'] = sysData[0].user_id) {
 		await db.query(client, "DELETE FROM systems WHERE sys_id=$1", [`${req.params.alt}`], res, req);
 		await db.query(client, "DELETE FROM systems WHERE subsys_id=$1", [`${req.params.alt}`], res, req);

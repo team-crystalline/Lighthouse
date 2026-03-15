@@ -68,5 +68,4 @@ router.get("/lighthouse-system", (req, res)=>{
 });
   console.log(`Static Page Router Loaded.`);
 
-
   module.exports = router;

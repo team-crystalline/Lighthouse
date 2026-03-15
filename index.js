@@ -276,9 +276,6 @@ if (process.env.maintenance == "true") {
 // #endregion
 
 // Refactored!
-app.get('/sunset', function (req, res) {
-	res.render('pages/sunset', { session: req.session, cookies: req.cookies });
-});
 app.get('/verify/:id', async function (req, res) {
 	if (!checkUUID(req.params.id)) return lostPage(res, req);
 	const userData = await db.query(client, "SELECT * FROM users WHERE id=$1;", [req.params.id], res, req);

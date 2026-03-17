@@ -123,6 +123,9 @@ router.get('/topic/:id/:pg?', validateParam('id'), authUser, (req, res) => {
         } else {
             // Here's the OP post
             /* issue */
+            if (result.rows.length == 0){
+                return lostPage(res, req);
+            }
             let originalPost = {
                 id: result.rows[0].id,
                 title: decryptWithAES(result.rows[0].title),

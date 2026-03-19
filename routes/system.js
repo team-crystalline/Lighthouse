@@ -17,7 +17,406 @@ const {
   validateParam,
   base64encode,
   base64decode,
+  getKeyByValue,
 } = require("../funcs.js");
+
+router.get('/inner-world/:id', (req, res) => {
+  // if (!checkUUID(req.params.id)) return lostPage(res, req);
+  if (isLoggedIn(req)) {
+    client.query({ text: "SELECT * FROM inner_worlds WHERE u_id=$1 AND id=$2;", values: [getCookies(req)['u_id'], req.params.id] }, (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+      } else {
+        res.render(`pages/edit_innerworld`, {
+          session: req.session, cookies: req.cookies, iw: {
+            id: result.rows[0].id,
+            title: Buffer.from(result.rows[0].key, "base64").toString(),
+            body: Buffer.from(result.rows[0].value, "base64").toString()
+          }
+        });
+      }
+    });
+
+  } else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+
+});
+
+router.get('/inner-world', (req, res, next) => {
+  if (isLoggedIn(req)) {
+    client.query({ text: 'SELECT * FROM inner_worlds WHERE u_id=$1', values: [getCookies(req)['u_id']] }, (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+      } else {
+        req.session.innerworld_rows = result.rows;
+        client.query({ text: 'SELECT * FROM users WHERE id=$1', values: [getCookies(req)['u_id']] }, (err, bresult) => {
+          if (err) {
+            console.log(err.stack);
+            res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+          } else {
+            req.session.innerworld = bresult.rows[0].inner_worlds || false;
+            res.render(`pages/innerworld`, { session: req.session, cookies: req.cookies });
+          }
+
+        });
+      }
+
+    });
+  } else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+});
+
+router.get('/inner-world/delete/:id', (req, res) => {
+  // if (!checkUUID(req.params.id)) return lostPage(res, req);
+  if (isLoggedIn(req)) {
+    client.query({ text: "DELETE FROM inner_worlds WHERE id=$1;", values: [`${req.params.id}`] }, (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+      } else {
+        req.session.sys_rules = null;
+      }
+      res.redirect("/system/inner-world");
+    });
+  } else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+});
+
+router.post('/inner-world/:id', (req, res) => {
+  // if (!checkUUID(req.params.id)) return lostPage(res, req);
+  if (isLoggedIn(req)) {
+    client.query({
+      text: "UPDATE inner_worlds SET key=$3, value=$4 WHERE u_id=$1 AND id=$2;",
+      values: [
+        getCookies(req)['u_id'],
+        req.params.id,
+        `'${Buffer.from(req.body.keytitle).toString("base64")}`,
+        `'${Buffer.from(req.body.valuebody).toString("base64")}`,
+      ]
+    }, (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+      } else {
+        req.flash("flash", "Inner world updated!")
+        res.redirect("/system/inner-world")
+      }
+    });
+  } else {
+    res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies });
+  }
+});
+
+router.post('/inner-world', (req, res) => {
+  if (isLoggedIn(req)) {
+    if (req.body.create) {
+      client.query({ text: 'INSERT INTO inner_worlds (u_id, key, value) VALUES ($1,$2,$3);', values: [`${getCookies(req)['u_id']}`, `${Buffer.from(req.body.key).toString('base64')}`, `${Buffer.from(req.body.value).toString('base64')}`] }, (err, result) => {
+        if (err) {
+          console.log(err.stack);
+          res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+        }
+      });
+    } else {
+      // Deleting.
+      client.query({ text: "DELETE FROM inner_worlds WHERE id=$1;", values: [getKeyByValue(req.body, "Remove")] }, (err, result) => {
+        if (err) {
+          console.log(err.stack);
+          res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+        } else {
+          req.session.sys_rules = null;
+        }
+      });
+    }
+    res.redirect(req.get('referrer'));
+  } else {
+    res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies });
+  }
+});
+
+router.get('/wish', (req, res) => {
+	const filledWishes = [];
+	const wishArr = [];
+	if (isLoggedIn(req)) {
+		client.query({ text: 'SELECT * FROM wishlist WHERE user_id=$1 AND is_filled=false;', values: [getCookies(req).u_id] }, (err, result) => {
+			if (err) {
+				console.log(err.stack);
+				res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+			}
+			for (i in result.rows) {
+				wishArr.push({ text: decryptWithAES(result.rows[i].wish), checked: result.rows[i].is_filled, uuid: result.rows[i].uuid });
+			}
+
+			client.query({ text: 'SELECT * FROM wishlist WHERE user_id=$1 AND is_filled=true;', values: [getCookies(req).u_id] }, (err, result) => {
+				if (err) {
+					console.log(err.stack);
+					res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+				}
+				for (i in result.rows) {
+					filledWishes.push({ text: decryptWithAES(result.rows[i].wish), checked: result.rows[i].is_filled, uuid: result.rows[i].uuid });
+				}
+				res.render(`pages/wishlist`, { session: req.session, cookies: req.cookies, wishArr, filledWishes });
+
+			});
+
+		});
+
+	} else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+});
+
+router.get('/wish/:id', validateParam("id"), (req, res) => {
+	if (isLoggedIn(req)) {
+		client.query({ text: 'UPDATE wishlist SET is_filled=true WHERE uuid=$1', values: [`${req.params.id}`] }, (err, result) => {
+			if (err) {
+				console.log(err.stack);
+				res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+			}
+			res.redirect("/wish");
+		});
+
+	} else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+});
+
+router.get('/wish-d/:id', validateParam("id"), (req, res) => {
+	if (isLoggedIn(req)) {
+		client.query({ text: 'DELETE FROM wishlist WHERE uuid=$1', values: [`${req.params.id}`] }, (err, result) => {
+			if (err) {
+				console.log(err.stack);
+				res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+			}
+		});
+		res.redirect("/wish");
+
+	} else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
+});
+
+router.post('/wish', (req, res) => {
+	if (isLoggedIn(req)) {
+		if (req.body.createWish) {
+			client.query({ text: "INSERT INTO wishlist (user_id, wish) VALUES ($1, $2);", values: [getCookies(req).u_id, `${encryptWithAES(req.body.wish)}`] }, (err, result) => {
+				if (err) {
+					console.log(err.stack);
+					res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+				} else {
+					res.redirect(req.get('referer'));
+				}
+			});
+		}
+
+	} else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }) }
+});
+
+router.get("/rules", (req, res, next) => {
+	if (isLoggedIn(req)) {
+		client.query(
+			{
+				text: "SELECT * FROM sys_rules WHERE u_id=$1 ORDER BY created DESC;",
+				values: [getCookies(req).u_id],
+			},
+			(err, result) => {
+				if (err) {
+					console.log(err.stack);
+					res
+						.status(400)
+						.render("pages/400", {
+							session: req.session,
+							code: "Bad Request",
+							cookies: req.cookies,
+						});
+				} else {
+					req.session.sys_rules = result.rows;
+				}
+				res.render(`pages/sys_rules`, {
+					session: req.session,
+					cookies: req.cookies,
+				});
+			}
+		);
+	} else {
+		res
+			.status(403)
+			.render("pages/403", {
+				session: req.session,
+				code: "Forbidden",
+				cookies: req.cookies,
+			});
+	}
+});
+
+router.post('/rules', async (req, res) => {
+	if (isLoggedIn(req)) {
+		if (req.body.create) {
+			// Create rule.
+			client.query({ text: `INSERT INTO sys_rules (u_id, rule) VALUES ($1, $2)`, values: [getCookies(req).u_id, `'${Buffer.from(req.body.rule).toString('base64')}'`] }, (err, result) => {
+				if (err) {
+					console.log(err.stack);
+					res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+				}
+			});
+		} else if (req.body.edit) {
+			await db.query(client, "UPDATE sys_rules SET rule=$1 WHERE id=$2 AND u_id=$3", [`'${Buffer.from(req.body.edit).toString('base64')}'`, req.body.ruleid, getCookies(req).u_id], res, req);
+		} else {
+			// Delete Rule
+			client.query({ text: `DELETE FROM sys_rules WHERE id=$1;`, values: [getKeyByValue(req.body, "Remove")] }, (err, result) => {
+				if (err) {
+					console.log(err.stack);
+					res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+				}
+			});
+		}
+		res.redirect(req.get('referer'));
+
+	} else {
+		res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies });
+	}
+});
+
+router.get("/editsys/:alt", validateParam("alt"), (req, res, next) => {
+	if (isLoggedIn(req)) {
+		client.query(
+			{ text: "SELECT * FROM systems WHERE sys_id=$1", values: [`${req.params.alt}`] },
+			(err, result) => {
+				if (err) {
+					console.log(err.stack);
+					res
+						.status(400)
+						.render("pages/400", {
+							session: req.session,
+							code: "Bad Request",
+							cookies: req.cookies,
+						});
+				} else {
+					req.session.chosenSys = result.rows[0];
+					client.query(
+						{
+							text: "SELECT alters.name, alters.alt_id, alters.sys_id, systems.sys_alias FROM alters INNER JOIN systems ON systems.sys_id = alters.sys_id WHERE systems.sys_id=$1;",
+							values: [`${req.params.alt}`],
+						},
+						(err, result) => {
+							if (err) {
+								console.log(err.stack);
+								res
+									.status(400)
+									.render("pages/400", {
+										session: req.session,
+										code: "Bad Request",
+										cookies: req.cookies,
+									});
+							} else {
+								// console.table(result.rows);
+								req.session.alters = result.rows;
+								res.render(`pages/edit_sys`, {
+									session: req.session,
+									alt: req.session.chosenSys,
+									alters: result.rows,
+									cookies: req.cookies,
+								});
+							}
+						}
+					);
+				}
+				// res.render(`pages/edit_sys`, { session: req.session, alt:req.session.chosenSys });
+			}
+		);
+	} else {
+		res
+			.status(403)
+			.render("pages/403", {
+				session: req.session,
+				code: "Forbidden",
+				cookies: req.cookies,
+			});
+	}
+	// res.render(`pages/edit_sys`, { session: req.session, alt:req.params.alt });
+});
+
+router.get("/deletesys/:alt", validateParam("alt"), async (req, res) => {
+	if (isLoggedIn(req)) {
+		try {
+			const systemDat = await db.query(
+				client,
+				"SELECT * FROM systems WHERE sys_id=$1 AND user_id=$2",
+				[`${req.params.alt}`, getCookies(req).u_id],
+				res,
+				req
+			);
+			req.session.chosenSys = systemDat[0];
+			res.render(`pages/delete_sys`, {
+				session: req.session,
+				alt: req.session.chosenSys,
+				cookies: req.cookies,
+			});
+		} catch (e) {
+			lostPage(res, req);
+		}
+	} else {
+		res
+			.status(403)
+			.render("pages/403", {
+				session: req.session,
+				code: "Forbidden",
+				cookies: req.cookies,
+			});
+	}
+	// res.render(`pages/edit_sys`, { session: req.session, alt:req.params.alt });
+});
+
+router.post("/deletesys/:alt", validateParam("alt"), async (req, res) => {
+	const sysData = await db.query(
+		client,
+		"SELECT * FROM systems WHERE sys_id=$1",
+		[`${req.params.alt}`],
+		res,
+		req
+	);
+	if (sysData.length == 0) return lostPage(res, req);
+	if (getCookies(req).u_id == sysData[0].user_id) {
+		await db.query(
+			client,
+			"DELETE FROM systems WHERE sys_id=$1",
+			[`${req.params.alt}`],
+			res,
+			req
+		);
+		await db.query(
+			client,
+			"DELETE FROM systems WHERE subsys_id=$1",
+			[`${req.params.alt}`],
+			res,
+			req
+		);
+		req.session.chosenSys = null;
+		res.redirect("/system");
+	} else {
+		forbidUser(res, req);
+	}
+});
+
+router.post("/editsys/:alt", validateParam("alt"), (req, res) => {
+	client.query(
+		{
+			text: "UPDATE systems SET sys_alias=$1, description=$3 WHERE sys_id=$2;",
+			values: [
+				`'${base64encode(req.body.sysname)}'`,
+				`${req.params.alt}`,
+				`${encryptWithAES(req.body.sysdesc)}`,
+			],
+		},
+		(err, result) => {
+			if (err) {
+				console.log(err.stack);
+				res
+					.status(400)
+					.render("pages/400", {
+						session: req.session,
+						code: "Bad Request",
+						cookies: req.cookies,
+					});
+			} else {
+				req.flash("flash", strings.system.updated);
+				res.redirect(`/system/${req.params.alt}`);
+			}
+		}
+	);
+});
 
 // Refactoring
 router.get("/", authUser, async (req, res) => {
@@ -206,6 +605,76 @@ router.post("/communal-journal", authUser, async (req, res) => {
   }
 });
 
+router.post("/", authUser, async (req, res) => {
+  if (req.body.sysname) {
+    const subsysID = req.body.subsys == "None" ? null : req.body.subsys;
+    await db.query(
+      client,
+      "INSERT INTO systems (sys_alias, user_id, subsys_id, description) VALUES ($1, $2, $3, $4)",
+      [
+        `'${base64encode(req.body.sysname)}'`,
+        `${getCookies(req).u_id}`,
+        subsysID,
+        `${encryptWithAES(req.body.sysdesc)}`,
+      ],
+      res,
+      req
+    );
+    return res.redirect(`/system`);
+  } if (req.body.post) {
+    // Comm journal.
+    // id | u_id | created_on | title | body
+    client.query(
+      {
+        text: "INSERT INTO comm_posts (u_id, created_on, title, body) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4)",
+        values: [
+          `${getCookies(req).u_id}`,
+          `${Date.now()}`,
+          `${encryptWithAES(req.body.cTitle)}`,
+          `${encryptWithAES(req.body.cBody)}`,
+        ],
+      },
+      (err, result) => {
+        if (err) {
+          console.log(err.stack);
+          res
+            .status(400)
+            .render("pages/400", {
+              session: req.session,
+              code: "Bad Request",
+              cookies: req.cookies,
+            });
+        } else {
+          res.redirect("/system");
+        }
+      }
+    );
+  } else {
+    // Deleting.
+    client.query(
+      {
+        text: "DELETE FROM comm_posts WHERE id=$1; ",
+        values: [getKeyByValue(req.body, "Remove")],
+      },
+      (err, result) => {
+        if (err) {
+          console.log(err.stack);
+          res
+            .status(400)
+            .render("pages/400", {
+              session: req.session,
+              code: "Bad Request",
+              cookies: req.cookies,
+            });
+        } else {
+          req.session.jPost = null;
+          res.redirect(`/system`);
+        }
+      }
+    );
+  }
+});
+
 router.get("/:id/:pg?",
   authUser,
   validateParam("id"),
@@ -389,76 +858,6 @@ router.post("/:alt/:pg?", authUser, validateParam("alt"), (req, res) => {
         code: "Forbidden",
         cookies: req.cookies,
       });
-  }
-});
-
-router.post("/", authUser, async (req, res) => {
-  if (req.body.sysname) {
-    const subsysID = req.body.subsys == "None" ? null : req.body.subsys;
-    await db.query(
-      client,
-      "INSERT INTO systems (sys_alias, user_id, subsys_id, description) VALUES ($1, $2, $3, $4)",
-      [
-        `'${base64encode(req.body.sysname)}'`,
-        `${getCookies(req).u_id}`,
-        subsysID,
-        `${encryptWithAES(req.body.sysdesc)}`,
-      ],
-      res,
-      req
-    );
-    return res.redirect(`/system`);
-  } if (req.body.post) {
-    // Comm journal.
-    // id | u_id | created_on | title | body
-    client.query(
-      {
-        text: "INSERT INTO comm_posts (u_id, created_on, title, body) VALUES ($1, to_timestamp($2 / 1000.0), $3, $4)",
-        values: [
-          `${getCookies(req).u_id}`,
-          `${Date.now()}`,
-          `${encryptWithAES(req.body.cTitle)}`,
-          `${encryptWithAES(req.body.cBody)}`,
-        ],
-      },
-      (err, result) => {
-        if (err) {
-          console.log(err.stack);
-          res
-            .status(400)
-            .render("pages/400", {
-              session: req.session,
-              code: "Bad Request",
-              cookies: req.cookies,
-            });
-        } else {
-          res.redirect("/system");
-        }
-      }
-    );
-  } else {
-    // Deleting.
-    client.query(
-      {
-        text: "DELETE FROM comm_posts WHERE id=$1; ",
-        values: [getKeyByValue(req.body, "Remove")],
-      },
-      (err, result) => {
-        if (err) {
-          console.log(err.stack);
-          res
-            .status(400)
-            .render("pages/400", {
-              session: req.session,
-              code: "Bad Request",
-              cookies: req.cookies,
-            });
-        } else {
-          req.session.jPost = null;
-          res.redirect(`/system`);
-        }
-      }
-    );
   }
 });
 

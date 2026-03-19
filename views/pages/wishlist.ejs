@@ -25,9 +25,9 @@
             <h3>Posted Wishes</h3>
                 <ul>
                 <% for (i in wishArr){ %>
-                        <li><%- wishArr[i].text %> <a title="Grant Wish!" href="/wish/<%- wishArr[i].uuid %>"><span class="material-symbols-outlined" style="cursor: pointer; color: #D9B23D">
+                        <li><%- wishArr[i].text %> <a title="Grant Wish!" href="/system/wish/<%- wishArr[i].uuid %>"><span class="material-symbols-outlined" style="cursor: pointer; color: #D9B23D">
                             magic_button
-                            </span></a><a title="Delete Wish" href="/wish-d/<%- wishArr[i].uuid %>"><span class="material-symbols-outlined" style="cursor:pointer; color:#911111;">
+                            </span></a><a title="Delete Wish" href="/system/wish-d/<%- wishArr[i].uuid %>"><span class="material-symbols-outlined" style="cursor:pointer; color:#911111;">
                                 delete_forever
                                 </span></a></li>
                     <% } %>
@@ -37,7 +37,7 @@
                   <h3>Fulfilled Wishes</h3>
                 <ul>
                 <% for (i in filledWishes){ %>
-                    <li style="color: green;"><%- filledWishes[i].text %> <a title="Delete Wish" href="/wish-d/<%- filledWishes[i].uuid %>"><span class="material-symbols-outlined" style="cursor:pointer; color:#911111;">
+                    <li style="color: green;"><%- filledWishes[i].text %> <a title="Delete Wish" href="/system/wish-d/<%- filledWishes[i].uuid %>"><span class="material-symbols-outlined" style="cursor:pointer; color:#911111;">
                         delete_forever
                         </span></a></li>
                 <% } %>

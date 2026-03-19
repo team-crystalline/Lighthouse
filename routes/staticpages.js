@@ -95,7 +95,7 @@ router.get("/lighthouse-system", (req, res) => {
  */
 router.get("/combine/:item", (req, res) => {
   if (isLoggedIn(req)) {
-    res.render(`pages/combine-alters`, {
+    res.render(`pages/combine-alts`, {
       session: req.session,
       cookies: req.cookies,
     });

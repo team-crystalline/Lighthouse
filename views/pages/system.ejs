@@ -56,9 +56,9 @@
             
             <ul class="padLinks">
               <li><a class="dyn linkbutton" title= "<%= strings.system.links.search %>" href="/search"><%= strings.system.links.search %></a></li>
-              <li><a class="dyn linkbutton" title= "<%= strings.system.links.rules %>" href="/rules"><%= strings.system.links.rules %></a></li>
-              <li><% if (session.innerworld == true) { %> <a class="dyn linkbutton" title="<%= capitalise(innerWorld) %>" href="/inner-world"><%= capitalise(innerWorld) %></a> <%}%></li>
-              <li><a class="dyn linkbutton" title="<%= strings.system.links.wishlist %>" href="/wish"><%= strings.system.links.wishlist %></a></li>
+              <li><a class="dyn linkbutton" title= "<%= strings.system.links.rules %>" href="/system/rules"><%= strings.system.links.rules %></a></li>
+              <li><% if (session.innerworld == true) { %> <a class="dyn linkbutton" title="<%= capitalise(innerWorld) %>" href="/system/inner-world"><%= capitalise(innerWorld) %></a> <%}%></li>
+              <li><a class="dyn linkbutton" title="<%= strings.system.links.wishlist %>" href="/system/wish"><%= strings.system.links.wishlist %></a></li>
               <li><% if (session.worksheets_enabled == true){ %><a class="dyn linkbutton" title="<%= strings.system.links.worksheets %>" href="/worksheets"><%= strings.system.links.worksheets %></a><% }%></li>
               <li><a class="dyn linkbutton" title="Crash course on using Lighthouse" href="/tutorial"><%= strings.system.links.tutorial %></a></li>
               <li><a class="dyn linkbutton" title="<%= strings.system.links.combine %>" href="/combine/alts"><%= strings.system.links.combine %></a></li>

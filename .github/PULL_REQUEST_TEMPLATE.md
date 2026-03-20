@@ -8,13 +8,13 @@ Closes # (issue number) (delete this line if your pull request does not close an
 
 Here is where you'll describe what your pull request does. If it fixes a bug, please include the issue number and a description of how to reproduce the bug. If it adds a feature, please include a description of the feature and how to use it.
 
-### Expected Behavior
+### Expected Behaviour
 
-(Psst, delete this if your pull request doesn't fix a bug!) Here is where you'll describe the expected behavior of the bug you fixed. This should be a clear and concise description of what should happen when the bug is fixed.
+(Psst, delete this if your pull request doesn't fix a bug!) Here is where you'll describe the expected behaviour of the bug you fixed. This should be a clear and concise description of what should happen when the bug is fixed.
 
-### Actual Behavior
+### Actual Behaviour
 
-(Psst, delete this if your pull request doesn't fix a bug!) Here is where you'll describe the actual behavior of the bug you fixed. This should be a clear and concise description of what happens when the bug is not fixed.
+(Psst, delete this if your pull request doesn't fix a bug!) Here is where you'll describe the actual behaviour of the bug you fixed. This should be a clear and concise description of what happens when the bug is not fixed.
 
 ### Reproduction Steps
 

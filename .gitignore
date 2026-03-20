@@ -8,3 +8,4 @@ old-nav-2.ejs
 *.log
 .notes
 .trash
+.DS_Store

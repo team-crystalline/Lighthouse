@@ -44,7 +44,7 @@
               <section>
                 <h2>About Your <%= capitalise(session.innerworld_term) %></h2>
                 <% for (i in session.innerworld_rows){ %>
-                  <dt><%= Buffer.from(session.innerworld_rows[i].key, 'base64').toString() %> <form method="post" style="display: inline;"><button type="submit" name="<%= session.innerworld_rows[i].id %>" value="Remove" class="textless" onclick="deleteWarn('<%= Buffer.from(session.innerworld_rows[i].key, 'base64').toString() %>')"><span class="material-symbols-outlined textless"> delete</span></button></form><a title="Edit entry" href="/inner-world/<%- session.innerworld_rows[i].id %>"><i class="fa fa-pencil" aria-hidden="true"></i></a></dt>
+                  <dt><%= Buffer.from(session.innerworld_rows[i].key, 'base64').toString() %> <form method="post" style="display: inline;"><button type="submit" name="<%= session.innerworld_rows[i].id %>" value="Remove" class="textless" onclick="deleteWarn('<%= Buffer.from(session.innerworld_rows[i].key, 'base64').toString() %>')"><span class="material-symbols-outlined textless"> delete</span></button></form><a title="Edit entry" href="/system/inner-world/<%- session.innerworld_rows[i].id %>"><i class="fa fa-pencil" aria-hidden="true"></i></a></dt>
                   <dd class="md-support"><%- (Buffer.from(session.innerworld_rows[i].value, 'base64').toString()).replace(/\n/g, "<br/>") %></dd>
                 <% } %>
   

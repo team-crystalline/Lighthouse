@@ -1,10 +1,10 @@
 // DATABASE
 require('dotenv').config();
-var strings= require("./lang/en.json");
+var strings = require("./lang/en.json");
 
 
-const { Pool, Client,pg, Query } = require('pg');
-  if (process.env['environment']== "dev"){
+const { Pool, Client, pg, Query } = require('pg');
+if (process.env['environment'] == "dev") {
 	console.log("⚒ Starting Lighthouse in  𝙎 𝘼 𝙉 𝘿 𝘽 𝙊 𝙓  mode. You are using an offline database.");
 	var client = new Client({
 		user: "dannyliehr",
@@ -12,7 +12,7 @@ const { Pool, Client,pg, Query } = require('pg');
 		database: "Sandbox",
 		password: "",
 		port: 5432
-	  });
+	});
 } else {
 	console.log("📷 Starting Lighthouse in  𝙋 𝙍 𝙊 𝘿 𝙐 𝘾 𝙏 𝙄 𝙊 𝙉  mode. ⚠ You are using the live site's database. ⚠");
 	var client = new Client({
@@ -22,8 +22,8 @@ const { Pool, Client,pg, Query } = require('pg');
 		password: process.env.DB_PASS,
 		port: process.env.DB_PORT,
 		ssl: { rejectUnauthorized: false }
-	  });
-	
+	});
+
 }
 
 // Database functions now that all that is declared.
@@ -37,26 +37,28 @@ const { Pool, Client,pg, Query } = require('pg');
  * @param {boolean} handleZero Determine if we need to handle if the result has 0 rows.
  * @returns {array} Array of matching rows to query.
  */
-async function query(client, customQuery, customValues, res, req, handleZero=false) {
+async function query(client, customQuery, customValues, res, req, handleZero = false) {
 	try {
-	  const result = await client.query({ text: customQuery, values: customValues });
-	  
-	  if (handleZero == true && result.rows.length < 1){
-		// We need to handle if the result has no rows. This one has none.
-		return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", cookies:req.cookies });
-	  }
-	  return result.rows;
-	} catch (e) {
-	  console.error(e.stack);
-	  return res.status(400).render('pages/400',{ session: req.session, code:"Bad Request", cookies:req.cookies });
-	}
-  }
-  
+		const result = await client.query({ text: customQuery, values: customValues });
 
+		if (handleZero == true && result.rows.length < 1) {
+			// We need to handle if the result has no rows. This one has none.
+			return res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+		}
+		return result.rows;
+	} catch (e) {
+		console.error(e.stack);
+		return res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
+	}
+}
+
+client.on('error', (err) => {
+	console.error('Unexpected error on idle client', err);
+});
 client.connect();
 
 // MODULE EXPORTS
 module.exports = {
 	query,
-	client:client
-  };
+	client: client
+};

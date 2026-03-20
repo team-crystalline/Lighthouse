@@ -1,20 +1,15 @@
 // Worksheets Router
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('../db.js');
 const client= db.client;
-const crypto= require('crypto');
-const CryptoJS = require("crypto-js");
-var strings= require("./lang/en.json");
 const ejs = require('ejs');
 const path = require('path');
-const PORT = process.env.PORT || 5000;
 const fs = require('fs');
 var pdf = require("html-pdf");
 
-
 const { isLoggedIn, getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, forbidUser, 
-lostPage, checkUUID } = require("./funcs.js")
+lostPage, checkUUID } = require("../funcs.js")
 
 
 

@@ -1,2 +1,18 @@
 {
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "eslint.workingDirectories": [
+    { "mode": "auto" }
+  ],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact"
+  ],
+  "json.schemaDownload.trustedDomains": {
+    "https://raw.githubusercontent.com/": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.formatOnSave": true
+  },
 }

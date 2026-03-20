@@ -316,7 +316,6 @@
         let alterTermCap= "<%= capitalise(cookies.alter_term) %>";
         let alterTermLow= "<%= cookies.alter_term %>";
         $("#type").bind("change paste keyup keydown", function(){
-            // $("#typeinfo").html(`${alterTermCap} Type<br><small>This ${alterTermLow} ${alterTypes[selectedAlt].desc}</small>`); 
             if ($("#type").val()=="") return $("#typeSplash").empty();
             $("#typeSplash").empty();
             for (i in alterTypes){

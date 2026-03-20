@@ -551,3 +551,9 @@ app.listen(PORT, async (res, req) => {
 	console.log(`⚓ Docked at Port ${PORT}. The time is ${(rn[0].now).toLocaleString('en-GB', { timeZone: 'EST' })}\nOpen in browser: http://localhost:${PORT}/`)
 });
 
+// Hoping for catching crashes.
+app.use((err, req, res, next) => {
+	console.error('An unexpected error occurred:', err);
+	errorPage(500, res, req, err);
+	next(err);
+});

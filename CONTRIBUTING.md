@@ -26,6 +26,8 @@ Note: Front tracking does **not** count as a social feature, as long as it is fo
 
 ### Gate-keeping Features
 
+This is pertaining to "syscourse", which is discourse in the plural community. This is primarily arguments about who is and isn't a system, what is and isn't plurality, introjects, etc. We would like to keep our "minimal controversy" streak going, so we ask that your opinions on these topics be left at the door (don't include it in your features or bug fixes). At the end of the day, Lighthouse is a place for you to be reflecting on your own, so there's no need to be bringing that kind of thing into the app. It's also banned in our Discord server, so you should already be used to leaving it at the door!
+
 No matter the stance of any developer on this project, we will not allow features that gatekeep access to the project. Not just financially, but socially as well. Lighthouse is to accommodate ANY system who finds it useful. Please avoid exclusionary language or behaviour that may make groups of people feel unwelcome. If your feature is inherently traumagenic (caters to users with trauma), we ask you to talk to us so we may make it a toggleable feature. Not everyone has memories of trauma, has the capacity to process trauma, or is traumatised. Also keep in mind that exclusionary language and behaviour can harm traumatised users who are experiencing amnesia or heavy dissociation, or users who do not fit the conventional (usually Western-centric) definition of a system. If this paragraph did not make you angry, then your feature will likely be just fine, and we look forward to seeing it!
 
 ### "Simply Plural or Octocon Replacement" Features

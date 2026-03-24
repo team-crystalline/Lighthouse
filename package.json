@@ -4,7 +4,9 @@
   "description": "A journal app for systems to write diaries. Plural users specifically.",
   "main": "main.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "archiver": "^7.0.1",
@@ -49,6 +51,10 @@
   },
   "devDependencies": {
     "css-loader": "^5.2.7",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
     "postcss": "^8.4.23",
     "postcss-loader": "^4.3.0",
     "raw-loader": "^4.0.2",

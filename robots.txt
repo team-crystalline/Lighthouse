@@ -6,8 +6,8 @@ Disallow: /deletesys
 Disallow: /clearalter
 Disallow: /edit-alter
 Disallow: /mood
-Disallow: /inner-world 
-Disallow: /rules
+Disallow: /system/inner-world 
+Disallow: /system/rules
 Disallow: /reset
 Disallow: /forgot-password
 Disallow: /del-mood

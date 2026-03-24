@@ -1,14 +1,10 @@
 // Static Pages Router
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('../db');
 const client = db.client;
-const crypto = require('crypto');
-const CryptoJS = require("crypto-js");
-var strings = require("./lang/en.json");
 
-
-const { getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, idCheck, paginate, sortFunction, authUser, validateParam } = require("./funcs.js")
+const { getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, idCheck, paginate, sortFunction, authUser, validateParam } = require("../funcs.js");
 
 // Refactored!
 router.get('/forum/:id/new', validateParam('id'), authUser, async function (req, res) {

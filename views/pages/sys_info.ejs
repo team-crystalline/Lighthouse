@@ -167,7 +167,7 @@ var journSkin=[
             </div>
             <% } %>
         
-            <a href="/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton deletebtn"><%- strings.actions.delete %></a>&emsp;<a href="/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton editbtn"><%- strings.actions.rename %></a>
+            <a href="/system/deletesys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton deletebtn"><%- strings.actions.delete %></a>&emsp;<a href="/system/editsys/<%= session.chosenSys.sys_id %>" name="<%= session.chosenSys.sys_id %>" class="linkbutton editbtn"><%- strings.actions.rename %></a>
             <button onclick="$('#subsysForm').toggle('fast')"><%- capitalise(cookies.subsystem_term) %> settings</button>
             <form id="subsysForm" style="display:none;" method="post">
                 <label for="sysid">Nest this system under:</label>
@@ -228,7 +228,7 @@ var journSkin=[
                 for (i in sysInfo.systems){
                     // $("#subList").append(`<li>${sysInfo.systems[i].name}</li>`);
                     $("#subList").append(`<div class="systemdiv">
-                    <a class="systembutton" title="${sysInfo.systems[i].name}" href="/system/${sysInfo.systems[i].sys_id}">${sysInfo.systems[i].name} <a class="editbtn" href="/editsys/${sysInfo.systems[i].sys_id}"><%- strings.actions.rename %></a></a><a href="/deletesys/${sysInfo.systems[i].sys_id}" name="${sysInfo.systems[i].sys_id}" class="deletebtn"><%- strings.actions.delete %></a>
+                    <a class="systembutton" title="${sysInfo.systems[i].name}" href="/system/${sysInfo.systems[i].sys_id}">${sysInfo.systems[i].name} <a class="editbtn" href="/system/editsys/${sysInfo.systems[i].sys_id}"><%- strings.actions.rename %></a></a><a href="/system/deletesys/${sysInfo.systems[i].sys_id}" name="${sysInfo.systems[i].sys_id}" class="deletebtn"><%- strings.actions.delete %></a>
                     </div>`)
                 }
             }

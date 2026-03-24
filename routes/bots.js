@@ -2,11 +2,6 @@
 
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
-const client= db.client;
-const crypto= require('crypto');
-const CryptoJS = require("crypto-js");
-var strings= require("./lang/en.json");
 
 
 // ROBOTS.TXT
@@ -100,8 +95,8 @@ Disallow: /deletesys
 Disallow: /clearalter
 Disallow: /edit-alter
 Disallow: /mood
-Disallow: /inner-world 
-Disallow: /rules
+Disallow: /system/inner-world 
+Disallow: /system/rules
 Disallow: /reset
 Disallow: /forgot-password
 Disallow: /del-mood

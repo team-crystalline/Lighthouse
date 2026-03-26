@@ -185,7 +185,7 @@ router.get('/wish-d/:id', validateParam("id"), (req, res) => {
         res.status(400).render('pages/400', { session: req.session, code: "Bad Request", cookies: req.cookies });
       }
     });
-    res.redirect("/wish");
+    res.redirect("/system/wish");
 
   } else { res.status(403).render('pages/403', { session: req.session, code: "Forbidden", cookies: req.cookies }); }
 });

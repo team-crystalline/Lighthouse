@@ -1,11 +1,9 @@
-// config.js
-// Script to get constants from the environment and set defaults if they don't exist
+/* Script to get constants from the environment and set defaults if they don't exist */
 
 require('dotenv').config();
 
 
 var port = process.env.PORT || "5000";
-console.log("Port = " + port);
 
 module.exports = {
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@example.com",
@@ -17,11 +15,11 @@ module.exports = {
     DB_PORT: process.env.DB_PORT,
     DB_USER: process.env.DB_USER,
     DEVELOPERS: [process.env.dev1, process.env.dev2, process.env.dev3],
-    ENVIRONMENT: process.env.environment || 'dev',
+    ENVIRONMENT: process.env.environment || "dev",
     GMAIL_PASS: process.env.GMAIL_PASS,
     MAINTENANCE: process.env.MAINTENANCE, // Set to "true" to switch on maintenance mode.
     PORT: port,
     SALT_KEY: process.env.SALT_KEY,
     SECRET: process.env.sec,
-    URL_PREFIX: process.env.URL_PREFIX || "http://" + process.env.HOSTNAME + ":" + port || "http://localhost:" + port,
+    URL_PREFIX: process.env.URL_PREFIX || "http://${process.env.HOSTNAME}:${port}" || "http://localhost:${port}",
 };

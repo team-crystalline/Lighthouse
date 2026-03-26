@@ -15,41 +15,41 @@ router.get("/sitemap.xml", function(req, res) {
 res.setHeader('content-type', 'text/plain');
 res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset
-xmlns="` + config.URL_PREFIX + `"
-xsi:schemaLocation="` + config.URL_PREFIX + `/sitemap.xml">
+xmlns="${config.URL_PREFIX}"
+xsi:schemaLocation="${config.URL_PREFIX}/sitemap.xml">
 
 <url>
-<loc>` + config.URL_PREFIX + `</loc>
+<loc>${config.URL_PREFIX}</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>1.00</priority>
 </url>
 <url>
-<loc>` + config.URL_PREFIX + `signup</loc>
+<loc>${config.URL_PREFIX}signup</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>0.80</priority>
 </url>
 <url>
-<loc>` + config.URL_PREFIX + `login</loc>
+<loc>${config.URL_PREFIX}login</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>0.80</priority>
 </url>
 <url>
-<loc>` + config.URL_PREFIX + `about</loc>
+<loc>${config.URL_PREFIX}about</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>0.80</priority>
 </url>
 <url>
-<loc>` + config.URL_PREFIX + `changelog</loc>
+<loc>${config.URL_PREFIX}changelog</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>0.80</priority>
 </url>
 <url>
-<loc>` + config.URL_PREFIX + `glossary</loc>
+<loc>${config.URL_PREFIX}glossary</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>0.90</priority>
 </url>
 <url>
-<loc>` + config.URL_PREFIX + `tutorial</loc>
+<loc>${config.URL_PREFIX}tutorial</loc>
 <lastmod>2023-05-06T00:29:06+00:00</lastmod>
 <priority>0.75</priority>
 </url>
@@ -118,7 +118,7 @@ Allow: /about
 Allow: /glossary
 Allow: /tutorial
 Crawl-delay: 10
-Sitemap: ` + config.URL_PREFIX + `/sitemap.xml`);
+Sitemap: ${config.URL_PREFIX}/sitemap.xml`);
 });
 
 console.log(`Web Crawler Router Loaded.`);

@@ -387,7 +387,7 @@ app.get('/mod', (req, res) => {
 			res.render(`pages/mod-panel`, { session: req.session, cookies: req.cookies });
 		} else {
 			var mailOptions = {
-				from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>',
+				from: '"Lighthouse" <${config.ADMIN_EMAIL}>',
 				to: config.ADMIN_EMAIL,
 				subject: `Unauthorised attempt to access mod panel.`,
 				html: `<p>A user has attempted to enter the mod panel!</p><p>User: ID: ${getCookies(req)['u_id'] || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req)['email'], "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -407,7 +407,7 @@ app.get('/mod', (req, res) => {
 		}
 	} else {
 		var mailOptions = {
-			from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>',
+			from: '"Lighthouse" <${config.ADMIN_EMAIL}>',
 			to: config.ADMIN_EMAIL,
 			subject: `Unauthorised attempt to access mod panel.`,
 			html: `<p>A user has attempted to enter the mod panel!</p><p>User: ID: ${getCookies(req)['u_id'] || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req)['email'], "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -1062,7 +1062,7 @@ app.post('/mod', (req, res) => {
 			}
 		} else {
 			var mailOptions = {
-				from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>',
+				from: '"Lighthouse" <${config.ADMIN_EMAIL}>',
 				to: config.ADMIN_EMAIL,
 				subject: `Unauthorised attempt to POST to mod panel.`,
 				html: `<p>A user has attempted to POST to the mod panel!</p><p>User: ID: ${getCookies(req)['u_id'] || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req)['email'], "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -1083,7 +1083,7 @@ app.post('/mod', (req, res) => {
 
 	} else {
 		var mailOptions = {
-			from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>',
+			from: '"Lighthouse" <${config.ADMIN_EMAIL}>',
 			to: config.ADMIN_EMAIL,
 			subject: `Unauthorised attempt to POST to mod panel.`,
 			html: `<p>A user has attempted to POST to the mod panel!</p><p>User: ID: ${getCookies(req)['u_id'] || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req)['email'], "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -1154,7 +1154,7 @@ app.post('/profile', function (req, res) {
 							console.log(err);
 						} else {
 							var mailOptions = {
-								from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>',
+								from: '"Lighthouse" <${config.ADMIN_EMAIL}>',
 								to: Buffer.from(result.rows[0].email, 'base64').toString(),
 								subject: `Farewell, ${Buffer.from(result.rows[0].username, 'base64').toString()}.`,
 								html: data
@@ -1438,7 +1438,7 @@ app.post('/forgot-password', (req, res) => {
 							console.log(err);
 						} else {
 							var mailOptions = {
-								from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>',
+								from: '"Lighthouse" <${config.ADMIN_EMAIL}>',
 								to: req.body.email,
 								subject: `Forgot your password, ${Buffer.from(req.session.user.username, 'base64').toString()}?`,
 								html: data
@@ -1452,7 +1452,6 @@ app.post('/forgot-password', (req, res) => {
 								});
 							} else {
 								console.log("Email skipped: GMAIL_PASS is not configured.");
-								console.log(data);
 							}
 						}
 					});
@@ -1842,7 +1841,7 @@ app.post('/signup', async function (req, res) {
 		if (err) {
 			console.log(err);
 		} else {
-			var mailOptions = { from: '"Lighthouse" <' + config.ADMIN_EMAIL + '>', to: req.body.email, subject: `Welcome to Lighthouse, ${req.body.username}!`, html: data };
+			var mailOptions = { from: '"Lighthouse" <${config.ADMIN_EMAIL}>', to: req.body.email, subject: `Welcome to Lighthouse, ${req.body.username}!`, html: data };
 			if (transporter) {
 				transporter.sendMail(mailOptions, (error) => {
 					if (error) {
@@ -1996,7 +1995,7 @@ app.put('/system-data', async function (req, res) {
 				let altName = req.body.name == null ? `'${Buffer.from('New alter').toString('base64')}'` : `'${Buffer.from(req.body.name).toString('base64')}'`;
 				let altPro = req.body.pronouns == null ? null : `'${Buffer.from(req.body.pronouns).toString('base64')}'`;
 				let altBirth = req.body.birthday == null ? null : `'${Buffer.from(req.body.birthday).toString('base64')}'`;
-				let altAva = req.body.avatar == null ? `'${Buffer.from(config.URL_PREFIX + '/img/avatar-default.jpg').toString('base64')}'` : `'${Buffer.from(req.body.avatar).toString('base64')}'`;
+				let altAva = req.body.avatar == null ? `'${Buffer.from('${config.URL_PREFIX}/img/avatar-default.jpg').toString('base64')}'` : `'${Buffer.from(req.body.avatar).toString('base64')}'`;
 				let altNotes = req.body.notes == null ? null : `'${Buffer.from(req.body.notes).toString('base64')}'`;
 				client.query({
 					text: "INSERT INTO alters (name, sys_id, pronouns, img_url, colour, notes) VALUES($1, $2, $3, $4, $5, $6);", values: [
@@ -2018,7 +2017,7 @@ app.put('/system-data', async function (req, res) {
 				});
 			} else if (editMode == "add-ph-alter") {
 				// Place placeholder alters in database.
-				let iconNo = config.URL_PREFIX + "/img/" + getRandomInt(1, 42) + ".png";
+				let iconNo = "${config.URL_PREFIX}/img/" + getRandomInt(1, 42) + ".png";
 				client.query({
 					text: "INSERT INTO alters (name, sys_id, img_url, gender) VALUES($1, $2, $3, $4);", values: [
 						`'${Buffer.from(req.body.altName).toString('base64')}'`,

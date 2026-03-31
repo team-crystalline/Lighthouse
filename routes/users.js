@@ -16,7 +16,20 @@ const {
 const strings = require("../lang/en.json");
 const ejs = require("ejs");
 const twoWeeks = 1000 * 60 * 60 * 24 * 14;
-
+const path = require("path");
+const nodemailer = require("nodemailer");
+const hasMailConfig = Boolean(process.env.gmail_pass);
+const transporter = hasMailConfig
+  ? nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'dee_deyes@writelighthouse.com',
+      pass: process.env.gmail_pass,
+    },
+  })
+  : null;
 router.get("/users", (req, res, next) => {
   if (apiEyesOnly(req)) {
     // No browser peeking!! Only Lighthouse's API can see this!
@@ -793,7 +806,7 @@ router.post("/forgot-password", (req, res) => {
                 cookies: req.cookies,
               });
               ejs.renderFile(
-                __dirname + "/views/pages/email-forgotpass.ejs",
+                path.join(__dirname, '..', 'views', 'pages', 'email-forgotpass.ejs'),
                 {
                   alias:
                     Buffer.from(

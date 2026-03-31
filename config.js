@@ -21,5 +21,5 @@ module.exports = {
     PORT: port,
     SALT_KEY: process.env.SALT_KEY,
     SECRET: process.env.sec,
-    URL_PREFIX: process.env.URL_PREFIX || "http://${process.env.HOSTNAME}:${port}" || "http://localhost:${port}",
+    URL_PREFIX: process.env.URL_PREFIX || `http://${process.env.HOSTNAME}:${port}`
 };

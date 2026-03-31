@@ -7,3 +7,4 @@ old-nav-2.ejs
 **/.DS_Store
 *.log
 .notes
+.trash

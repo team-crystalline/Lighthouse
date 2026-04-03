@@ -36,7 +36,7 @@
                 <!-- <span><%- (cJourn.date).getFullYear() %>-<%- pad((cJourn.date).getMonth()+1 , 2) %>-<%- pad((cJourn.date).getDate(), 2) %>T<%- pad((cJourn.date).getHours(), 2) %>:<%- pad((cJourn.date).getMinutes(), 2) %></span><br> -->
 
                 <label for="feeling">Currently feeling... </label><br/>
-                <input type="text" id="feeling" name="feeling" autocomplete="off" value="<%- cJourn.feeling %>"></br>
+                <input type="text" id="feeling" name="feeling" autocomplete="off" value="<%- cJourn.feeling %>"><br/>
                 <label for="jBody">Post Body</label><br/>
                 <div id="editor"><%- cJourn.body %></div>
                 <textarea name="jBody" autocomplete="off" cols="60" rows="15" id="hidden-text" ></textarea><br/>

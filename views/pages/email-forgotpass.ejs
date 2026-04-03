@@ -52,7 +52,7 @@
                 display:block;
                 border:0px;
                 height:calc(2em);
-                background-image:url('https://www.writelighthouse.com/img/horizontal_rule.svg');
+                background-image:url('<%- config.url_prefix %>/img/horizontal_rule.svg');
                 background-repeat: no-repeat;
                 background-position: center; 
             }
@@ -64,12 +64,12 @@
     </head>
     <body>
         <div id="wrapper">
-           <img src="https://www.writelighthouse.com/img/logo.png" class="tinyimg" style="float:left; margin-right: calc(2vw); border-radius: 5em;">
+           <img src="<%- config.url_prefix %>/img/logo.png" class="tinyimg" style="float:left; margin-right: calc(2vw); border-radius: 5em;">
            <h1>Need help, <%- alias %>?</h1>
            <hr>
            <p>Hey, <%- alias %>. Did you forget your password to Lighthouse? No worries.</p>
             
-           <p>Follow the link provided and don't forget the PIN in this email!</p><a href= "www.writelighthouse.com/reset/<%- resetLink %>">www.writelighthouse.com/reset/<%- resetLink %></a></p>
+           <p>Follow the link provided and don't forget the PIN in this email!</p><a href= "<%- config.url_prefix %>/reset/<%- resetLink %>"><%- config.url_prefix %>/reset/<%- resetLink %></a></p>
            
            <p>PIN: <b><%- userPin %></b></p>
            

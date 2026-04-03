@@ -1,3 +1,4 @@
+const config = require("./config.js")
 const pjson = require("../package.json");
 const tuning = require("../js/genVars.js");
 var strings = require("../lang/en.json");
@@ -33,7 +34,7 @@ const {
 var pluralize = require("pluralize");
 
 /*
-app.locals.apiKey = process.env.apiKey;
+app.locals.apiKey = config.apiKey;
 */
 module.exports = {
   version: pjson.version,
@@ -75,5 +76,5 @@ module.exports = {
   },
   timeOptions: { hour: "2-digit", minute: "2-digit" },
   formatGMTToLocal,
-  isDev: process.env.environment === "dev",
+  isDev: config.ENVIRONMENT === "dev",
 };

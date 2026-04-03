@@ -21,6 +21,9 @@ const {
   authUser,
   validateParam,
 } = require("../funcs.js");
+const config = require("../config/config.js");
+
+console.log(`Environment: ${config.ENVIRONMENT}`);
 
 router.get('/inner-world/:id', (req, res) => {
   // if (!checkUUID(req.params.id)) return lostPage(res, req);
@@ -776,6 +779,7 @@ router.get("/:id/:pg?",
       curPage: req.params.pg || 1,
       numup: Number(numUp[0].altupnum),
       currentSys: req.params.id,
+      environment: config.ENVIRONMENT
     });
   }
 );

@@ -124,7 +124,7 @@
             let response = await fetch(`https://api.pluralkit.me/v2/systems/${pkID}/members`, { 
                 headers: { 
                     "Authorization": $("#pktoken").val(),
-                    "User-Agent": "Lighthouse/Web App (www.writelighthouse.com, dee_deyes@writelighthouse.com, put here for contact if PK devs need to)" 
+                    "User-Agent": `Lighthouse/Web App (${config.url_prefix}, ${config.admin_email}, put here for contact if PK devs need to)` 
                 } 
             });
             let body = await response.text();

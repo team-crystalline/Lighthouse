@@ -155,16 +155,16 @@
           <a href="/cookies" target="_blank">cookie usage</a>. See our
           <a href="/privacypolicy" target="_blank">Privacy Policy</a>.</label
         >
+        <% if (cloudflare_key) { %>
         <input
           type="hidden"
           name="mjl2fbbz8s"
           id="mjl2fbbz8s"
           placeholder="Users should not see this! This is a bot honeypot."
         />
-        <% var key = isDev ? '1x00000000000000000000AA' :
-        '0x4AAAAAAAyTMNcAMEfytCrt'; %>
-        <div class="cf-turnstile" data-sitekey="<%= key %>"></div>
+        <div class="cf-turnstile" data-sitekey="<%= cloudflare_key %>"></div>
         <input type="submit" id="signup" value="Sign Up" disabled />
+        <% } %>
       </form>
       <% } %>
     </div>

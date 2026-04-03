@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db.js");
+const config = require("../config/config.js");
 const client = db.client;
 const {
 	isLoggedIn,
@@ -437,7 +438,7 @@ router.put("/system-data", async function (req, res) {
 				let altAva =
 					req.body.avatar == null
 						? `'${Buffer.from(
-							"https://www.writelighthouse.com/img/avatar-default.jpg"
+							`${config.URL_PREFIX}/img/avatar-default.jpg`
 						).toString("base64")}'`
 						: `'${Buffer.from(req.body.avatar).toString("base64")}'`;
 				let altpk =
@@ -541,7 +542,7 @@ router.put("/system-data", async function (req, res) {
 				let altAva =
 					req.body.avatar == null
 						? `'${Buffer.from(
-							"https://www.writelighthouse.com/img/avatar-default.jpg"
+							`${config.URL_PREFIX}/img/avatar-default.jpg`
 						).toString("base64")}'`
 						: `'${Buffer.from(req.body.avatar).toString("base64")}'`;
 				let altNotes =
@@ -572,7 +573,7 @@ router.put("/system-data", async function (req, res) {
 			} else if (editMode == "add-ph-alter") {
 				// Place placeholder alters in database.
 				let iconNo =
-					"https://www.writelighthouse.com/img/" + getRandomInt(1, 42) + ".png";
+					`${config.URL_PREFIX}/` + getRandomInt(1, 42) + ".png";
 				client.query(
 					{
 						text: "INSERT INTO alters (name, sys_id, img_url, gender) VALUES($1, $2, $3, $4);",

@@ -51,7 +51,7 @@
                 display:block;
                 border:0px;
                 height:calc(2em);
-                background-image:url('https://www.writelighthouse.com/img/horizontal_rule.svg');
+                background-image:url('<%- config.url_prefix %>/img/horizontal_rule.svg');
                 background-repeat: no-repeat;
                 background-position: center; 
             }
@@ -63,7 +63,7 @@
     </head>
     <body>
         <div id="wrapper">
-           <img src="https://www.writelighthouse.com/img/logo.png" class="tinyimg" style="float:left; margin-right: calc(2vw); border-radius: 5em;">
+           <img src="<%- config.url_prefix %>/img/logo.png" class="tinyimg" style="float:left; margin-right: calc(2vw); border-radius: 5em;">
            <h1>Farewell, <%- alias %>.</h1>
            <hr>
             <p>Thanks for using Lighthouse. We're sorry to see you go!</p> 

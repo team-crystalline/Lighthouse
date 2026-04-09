@@ -200,7 +200,6 @@ app.get('/mod', (req, res) => {
 			res.render(`pages/mod-panel`, { session: req.session, cookies: req.cookies });
 		} else {
 			const mailOptions = {
-				from: `"Lighthouse" <${config.ADMIN_EMAIL}>`,
 				to: config.ADMIN_EMAIL,
 				subject: `Unauthorised attempt to access mod panel.`,
 				html: `<p>A user has attempted to enter the mod panel!</p><p>User: ID: ${getCookies(req).u_id || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req).email, "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -212,7 +211,6 @@ app.get('/mod', (req, res) => {
 		}
 	} else {
 		const mailOptions = {
-			from: `"Lighthouse" <${config.ADMIN_EMAIL}>`,
 			to: config.ADMIN_EMAIL,
 			subject: `Unauthorised attempt to access mod panel.`,
 			html: `<p>A user has attempted to enter the mod panel!</p><p>User: ID: ${getCookies(req).u_id || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req).email, "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -266,7 +264,6 @@ app.post('/mod', (req, res) => {
 			}
 		} else {
 			const mailOptions = {
-				from: `"Lighthouse" <${config.ADMIN_EMAIL}>`,
 				to: config.ADMIN_EMAIL,
 				subject: `Unauthorised attempt to POST to mod panel.`,
 				html: `<p>A user has attempted to POST to the mod panel!</p><p>User: ID: ${getCookies(req).u_id || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req).email, "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -279,7 +276,6 @@ app.post('/mod', (req, res) => {
 
 	} else {
 		const mailOptions = {
-			from: `"Lighthouse" <${config.ADMIN_EMAIL}>`,
 			to: config.ADMIN_EMAIL,
 			subject: `Unauthorised attempt to POST to mod panel.`,
 			html: `<p>A user has attempted to POST to the mod panel!</p><p>User: ID: ${getCookies(req).u_id || "Guest/Logged Out User"}</p><p>Email: ${Buffer.from(getCookies(req).email, "base64").toString() || "N/A"}</p><p>IP Address: ${req.socket.remoteAddress}</p>`
@@ -461,7 +457,7 @@ app.post('/signup', async (req, res) => {
 		if (err) {
 			console.log(err);
 		} else {
-			const mailOptions = { from: `"Lighthouse" <${config.ADMIN_EMAIL}>`, to: req.body.email, subject: `Welcome to Lighthouse, ${req.body.username}!`, html: data };
+			const mailOptions = { to: req.body.email, subject: `Welcome to Lighthouse, ${req.body.username}!`, html: data };
 			sendEmail(mailOptions.to, mailOptions.subject, mailOptions.html);
 		}
 	});

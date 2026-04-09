@@ -340,7 +340,6 @@ router.post('/bda/edit/:id', (req, res) => {
 router.delete('/safety-plan', (req, res) => {
 	if (apiEyesOnly(req)) {
 		var filePath = `public/pdfs/${req.headers.user}.pdf`;
-		console.log(`Unlinking ${filePath}`);
 		fs.unlinkSync(filePath);
 		return res.json({ code: 200 });
 	}

@@ -23,8 +23,6 @@ const {
 } = require("../funcs.js");
 const config = require("../config/config.js");
 
-console.log(`Environment: ${config.ENVIRONMENT}`);
-
 router.get('/inner-world/:id', (req, res) => {
   // if (!checkUUID(req.params.id)) return lostPage(res, req);
   if (isLoggedIn(req)) {

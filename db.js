@@ -4,27 +4,14 @@ var strings = require("./lang/en.json");
 
 
 const { Pool, Client, pg, Query } = require('pg');
-if (config.ENVIRONMENT == "dev") {
-	console.log("⚒ Starting Lighthouse in  𝙎 𝘼 𝙉 𝘿 𝘽 𝙊 𝙓  mode. You are using an offline database.");
-	var client = new Client({
-		user: "dannyliehr",
-		host: "localhost",
-		database: "Sandbox",
-		password: "",
-		port: 5432
-	});
-} else {
-	console.log("📷 Starting Lighthouse in  𝙋 𝙍 𝙊 𝘿 𝙐 𝘾 𝙏 𝙄 𝙊 𝙉  mode. ⚠ You are using the live site's database. ⚠");
-	var client = new Client({
-		user: config.DB_USER,
-		host: config.DB_HOST,
-		database: config.DB_NAME,
-		password: config.DB_PASS,
-		port: config.DB_PORT,
-		ssl: { rejectUnauthorized: false }
-	});
-
-}
+var client = new Client({
+	user: config.DB_USER,
+	host: config.DB_HOST,
+	database: config.DB_NAME,
+	password: config.DB_PASS,
+	port: config.DB_PORT,
+	ssl: { rejectUnauthorized: false }
+});
 
 // Database functions now that all that is declared.
 /**

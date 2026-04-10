@@ -515,7 +515,7 @@ app.use((req, res) => {
 // End pages.
 app.listen(PORT, async (res, req) => {
 	const rn = await db.query(client, "SELECT NOW();", [], res, req);
-	console.log(`⚓ Docked at Port ${PORT}. The time is ${(rn[0].now).toLocaleString('en-GB', { timeZone: 'EST' })}\nOpen in browser: ${config.URL_PREFIX}/`)
+	console.log(`⚓ Docked at Port ${PORT}. The time is ${(rn[0].now).toLocaleString('en-GB', { timeZone: 'EST' })}\nEnvironment: ${config.ENVIRONMENT}\nOpen in browser: http://${config.URL_PREFIX}:${PORT}/`)
 });
 
 // Hoping for catching crashes.

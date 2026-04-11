@@ -7,7 +7,7 @@ var port = process.env.PORT || "5000";
 
 module.exports = {
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@example.com",
-    CLOUDFLARE_KEY: process.env.environment == "dev" ? '1x00000000000000000000AA' : process.env.CLOUDFLARE_KEY,
+    CLOUDFLARE_KEY: process.env.environment == "dev" ? '1x0000000000000000000000000000000AA' : process.env.CLOUDFLARE_KEY,
     CRYPT_KEY: process.env.cryptkey,
     DB_HOST: process.env.DB_HOST,
     DB_NAME: process.env.DB_NAME,

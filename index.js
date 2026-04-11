@@ -407,18 +407,30 @@ app.post('/signup', async (req, res) => {
 		if (req.body.mjl2fbbz8s) return res.send("(:"); // It's a bot. Do not let them load anything.
 
 		try {
-			const verificationResponse = await axios.post('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-				secret: secretKey,
-				response,
-			});
+			const cleanSecret = secretKey.replace(/^['"]|['"]$/g, '');
+			const cleanResponse = response.replace(/^['"]|['"]$/g, '');
+
+			const params = new URLSearchParams();
+			params.append('secret', cleanSecret);
+			params.append('response', cleanResponse);
+
+			const verificationResponse = await axios.post(
+				'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+				params
+			);
+
 			if (!verificationResponse.data.success) {
-				// The Turnstile verification was successful
-				req.flash("flash", "CAPTCHA	verification unsuccessful.");
-				return res.render(`pages/signup`, { session: req.session, cookies: req.cookies, config: site_config, cloudflare_key: config.CLOUDFLARE_KEY });
+				req.flash("flash", "CAPTCHA verification unsuccessful.");
+				return res.render(`pages/signup`, {
+					session: req.session,
+					cookies: req.cookies,
+					config: site_config,
+					cloudflare_key: config.CLOUDFLARE_KEY
+				});
 			}
 		} catch (error) {
-			console.error('Error verifying Turnstile:', error);
-			res.status(500).send('An error occurred while verifying Turnstile.');
+			console.error('Turnstile Error:', error.response?.data || error.message);
+			return res.status(500).send('An error occurred while verifying Turnstile.');
 		}
 	}
 

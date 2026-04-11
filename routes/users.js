@@ -2,6 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db.js");
+const config = require("../config/config.js");
+const site_config = require("../config/site_config.js")
 const client = db.client;
 const {
   isLoggedIn,
@@ -10,7 +12,8 @@ const {
   lostPage,
   randomise,
   getRandomInt,
-  createPassword
+  createPassword,
+  sendEmail
 } = require("../funcs.js");
 
 const strings = require("../lang/en.json");
@@ -18,15 +21,15 @@ const ejs = require("ejs");
 const twoWeeks = 1000 * 60 * 60 * 24 * 14;
 const path = require("path");
 const nodemailer = require("nodemailer");
-const hasMailConfig = Boolean(process.env.gmail_pass);
+const hasMailConfig = Boolean(config.GMAIL_PASS);
 const transporter = hasMailConfig
   ? nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-      user: 'dee_deyes@writelighthouse.com',
-      pass: process.env.gmail_pass,
+      user: config.ADMIN_EMAIL,
+      pass: config.GMAIL_PASS,
     },
   })
   : null;
@@ -154,6 +157,7 @@ router.get("/profile/tokens", async function (req, res) {
       session: req.session,
       cookies: req.cookies,
       tokens: tokens,
+      config: site_config,
     });
   } else {
     res
@@ -189,7 +193,7 @@ router.post("/profile", function (req, res) {
           // Logged account matches searched account.
           if (req.body.deleteAcc) {
             ejs.renderFile(
-              __dirname + "/views/pages/email-goodbye.ejs",
+              path.join(__dirname, '..', 'views', 'pages', "email-goodbye.ejs"),
               {
                 alias:
                   Buffer.from(result.rows[0].username, "base64").toString() ||
@@ -200,7 +204,7 @@ router.post("/profile", function (req, res) {
                   console.log(err);
                 } else {
                   var mailOptions = {
-                    from: '"Lighthouse" <dee_deyes@writelighthouse.com>',
+                    from: `"Lighthouse" <${config.ADMIN_EMAIL}>`,
                     to: Buffer.from(result.rows[0].email, "base64").toString(),
                     subject: `Farewell, ${Buffer.from(
                       result.rows[0].username,
@@ -209,15 +213,7 @@ router.post("/profile", function (req, res) {
                     html: data,
                   };
 
-                  if (transporter) {
-                    transporter.sendMail(mailOptions, (error) => {
-                      if (error) {
-                        return console.log(error);
-                      }
-                    });
-                  } else {
-                    console.log("Email skipped: gmail_pass is not configured.");
-                  }
+                  sendEmail(mailOptions.to, mailOptions.subject, mailOptions.html);
                 }
               }
             );
@@ -821,7 +817,7 @@ router.post("/forgot-password", (req, res) => {
                     console.log(err);
                   } else {
                     var mailOptions = {
-                      from: '"Lighthouse" <dee_deyes@writelighthouse.com>',
+                      from: `"Lighthouse" <${config.ADMIN_EMAIL}>`,
                       to: req.body.email,
                       subject: `Forgot your password, ${Buffer.from(
                         req.session.user.username,
@@ -830,17 +826,7 @@ router.post("/forgot-password", (req, res) => {
                       html: data,
                     };
 
-                    if (transporter) {
-                      transporter.sendMail(mailOptions, (error) => {
-                        if (error) {
-                          return console.log(error);
-                        }
-                      });
-                    } else {
-                      console.log(
-                        "Email skipped: gmail_pass is not configured."
-                      );
-                    }
+                    sendEmail(mailOptions.to, mailOptions.subject, mailOptions.html);
                   }
                 }
               );

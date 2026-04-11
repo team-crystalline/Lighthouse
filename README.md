@@ -16,6 +16,11 @@ Setting up Lighthouse is fairly straightforward.
 1. Clone the repository to your local machine.
 2. Install all dependencies using `npm install`.
 3. Create a `.env` file in the root directory. Add the following environment variables:
+    - `ADMIN_EMAIL`: Your email that will be sending all email to users, including password reset emails.
+    - `gmail_pass`: The app password for the account. Might work without gmail!
+    - `URL_PREFIX`: The url for your project. Your dev environment should have this set to `localhost`, while your hosted instance will have the URL (like `www.example.com`)
+    - `CLOUDFLARE_KEY`: Optional. For if you want to protect signups on your instance.
+    - `LOG_EMAIL`: true/false for logging the email html to the console for debugging.
     - `cryptkey`: The key used for encrypting sensitive data. This should be a long, random string.
     - `DB_HOST`: The host of your PostgreSQL database.
     - `DB_USER`: The username for your PostgreSQL database.
@@ -23,7 +28,7 @@ Setting up Lighthouse is fairly straightforward.
     - `DB_PORT`: The port for your PostgreSQL database.
     - `DB_NAME`: The name of your PostgreSQL database.
     - `dev1`, `dev2`, `dev3`: The IDs of users who should have access to development features (optional).
-    - `environment`: Set this to `prod` for now. We will update this when the `dev` environment no longer points to a hard-coded localhost address for the database.
+    - `environment`: Set this to `dev`. Wherever you host your instance, the instance itself should have this set to `prod`.
     - `maintenance`: Set this to false. Not entirely necessary, because you probably won't need to put the site in maintenance mode on the dev environment, but it's here since you might see it in the code and wonder what it does.
     - `sec`: Secret for session management. This should also be a long, random string.
     - `PORT`: The port you want the server to run on.

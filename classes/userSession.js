@@ -1,4 +1,5 @@
 const db = require('../db');
+const config = require('../config/config.js')
 /**
  * A class for a user's session. It has information on the account, the preferances, and if they're a developer or not.
  * @param {Object} dbResults The database entry for this user.
@@ -31,7 +32,7 @@ class UserSession {
         this.glossaryEnabled = dbResults.glossary_enabled || false;
         this.isDev = Boolean(
             this.u_id &&
-            [process.env.dev1, process.env.dev2, process.env.dev3].includes(this.u_id)
+            config.DEVELOPERS.includes(this.u_id)
         )
     }
     /**

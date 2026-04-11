@@ -21,12 +21,12 @@
                 border-radius: 0 1em 1em 0;
             }
         </style>
-    </head>
     <script>
         function randomise (arr){
 	return arr[Math.floor(Math.random()*arr.length)];
 }
     </script>
+    </head>
     <body>
         <%- include ("../partials/nav.ejs") %>
         <div id="wrapper">
@@ -61,7 +61,6 @@
                 </ul>
                 
             </div>
-        </section>
     </div>
     <div id="screen" class="modal" style="display:none;">
         <div id="modal-content" class="modal-content" style="overflow:hidden;">
@@ -77,7 +76,6 @@
         
     </div>
     <%- include ("../partials/footer.ejs") %>
-    </body>
     <script>
         function cleanString(input) {
             return input.replace(/[^\x00-\x7F]/gi, " ")
@@ -124,7 +122,7 @@
             let response = await fetch(`https://api.pluralkit.me/v2/systems/${pkID}/members`, { 
                 headers: { 
                     "Authorization": $("#pktoken").val(),
-                    "User-Agent": "Lighthouse/Web App (www.writelighthouse.com, dee_deyes@writelighthouse.com, put here for contact if PK devs need to)" 
+                    "User-Agent": `Lighthouse/Web App (<%- config.URL_PREFIX %>, <%- config.ADMIN_EMAIL %>, put here for contact if PK devs need to)` 
                 } 
             });
             let body = await response.text();
@@ -262,4 +260,5 @@
     }
 
     </script>
+    </body>
 </html>

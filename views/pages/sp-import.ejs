@@ -112,7 +112,7 @@
             method: "GET",
             headers:{
             "Authorization": token,
-            "User-Agent": "Lighthouse/Web App (www.writelighthouse.com, dee_deyes@writelighthouse.com, put here for contact if SP devs need to)"
+            "User-Agent": `Lighthouse/Web App (<%- config.URL_PREFIX %>, <%- config.ADMIN_EMAIL %>, put here for contact if SP devs need to)`
             }
         });
         let alter= await response.text()

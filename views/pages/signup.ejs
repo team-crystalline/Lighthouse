@@ -7,10 +7,12 @@
       input[type="username"],
       input[type="password"],
       input[type="submit"],
-      #passSplash, #emailSplash {
+      #passSplash,
+      #emailSplash {
         display: block;
       }
-      #passSplash, #emailSplash {
+      #passSplash,
+      #emailSplash {
         margin-top: -2em;
         margin-bottom: 1em;
         font-weight: 300;
@@ -25,6 +27,11 @@
     ></script>
   </head>
   <body>
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
     <%- include ("../partials/nav.ejs") %>
     <div id="wrapper">
       <% if (cookies.loggedin){ %>
@@ -37,14 +44,19 @@
       <h1>Sign Up to Lighthouse</h1>
       <p>
         We're happy to have you! But first, we need some information.
-        <strong>Please use a valid, non-temporary email,</strong> so that if
-        you lose your password, you can still reset it. We only email you when
+        <strong>Please use a valid, non-temporary email,</strong> so that if you
+        lose your password, you can still reset it. We only email you when
         you've made an account, when you delete an account, if you lose your
         password, or if there's a situation in which we need to email all of our
         users (like a Terms of Service update, or when we eventually implement
         2FA).
       </p>
-      <p><strong>Important:</strong> We do not recommend using school or work emails. Not only are these often temporary, but they can also be monitored by your employer or school. If you use a work or school email, you might not receive password reset emails.</p>
+      <p>
+        <strong>Important:</strong> We do not recommend using school or work
+        emails. Not only are these often temporary, but they can also be
+        monitored by your employer or school. If you use a work or school email,
+        you might not receive password reset emails.
+      </p>
       <p id="error" class="splash" style="display: none"></p>
       <form method="post" autocomplete="off">
         <label for="email">Email: <br /></label
@@ -155,15 +167,16 @@
           <a href="/cookies" target="_blank">cookie usage</a>. See our
           <a href="/privacypolicy" target="_blank">Privacy Policy</a>.</label
         >
+        <% if (cloudflare_key) { %>
         <input
           type="hidden"
           name="mjl2fbbz8s"
           id="mjl2fbbz8s"
           placeholder="Users should not see this! This is a bot honeypot."
         />
-        <% var key = isDev ? '1x00000000000000000000AA' :
-        '0x4AAAAAAAyTMNcAMEfytCrt'; %>
-        <div class="cf-turnstile" data-sitekey="<%= key %>"></div>
+        <% const key = isDev ? '1x00000000000000000000AA' : cloudflare_key %>
+        <div class="cf-turnstile" data-sitekey="<%=key %>"></div>
+        <% } %>
         <input type="submit" id="signup" value="Sign Up" disabled />
       </form>
       <% } %>
@@ -206,7 +219,9 @@
       $("#email, #emailVerify").on("keyup", function () {
         if ($("#emailVerify").val() == "") return;
         if ($("#email").val() !== $("#emailVerify").val()) {
-          $("#emailSplash").html("Email addresses do not match. Did you make a typo?");
+          $("#emailSplash").html(
+            "Email addresses do not match. Did you make a typo?"
+          );
         } else {
           $("#emailSplash").html("");
         }

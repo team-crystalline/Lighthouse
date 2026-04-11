@@ -51,7 +51,7 @@
                 display:block;
                 border:0px;
                 height:calc(2em);
-                background-image:url('https://www.writelighthouse.com/img/horizontal_rule.svg');
+                background-image:url('<%- config.URL_PREFIX %>/img/svg/horizontal_rule.svg');
                 background-repeat: no-repeat;
                 background-position: center; 
             }
@@ -63,7 +63,7 @@
     </head>
     <body>
         <div id="wrapper">
-           <img src="https://www.writelighthouse.com/img/logo.png" class="tinyimg" style="float:left; margin-right: calc(2vw); border-radius: 5em;"><h1>Ahoy there, <%- alias %>!</h1>
+           <img src="<%- config.URL_PREFIX %>/img/logo.png" class="tinyimg" style="float:left; margin-right: calc(2vw); border-radius: 5em;"><h1>Ahoy there, <%- alias %>!</h1>
            <hr>
             <p>Thanks for signing up to Lighthouse, a compartmentalised journal app designed specifically for people who are plural. We're so glad to have you aboard. No worries-- This is the only time we'll email you, unless if you change your password, delete your account, or something happens that we must alert our userbase about.</p>
             <p><strong>Don't remember making this account?</strong> No worries-- Simply reply to this email and your account will be deleted shortly.</p>

@@ -9,7 +9,8 @@ const fs = require('fs');
 var pdf = require("html-pdf");
 
 const { isLoggedIn, getCookies, apiEyesOnly, encryptWithAES, decryptWithAES, forbidUser,
-	lostPage, checkUUID } = require("../funcs.js")
+	lostPage, checkUUID } = require("../funcs.js");
+const site_config = require('../config/site_config.js');
 
 
 
@@ -34,7 +35,10 @@ router.get('/safety-plan', async function (req, res) {
 			const safetyPlan = await db.query(client, "SELECT * FROM safetyplans WHERE u_id=$1", [getCookies(req)['u_id']], res, req);
 			var user = {
 				id: safetyPlan[0].user,
-				name: getCookies(req)['username'],
+				name: Buffer.from(
+					req.session.username,
+					"base64"
+				).toString(),
 				symptoms: decryptWithAES(safetyPlan[0].symptoms),
 				safepeople: decryptWithAES(safetyPlan[0].safepeople),
 				distractions: decryptWithAES(safetyPlan[0].distractions),
@@ -44,7 +48,7 @@ router.get('/safety-plan', async function (req, res) {
 			}
 			// Read HTML Template
 			let pdfType = req.headers.colour == "colour" ? "safetyplan-pdf-col.ejs" : "safetyplan-pdf-bw.ejs";
-			ejs.renderFile(path.join(__dirname, './views/pages/', pdfType), { user: user }, (err, data) => {
+			ejs.renderFile(path.join(__dirname, '../views/pages/', pdfType), { user: user, config: site_config }, (err, data) => {
 				if (err) {
 					return res.json({ code: 404, msg: `Render File: ${err}` });
 				} else {
@@ -58,7 +62,7 @@ router.get('/safety-plan', async function (req, res) {
 						"height": dimensions[0],
 						"width": dimensions[1],
 					};
-					pdf.create(data, options).toFile(path.join(__dirname, './public/pdfs', `${req.headers.user}.pdf`), function (err, data) {
+					pdf.create(data, options).toFile(path.join(__dirname, '../public/pdfs', `${req.headers.user}.pdf`), function (err, data) {
 						if (err) {
 							return res.json({ code: 404, msg: `Generating: ${err}` });
 						} else {
@@ -335,7 +339,7 @@ router.post('/bda/edit/:id', (req, res) => {
 
 router.delete('/safety-plan', (req, res) => {
 	if (apiEyesOnly(req)) {
-		var filePath = `./public/pdfs/${req.headers.user}.pdf`;
+		var filePath = `public/pdfs/${req.headers.user}.pdf`;
 		fs.unlinkSync(filePath);
 		return res.json({ code: 200 });
 	}

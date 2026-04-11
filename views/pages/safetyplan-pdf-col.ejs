@@ -113,8 +113,8 @@ function getOrdinal(n) {
     <body>
         <section id="wrapper">
         
-            <h1><img src="https://www.writelighthouse.com/img/logo.png" style="width: 2em;float:left;">Safety Plan for <%- (user.name).replace(/%20/g, " ") %></h1>
-            <p>Below is your safety plan as of <strong><%- dayNames[new Date().getDay()] %>, <%- monthNames[new Date().getMonth()] %> <%- new Date().getDate() %><%- getOrdinal(new Date().getDate()) %> <%- new Date().getFullYear() %></strong>. Generated on Lighthouse.<br><a href="https://www.writelighthouse.com/" target="_blank"><sup>www.writelighthouse.com</sup></a></p>
+            <h1><img src="<%- config.URL_PREFIX %>/img/logo.png" style="width: 2em;float:left;">Safety Plan for <%- (user.name).replace(/%20/g, " ") %></h1>
+            <p>Below is your safety plan as of <strong><%- dayNames[new Date().getDay()] %>, <%- monthNames[new Date().getMonth()] %> <%- new Date().getDate() %><%- getOrdinal(new Date().getDate()) %> <%- new Date().getFullYear() %></strong>. Generated on Lighthouse.<br><a href="<%- config.URL_PREFIX %>/" target="_blank"><sup><%- config.URL_PREFIX %></sup></a></p>
             <hr>
             <!-- START COLUMNS -->
             <div id="columns">

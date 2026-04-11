@@ -1,4 +1,4 @@
-<title><%= siteLanguage[session.language || "en"].title %><% if (process.env.environment == "dev"){ %> (SANDBOX) <% } %></title>
+<title><%= siteLanguage[session.language || "en"].title %><% if (config.environment == "dev"){ %> (SANDBOX) <% } %></title>
 <link rel="preload" href="/stylesheets/main.css" as="style">
 <link rel="stylesheet" href="/stylesheets/main.css?v=<%- version %>">
 <script src="/prism.js"></script>
@@ -38,7 +38,7 @@
 
 
 <!-- Meta data -->
-<link rel="me" href="https://mastodon.social/@dee_deyes"></link>
+<link rel="me" href="https://mastodon.social/@dee_deyes"/>
 <meta charset="UTF-8">
 <meta name="description" content="Lighthouse is a self-help website for people who are plural. Keep track of day-to-day life, alters' feelings, and start building internal communication.">
 <meta name="keywords" content="DID, Dissociative Identity Disorder, OSDD, diary, journal, otherwise specified dissociative disorder, ddnos, multiplicity, plural, plurality, dissociative disorder not otherwise specified, journal app, diary app">
@@ -52,7 +52,7 @@
 <meta property="og:description" content="Lighthouse is a self-help website for people who are plural. Keep track of day-to-day life, alters' feelings, and start building internal communication.">
 <meta property="og:title" content="Lighthouse">
 <meta property="og:site_name" content="Lighthouse" />
-<link rel="canonical" href="https://www.writelighthouse.com/" />
+<link rel="canonical" href="<%- config.URL_PREFIX %>/" />
 
 <meta 
   name    = "color-scheme" 

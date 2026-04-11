@@ -1,214 +1,277 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <%- include ("../partials/header.ejs") %>
-        <style>
-            #bdapanel{
-                display: flex; 
-                justify-content:space-around;
-                vertical-align: bottom;
-            }
-            .panel{
-                width:30%; 
-                text-align:center;
-                display: block;
-                align-self: flex-end;
-            }
-            #clear{
-                margin-top: 1em;
-            }
-            @media only screen and (max-width: 600px) {
-                #bdapanel{
-                    display: block;
-            }
-            .panel{
-                width:100%; 
-                text-align:center;
-                display:block;
-            }
-            }
-            .planSection{
-                border-bottom: 1px solid var(--col1);
-            }
-            .planSection:last-child{
-                border: 0;
-            }
-            .bda::first-letter{
-                font-weight: 900;
-                color: var(--col4);
-            }
-        </style>
-    </head>
-    <body>
-        <%- include ("../partials/nav.ejs") %>
-        <div id="wrapper">
-            <ul class="breadcrumb">
-                <li><a href="/system" title="Your <%= capitalise(cookies.system_term) %>"><%= capitalise(cookies.system_term) %></a></li>
-                <li><a href="/worksheets" title="Worksheets">Worksheets</a></li>
-                <li>Before, During, After</li>
-            </ul>  
-            <% if (locals.messages.flash) { %>
-                <div class="splash"><%- locals.messages.flash %></div>
-            <% } %>
-            <section>
-                <h2>Before, During, After</h2>
-                <p>A <strong>Before, During, After</strong> plan is specifically for an upcoming event or trauma that you know may be stressful or even traumatic to <%- pluralize(cookies.alter_term) %> in your <%- cookies.system_term %>. The goal is to keep splitting/splintering to a minimum during a stressful event.</p>
-                <form>
-                    <label for ="planname">Name This Plan: </label> <input type="text" id="planname" name="planname" minlength="3">
-                    <div id="bdapanel">
-                      <div class="panel">
-                        <h3 class="bda">Before</h3>
-                        <label for="planbefore">What will you and the other <%- pluralize(cookies.alter_term) %> do to be ready for this event?</label><br>
-                        <textarea name="planbefore" id="planbefore" rows="10" cols="15" minlength="10"></textarea>
-                    </div>
-                    <div class="panel">
-                        <h3 class="bda">During</h3>
-                        <label for="planduring">How will the <%- cookies.system_term %> stay grounded during this event?</label><br>
-                        <textarea name="planduring" id="planduring" rows="10" cols="15" minlength="10"></textarea>
-                    </div>
-                    <div class="panel">
-                        <h3 class="bda">After</h3>
-                        <label for="planafter">What can everyone do to ensure each others' safety and solace?</label><br>
-                        <textarea name="planafter" id="planafter" rows="10" cols="15" minlength="10"></textarea>
-                    </div>  
-                    </div>
-                    <div id="clear"><center><button name="create" id="planSub">Create B-D-A Plan</button> <input type="reset" value="Start Over"></center></div>
-                </form>
-                
-            </section>
-            <hr>
-            <section>
-                <h1 style="text-align:center;">Your <%- capitalise(cookies.system_term) %> Plans</h1>
-                <center><img id="wait" style="display:none" src="/img/svg/bubbles.svg" class="tinyimg" alt="bubble loading bar"></center>
-                <div id="plans">
-
-                </div>
-            </section>
+  <head>
+    <%- include ("../partials/header.ejs") %>
+    <style>
+      #bdapanel {
+        display: flex;
+        justify-content: space-around;
+        vertical-align: bottom;
+      }
+      .panel {
+        width: 30%;
+        text-align: center;
+        display: block;
+        align-self: flex-end;
+      }
+      #clear {
+        margin-top: 1em;
+      }
+      @media only screen and (max-width: 600px) {
+        #bdapanel {
+          display: block;
+        }
+        .panel {
+          width: 100%;
+          text-align: center;
+          display: block;
+        }
+      }
+      .planSection {
+        border-bottom: 1px solid var(--col1);
+      }
+      .planSection:last-child {
+        border: 0;
+      }
+      .bda::first-letter {
+        font-weight: 900;
+        color: var(--col4);
+      }
+    </style>
+  </head>
+  <body>
+    <%- include ("../partials/nav.ejs") %>
+    <div id="wrapper">
+      <ul class="breadcrumb">
+        <li>
+          <a href="/system" title="Your <%= capitalise(cookies.system_term) %>"
+            ><%= capitalise(cookies.system_term) %></a
+          >
+        </li>
+        <li><a href="/worksheets" title="Worksheets">Worksheets</a></li>
+        <li>Before, During, After</li>
+      </ul>
+      <% if (locals.messages.flash) { %>
+      <div class="splash"><%- locals.messages.flash %></div>
+      <% } %>
+      <section>
+        <h2>Before, During, After</h2>
+        <p>
+          A <strong>Before, During, After</strong> plan is specifically for an
+          upcoming event or trauma that you know may be stressful or even
+          traumatic to <%- pluralize(cookies.alter_term) %> in your <%-
+          cookies.system_term %>. The goal is to keep splitting/splintering to a
+          minimum during a stressful event.
+        </p>
+        <form>
+          <label for="planname">Name This Plan: </label>
+          <input type="text" id="planname" name="planname" minlength="3" />
+          <div id="bdapanel">
+            <div class="panel">
+              <h3 class="bda">Before</h3>
+              <label for="planbefore"
+                >What will you and the other <%- pluralize(cookies.alter_term)
+                %> do to be ready for this event?</label
+              ><br />
+              <textarea
+                name="planbefore"
+                id="planbefore"
+                rows="10"
+                cols="15"
+                minlength="10"
+              ></textarea>
+            </div>
+            <div class="panel">
+              <h3 class="bda">During</h3>
+              <label for="planduring"
+                >How will the <%- cookies.system_term %> stay grounded during
+                this event?</label
+              ><br />
+              <textarea
+                name="planduring"
+                id="planduring"
+                rows="10"
+                cols="15"
+                minlength="10"
+              ></textarea>
+            </div>
+            <div class="panel">
+              <h3 class="bda">After</h3>
+              <label for="planafter"
+                >What can everyone do to ensure each others' safety and
+                solace?</label
+              ><br />
+              <textarea
+                name="planafter"
+                id="planafter"
+                rows="10"
+                cols="15"
+                minlength="10"
+              ></textarea>
+            </div>
+          </div>
+          <div id="clear">
+            <center>
+              <button name="create" id="planSub">Create B-D-A Plan</button>
+              <input type="reset" value="Start Over" />
+            </center>
+          </div>
+        </form>
+      </section>
+      <hr />
+      <section>
+        <h1 style="text-align: center">
+          Your <%- capitalise(cookies.system_term) %> Plans
+        </h1>
+        <center>
+          <img
+            id="wait"
+            style="display: none"
+            src="/img/svg/bubbles.svg"
+            class="tinyimg"
+            alt="bubble loading bar"
+          />
+        </center>
+        <div id="plans"></div>
+      </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
-    </body>
-    <script>
-        var getFirstBrowserLanguage = function () {
-    var nav = window.navigator,
-    browserLanguagePropertyKeys = ['language', 'browserLanguage', 'systemLanguage', 'userLanguage'],
-    i,
-    language;
+  </body>
+  <script>
+    var getFirstBrowserLanguage = function () {
+      var nav = window.navigator,
+        browserLanguagePropertyKeys = [
+          "language",
+          "browserLanguage",
+          "systemLanguage",
+          "userLanguage",
+        ],
+        i,
+        language;
 
-    // support for HTML 5.1 "navigator.languages"
-    if (Array.isArray(nav.languages)) {
-      for (i = 0; i < nav.languages.length; i++) {
-        language = nav.languages[i];
+      // support for HTML 5.1 "navigator.languages"
+      if (Array.isArray(nav.languages)) {
+        for (i = 0; i < nav.languages.length; i++) {
+          language = nav.languages[i];
+          if (language && language.length) {
+            return language;
+          }
+        }
+      }
+
+      // support for other well known properties in browsers
+      for (i = 0; i < browserLanguagePropertyKeys.length; i++) {
+        language = nav[browserLanguagePropertyKeys[i]];
         if (language && language.length) {
           return language;
         }
       }
+
+      return null;
+    };
+    async function fetchPosts() {
+      $("#wait").show();
+      $("#plans").html("");
+      let response = await fetch(`/bda`, {
+        headers: {
+          "api-lh-call": "api-lh-call",
+        },
+      });
+      let body = await response.text();
+      let bodyInfo = JSON.parse(body);
+      for (i in bodyInfo.body) {
+        var planString = `<section class="planSection"><h2>${bodyInfo.body[i].alias}</h2><a href="/bda/edit/${bodyInfo.body[i].id}" title="Edit ${bodyInfo.body[i].alias}" id=" ${bodyInfo.body[i].id}"><i class="fa fa-pencil" aria-hidden="true"></i></a><button id="${bodyInfo.body[i].id}" name="${bodyInfo.body[i].alias}" onclick="deletePlan(this)">Remove</button> <div style="padding-left:1em"><h3>BEFORE</h3>`;
+        var bArr = bodyInfo.body[i].before
+          .replace(/\r/gi, "")
+          .split("\n")
+          .filter(function () {
+            return true;
+          });
+        for (j in bArr) {
+          planString += `<p>${bArr[j]}</p>`;
+        }
+        planString += `<h3>DURING</h3>`;
+        var dArr = bodyInfo.body[i].during
+          .replace(/\r/gi, "")
+          .split("\n")
+          .filter(function () {
+            return true;
+          });
+        for (k in dArr) {
+          planString += `<p>${dArr[k]}</p>`;
+        }
+        planString += `<h3>AFTER</h3>`;
+        var aArr = bodyInfo.body[i].after
+          .replace(/\r/gi, "")
+          .split("\n")
+          .filter(function () {
+            return true;
+          });
+        for (l in aArr) {
+          planString += `<p>${aArr[l]}</p>`;
+        }
+        planString += `</div></section>`;
+        $("#plans").append(planString);
+      }
+
+      $("#wait").hide();
     }
 
-    // support for other well known properties in browsers
-    for (i = 0; i < browserLanguagePropertyKeys.length; i++) {
-      language = nav[browserLanguagePropertyKeys[i]];
-      if (language && language.length) {
-        return language;
+    $(document).ready(function () {
+      fetchPosts();
+    });
+
+    $("#planSub").click(async function () {
+      event.preventDefault();
+      $("#wait").toggle(`fast`);
+      const response = await fetch("/bda", {
+        method: "POST",
+        headers: {
+          "api-lh-call": "api-lh-call",
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          create: "create",
+          name: $("#planname").val(),
+          before: $("#planbefore").val(),
+          during: $("#planduring").val(),
+          after: $("#planafter").val(),
+        }),
+      });
+      const result = await response.json();
+      $("#planname").val("");
+      $("#planbefore").val("");
+      $("#planduring").val("");
+      $("#planafter").val("");
+      if (result.code == 200) {
+        // Load it below!
+        fetchPosts();
+      }
+    });
+
+    async function deletePlan(id) {
+      event.preventDefault();
+      if (confirm(`Do you really want to delete ${id.name}?`)) {
+        $("#wait").toggle(`fast`);
+        const response = await fetch("/bda", {
+          method: "DELETE",
+          headers: {
+            "api-lh-call": "api-lh-call",
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            delete: "delete",
+            id: id.id,
+          }),
+        });
+        const result = await response.json();
+        if (result.code == 200) {
+          // Load it below!
+          fetchPosts();
+        }
       }
     }
-
-    return null;
-  };
-        async function fetchPosts(){
-            $("#wait").show();
-            $("#plans").html("");
-                let response = await fetch(`/bda`, {
-            headers: {
-            "api-lh-call": "api-lh-call"
-            }
-        });
-        let body = await response.text();
-        let bodyInfo = JSON.parse(body);
-        for (i in bodyInfo.body){
-            var planString= `<section class="planSection"><h2>${bodyInfo.body[i].alias}</h2><a href="/bda/edit/${bodyInfo.body[i].id}" title="Edit ${bodyInfo.body[i].alias}" id=" ${bodyInfo.body[i].id}"><i class="fa fa-pencil" aria-hidden="true"></i></a><button id="${bodyInfo.body[i].id}" name="${bodyInfo.body[i].alias}" onclick="deletePlan(this)">Remove</button> <div style="padding-left:1em"><h3>BEFORE</h3>`;
-            var bArr= (bodyInfo.body[i].before).replace(/\r/gi, '').split("\n").filter(function() { return true; });
-                for (j in bArr){
-                    planString += `<p>${bArr[j]}</p>`
-                    }
-            planString+= `<h3>DURING</h3>`;
-            var dArr= (bodyInfo.body[i].during).replace(/\r/gi, '').split("\n").filter(function() { return true; });
-                for (k in dArr){
-                    planString += `<p>${dArr[k]}</p>`
-                    }
-            planString+= `<h3>AFTER</h3>`;
-            var aArr= (bodyInfo.body[i].after).replace(/\r/gi, '').split("\n").filter(function() { return true; });
-            for (l in aArr){
-                planString += `<p>${aArr[l]}</p>`
-                }
-            planString+= `</div></section>`;
-            $("#plans").append(planString);
-            }
-            
-        $("#wait").hide();
-        }
-            
-        $(document).ready(function(){
-            fetchPosts();
-        })
-        
-        $("#planSub").click(async function(){
-            event.preventDefault();
-            if ($("#planname").val().length < 3 || $("#planbefore").val().length < 10 || $("#planduring").val().length < 10 || $("#planafter").val().length < 10){
-                return;
-            }
-            $("#wait").toggle(`fast`);
-                const response = await fetch("/bda", {
-                        method: "POST",
-                        headers:{
-                            "api-lh-call": "api-lh-call",
-                            'Accept': 'application/json',
-                             'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            "create": "create",
-                            "name":  $("#planname").val(),
-                            "before": $("#planbefore").val(),
-                            "during": $("#planduring").val(),
-                            "after": $("#planafter").val(),
-                        })
-                    });
-                    const result = await response.json();
-                    $("#planname").val("");
-                    $("#planbefore").val("");
-                    $("#planduring").val("");
-                    $("#planafter").val("");
-                    if (result.code == 200){
-                        // Load it below!
-                        fetchPosts();
-                    }
-                    
-        });
-
-        async function deletePlan(id){
-            event.preventDefault();
-            if (confirm(`Do you really want to delete ${id.name}?`)){
-                $("#wait").toggle(`fast`);
-                const response = await fetch("/bda", {
-                        method: "DELETE",
-                        headers:{
-                            "api-lh-call": "api-lh-call",
-                            'Accept': 'application/json',
-                             'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            "delete": "delete",
-                            "id": id.id
-                        })
-                    });
-                    const result = await response.json();
-                    if (result.code == 200){
-                        // Load it below!
-                        fetchPosts();
-                    }
-            }
-            
-        }
-
-
-    </script>
+  </script>
 </html>

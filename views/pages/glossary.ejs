@@ -26,8 +26,8 @@
             }
         </style>
     </head>
-    <%- include ("../partials/nav.ejs") %>
     <body>
+    <%- include ("../partials/nav.ejs") %>
         <div id="copyNotification">Copied Link!</div>
         <div id="wrapper">
             <h1>Glossary</h1>
@@ -77,7 +77,7 @@
             $(`${window.location.hash}`).css("background-color", "rgba(255, 255, 0, .2)")
         }
         function copyLink(url) {
-            navigator.clipboard.writeText(`https://www.writelighthouse.com/glossary/#${url}`);
+            navigator.clipboard.writeText(`<%- config.URL_PREFIX %>/glossary/#${url}`);
             $("#copyNotification").show().delay(3000).fadeOut("slow");
             } 
         </script>

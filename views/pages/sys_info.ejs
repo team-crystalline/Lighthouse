@@ -110,7 +110,7 @@ queryString = queryString ? `?${queryString}` : "";
                     <strong><%= parseInt(resCount).toLocaleString() %></strong> of <strong><%= parseInt(altCount).toLocaleString() %></strong> <%= pluralize(cookies.alter_term) %> listed.
                 </p>
                 <p class="dyn">Showing you <%= numup %> [[ALTERS]] per page. [[ALTERSCAP]] marked with a ✦ have their primary [[SYSTEM]] listed differently.</p>
-
+                
             <div class="grid" id="sysContainer">
                 <% for ( i in alterArr) {
                     %>

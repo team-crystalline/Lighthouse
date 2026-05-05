@@ -781,7 +781,7 @@ router.get("/:id/:pg?",
             OR alters.subsys_id3 = $1::text
             OR alters.subsys_id4 = $1::text
             OR alters.subsys_id5 = $1::text
-          )
+          ) ${archive_select}
         ORDER BY alters.name ASC;`,
       [`${req.params.id}`],
       res,

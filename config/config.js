@@ -24,5 +24,5 @@ module.exports = {
     SALT_KEY: process.env.SALT_KEY,
     SECRET: process.env.sec,
     URL_PREFIX: process.env.URL_PREFIX || `http://${process.env.HOSTNAME}:${port}`,
-    DISABLE_SIGNUP: process.env.DISABLE_SIGNUP || false
+    DISABLE_SIGNUP: process.env.DISABLE_SIGNUP ? JSON.parse(process.env.DISABLE_SIGNUP) : false
 };

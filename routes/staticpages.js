@@ -39,7 +39,7 @@ router.get("/crisis", (req, res, next) => {
   res.render(`pages/crisis`, { session: req.session, cookies: req.cookies, config: site_config, });
 });
 router.get("/signup", (req, res, next) => {
-  if (config.DISABLE_SIGNUP) {
+  if (config.DISABLE_SIGNUP == true) {
     res.render(`pages/signup-disabled`, { session: req.session, cookies: req.cookies, config: site_config, });
   } else {
     res.render(`pages/signup`, {

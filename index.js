@@ -400,6 +400,7 @@ app.post('/pluralkit', (req, res) => {
 
 app.post('/signup', async (req, res) => {
 	// Bookmarks: signup post, post signup
+	if (config.DISABLE_SIGNUP) return; // <-- Shouldn't be signing up. We said no.
 	if (config.CLOUDFLARE_KEY) {
 		const secretKey = config.CLOUDFLARE_KEY;
 

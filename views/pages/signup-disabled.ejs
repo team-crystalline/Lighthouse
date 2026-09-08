@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <%- include ("../partials/header.ejs") %>
-        <script src="https://challenges.cloudflare.com/turnstile/v0.3.0/api.js" async defer></script>
-    </head>
-    <body>
-        <%- include ("../partials/nav.ejs") %>
-        <div id="wrapper">
-            <section>
-                <h1>Signup Disabled</h1>
-                <p>Sorry, but signup is unavailable. You can read our statement <a href="/sunset">here</a>.</p>
-            </section>
+  <head>
+    <%- include ("../partials/header.ejs") %>
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0.3.0/api.js"
+      async
+      defer
+    ></script>
+  </head>
+  <body>
+    <%- include ("../partials/nav.ejs") %>
+    <div id="wrapper">
+      <section>
+        <h1>Signup Disabled</h1>
+        <p>
+          Sorry, but signup is unavailable while we work on the offline version
+          of Lighthouse.
+        </p>
+      </section>
     </div>
     <%- include ("../partials/footer.ejs") %>
-    </body>
+  </body>
 </html>
